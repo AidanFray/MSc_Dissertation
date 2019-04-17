@@ -1,0 +1,26 @@
+\documentclass[a4paper,smallheadings,11pt,oneside,bibliography=totoc]{scrreprt}	
+	
+%Used to change the margin
+\newcommand{\margin}{0.75in}
+\usepackage[a4paper, left=\margin, right=\margin, top=\margin, bottom=\margin]{geometry}
+
+% Packages
+\usepackage[numbers]{natbib} 		% Package for IEE Referencing
+\usepackage{graphicx} 				% Package for images
+\usepackage{hyperref} 				% Package for URLS and Content links
+\usepackage[titletoc]{appendix} 	% Package added for the appendix
+\usepackage{mathtools}				% Package for mathmatical notation
+\usepackage{wrapfig}				% Wrapping figures on a page
+\usepackage{tcolorbox}				% For code listings
+\usepackage{titlesec}				% Package for reducing space after headers
+
+%Paragraph settings
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.75em}
+
+\begin{document}
+
+	\input{pages/work_plan}
+	\input{pages/delivery_plan}
+
+\end{document}
