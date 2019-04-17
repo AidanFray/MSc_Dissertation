@@ -1,0 +1,1 @@
+# Finding collisions in the full SHA1

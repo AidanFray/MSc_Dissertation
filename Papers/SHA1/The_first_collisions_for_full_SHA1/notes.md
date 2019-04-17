@@ -1,0 +1,1 @@
+# The first collisions for full SHA1
