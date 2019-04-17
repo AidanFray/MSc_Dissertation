@@ -9,3 +9,9 @@
 - What would be the complexity in storage and computation?
 
 - Can such near-collisions be generated e.g. using the university’s high-performance computing facilities? 
+
+## Links
+
+Project brief
+
+https://teaching.cs.york.ac.uk/projects/allocation/list/round/3/sfs521/sfs521.018
