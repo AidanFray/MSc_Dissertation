@@ -15,3 +15,8 @@
 Project brief
 
 https://teaching.cs.york.ac.uk/projects/allocation/list/round/3/sfs521/sfs521.018
+
+## Concepts to research
+
+**Differential cryptanalysis**
+- Disturbance vectors
