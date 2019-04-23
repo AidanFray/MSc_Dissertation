@@ -10,6 +10,25 @@
 
 - Can such near-collisions be generated e.g. using the university’s high-performance computing facilities? 
 
+## Topics to consider
+
+### SHA1 for PGP signatures
+- Can we harvest keys and notice similarities?
+
+    - How can we harvest keys on mass?
+
+- Can we fiddle with the last block of data for a PGP key and generate some sort of a near collision? Can this done for a target key or a completely random key?
+
+- Structure of a PGP key?
+
+- Are there certain implementations that are more vulnerable?
+
+### Generating Near-Collisions using Marc Steven's code
+- How fast is the Universities cluster?
+
+- Using discovered studies is this collision attack feasible?
+
+
 ## Links
 
 Project brief
