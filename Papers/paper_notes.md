@@ -2,8 +2,9 @@
 
 - [] Complexity Estimates of a SHA-1 Near-Collision Attack for GPU and FPGA
 
+# Near-Collision methods
 
-# Complexity Estimates of a SHA-1 Near-Collision Attack for GPU and FPGA
+### Complexity Estimates of a SHA-1 Near-Collision Attack for GPU and FPGA
 
 Talks about global 'root certificates' and their use of SHA1.
 
