@@ -3,6 +3,11 @@ from Crypto.Hash import SHA1
 import sys
 import re
 
+##############
+## RFC 4880 ##
+##############
+# https://tools.ietf.org/html/rfc4880#section-12.2
+
 if len(sys.argv) != 2:
     print("[!] Usage: python signature.py <KEY_FILE>")
     exit()
