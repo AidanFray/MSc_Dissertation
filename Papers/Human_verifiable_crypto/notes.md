@@ -44,3 +44,31 @@ Hexadecimal was around 21% attacks missed. Uppercase and lower case were very si
 Attack strengths also did not seem to affect the miss rate.
 
 They didn't test the use of software to check the signature. Examples of this are QR codes and smartphone cameras.
+
+
+## Usability and Security of Out-Of-BandChannels in Secure Device Pairing Protocols
+
+Paper will focus on the use of Out-of-band (OOB) authentication that can be used to verify or transport crypto secrets
+
+OOB utilises human involvement to set-up and manage authentication channels
+
+OOBs are somewhat not vulnerable to MITM attacks. One example is direct human interaction. With the correct config the trust exhibited here can be transferred to the party's devices.
+
+Examples of OOBs are: 
+
+- Comparison of visual, auditory or language based content 
+- Pictures of QR codes taken using a device
+
+Paper ranks usability:
+
+- Comparing strings
+- Typing strings 
+- Comparing and selecting strings
+- Barcode scanning
+
+Then, with security included:
+
+- Typing strings
+- Barcode scanning
+- Comparing and confirming
+- Comparing strings
