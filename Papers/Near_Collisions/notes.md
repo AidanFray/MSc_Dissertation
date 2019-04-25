@@ -1,8 +1,4 @@
-# TODO
-
-- [] Complexity Estimates of a SHA-1 Near-Collision Attack for GPU and FPGA
-
-# Near-Collision methods
+# Near collisions
 
 ### Complexity Estimates of a SHA-1 Near-Collision Attack for GPU and FPGA
 

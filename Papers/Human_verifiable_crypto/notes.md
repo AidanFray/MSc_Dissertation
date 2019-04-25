@@ -1,6 +1,5 @@
 # Human Verifiable Crypto
 
-
 ## Can Unicorns Help Users Compare Crypto Key Fingerprints?
 
 Study used 661 participants to test.
