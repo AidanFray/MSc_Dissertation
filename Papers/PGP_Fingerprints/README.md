@@ -23,3 +23,10 @@ It works by generating a single key and then just incrementing it's exponent, th
 Looking for any of 100 keys with 20 mid range GPUs takes 107 days
 ```
 
+## PEP - Trustwords
+
+Three different types of trust word mappings. Each mapping uses 2 bytes per word.
+
+**Full Trustword Mapping**
+
+Uses the entire fingerprint to map to 10 words.
