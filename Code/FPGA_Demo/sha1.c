@@ -6,7 +6,6 @@ By Steve Reid <steve@edmweb.com>
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h> /* for uint32_t */
-#include "sha1.h"
 #include <time.h>
 
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
@@ -144,6 +143,7 @@ void SHA1Transform(uint32_t state[5], const unsigned char buffer[64])
     R4(d, e, a, b, c, 77);
     R4(c, d, e, a, b, 78);
     R4(b, c, d, e, a, 79);
+    
     /* Add the working vars back into context.state[] */
     state[0] += a;
     state[1] += b;
@@ -213,35 +213,11 @@ void SHA1Final(unsigned char digest[20], SHA1_CTX * context)
     memset(&finalcount, '\0', sizeof(finalcount));
 }
 
-void printHash(unsigned char *buffer)
+void SHA1Hash(char** results, char* message)
 {
-   for (int n = 0; n < 20; n++)
-   {
-        printf("%02x", buffer[n]);
-   }
-    putchar('\n');
-}
-
-
-int main(int argc, char **argv)
-{
-    int num_of_hashes = 1000000;
-
-    clock_t begin = clock();
-
     SHA1_CTX sha; 
-    uint8_t results[20]; 
 
-    char *buf = "hello"; 
-
-    for(int x=0; x < num_of_hashes; ++x)
-    {
-        SHA1Init(&sha); 
-        SHA1Update(&sha, (uint8_t *)buf, strlen(buf)); 
-        SHA1Final(results, &sha);
-    }
-
-    clock_t end = clock();
-    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("%f MH/s\n", (num_of_hashes / time_spent) / 1000000);
+    SHA1Init(&sha); 
+    SHA1Update(&sha, (uint8_t *)message, strlen(message)); 
+    SHA1Final(results, &sha);
 }
