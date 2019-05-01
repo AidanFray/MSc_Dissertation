@@ -36,3 +36,20 @@ Marc steven's quotes the work of the near-collisions at `2^57.5`. If this is a m
 Involves two stages. The first is a depth-first search over the first 35 rounds of SHA-1, the conditions for advancement of this algorithm are defined by a differential path. Should a message not fulfil this requirement the algorithm will step back to previous rounds and try again, this continues until there're no new variations, where a completly new message block will be introduced.
 
 Phase two is a linear hash calculation and message check. There is no variation resulting in there being a yes or no decision on the message block. The second phase involve 3 subphases that check the characteristic of the message block.
+
+
+### Practical Near-Collisions for Reduced Round Blake, Fugue, Hamsi and JH
+
+Note: information will not recorded about the SHA3 candidates. The interesting method here is the method used to generate the near-collisions.
+
+The paper proposes a new method refereed to as 'Hill Climbing' where as the hash function takes a value reffered to as the `CV` (This is the result from the previous block)
+
+They start by randomly choosing the CV and calculating hash after hash to determine the potential for a near-collision. 
+
+The algorithm only stores the best CV variable meassured in Hamming Weight. The algorithm stops when the CV is equal to `k-opt`
+
+`k-opt` is the essentially the best value possible in terms of the hamming weight of the resulting hash.
+
+The psuedo code is below:
+
+![](./images/hillClimbingCode.png)
