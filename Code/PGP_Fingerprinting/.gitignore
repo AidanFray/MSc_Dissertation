@@ -1,7 +1,0 @@
-env
-.vscode
-*.kbx
-*.gpg
-
-private-keys-v1.d
-openpgp-revocs.d
