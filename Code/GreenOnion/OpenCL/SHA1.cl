@@ -1,41 +1,18 @@
-#define uint8 char
-#define int8 char
-#define uint16 ushort
-#define int16 short
-#define uint32 uint
-#define int32 int
-#define uint64 ulong
-#define int64 long
 
-#define FASTSHA
+inline uint andnot(uint a,uint b) { return a & ~b; }
+inline uint rotate1(uint a) { return (a << 1) | (a >> 31); }
+inline uint rotate5(uint a) { return (a << 5) | (a >> 27); }
+inline uint rotate30(uint a) { return (a << 30) | (a >> 2); }
 
-GENERATED__CONSTANTS
-
-// FNV hash: http://isthe.com/chongo/tech/comp/fnv/#FNV-source
-#define OFFSET_BASIS 2166136261u
-#define FNV_PRIME 16777619u
-#define fnv_hash_w3(w1,w2,w3) (uint)((((((OFFSET_BASIS ^ rotate5(w1)) * FNV_PRIME) ^ rotate5(w2)) * FNV_PRIME) ^ rotate5(w3)) * FNV_PRIME)
-#define fnv_hash_w5(w1,w2,w3,w4,w5) (uint)((((((((((OFFSET_BASIS ^ rotate5(w1)) * FNV_PRIME) ^ rotate5(w2)) * FNV_PRIME) ^ rotate5(w3)) * FNV_PRIME) ^ rotate5(w4)) * FNV_PRIME) ^ rotate5(w5)) * FNV_PRIME)
-
-#ifdef FASTSHA
-inline uint32 andnot(uint32 a,uint32 b) { return a & ~b; }
-inline uint32 rotate1(uint32 a) { return (a << 1) | (a >> 31); }
-inline uint32 rotate5(uint32 a) { return (a << 5) | (a >> 27); }
-inline uint32 rotate30(uint32 a) { return (a << 30) | (a >> 2); }
-
-// block size: 512b = 64B = 16W
-// in (80W long) is the 16W of work + scratch space (prepadded)
-// H (5W long) is the current hash state
-// this function taken from NearSHA, http://cr.yp.to/nearsha.html
-void sha1_block(uint32 *in, uint32 *H)
+void sha1_block(uint *in, uint *H)
 {
-	unsigned int a = H[0];
-	unsigned int b = H[1];
-	unsigned int c = H[2];
-	unsigned int d = H[3];
-	unsigned int e = H[4];
-	unsigned int f;
-	unsigned int x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15;
+	uint a = H[0];
+	uint b = H[1];
+	uint c = H[2];
+	uint d = H[3];
+	uint e = H[4];
+	uint f;
+	uint x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15;
 
 	x0 = in[0];
 	f = (c & b) | andnot(d,b);
@@ -369,136 +346,13 @@ void sha1_block(uint32 *in, uint32 *H)
 	H[3] = d;
 	H[4] = e;
 }
-#endif
-
-#ifdef SAFESHA
-uint rotateLeft(uint32 x, int32 n)
-{
-    return  (x << n) | (x >> (32-n));
-}
-
-// block size: 512b = 64B = 16W
-// W (80W long) is the 16W of work + scratch space (prepadded)
-// H (5W long) is the current hash state
-void sha1_block(uint32 *W, uint32 *H)
-{
-        uint32 A,B,C,D,E,K0,K1,K2,K3,temp; 
-        int i;
-    
-        K0 = 0x5A827999;
-        K1 = 0x6ED9EBA1;
-        K2 = 0x8F1BBCDC;
-        K3 = 0xCA62C1D6;
-
-        A = H[0];
-        B = H[1];
-        C = H[2];
-        D = H[3];
-        E = H[4];
-
-        for(i = 16; i < 80; i++)
-        {
-            W[i] = rotateLeft(W[i-3] ^ W[i-8] ^ W[i-14] ^ W[i-16], 1);
-        }
-
-        for(i = 0; i < 20; i++)
-        {
-            temp = rotateLeft(A,5) + ((B & C) | ((~ B) & D)) + E + W[i] + K0;
-            E = D;
-            D = C;
-            C = rotateLeft(B, 30);
-            B = A;
-            A = temp;
-        }
-
-        for(i = 20; i < 40; i++)
-        {
-            temp = rotateLeft(A, 5) + (B ^ C ^ D) + E + W[i] + K1;
-            E = D;
-            D = C;
-            C = rotateLeft(B, 30);
-            B = A;
-            A = temp;
-        }
-
-        for(i = 40; i < 60; i++)
-        {
-            temp = rotateLeft(A, 5) + ((B & C) | (B & D) | (C & D)) + E + W[i] + K2;
-            E = D;
-            D = C;
-            C = rotateLeft(B, 30);
-            B = A;
-            A = temp;
-        }
-
-        for(i = 60; i < 80; i++)
-        {
-            temp = rotateLeft(A, 5) + (B ^ C ^ D)  + E + W[i] + K3;
-            E = D;
-            D = C;
-            C = rotateLeft(B, 30);
-            B = A;
-            A = temp;
-        }
-
-        H[0] = (H[0] + A);
-        H[1] = (H[1] + B);
-        H[2] = (H[2] + C);
-        H[3] = (H[3] + D);
-        H[4] = (H[4] + E);
-}
-#endif
-
-// Must set the right define for W packing code
-// Only works with certain sized keys (1024 and 2048/4096 tested) and 4 byte exponents.
-// Base_exp must be >= 0x01000001 and global work size must be <= (0x7FFFFFFF-base_exp)/2
-__kernel void optimized(__constant uint32* LastWs, __constant uint32* Midstates, __global uint32* Results, uint32 BaseExp,
-						uint8 LenStart, __constant int32* ExpIndexes, 								// Not used - for compat.
-						__constant uint32* BitmaskArray, __constant uint16* HashTable, __constant uint32* DataArray)
-{
-	uint64 exp;
-	uint32 fnv,fnv10;
-	
-	uint16 dataaddr;
-	
-	int i;
-
-	uint32 W[16];
-	uint32 H[5];
-	
-	/*GENERATED__ARRAYS*/
-
-	exp = get_global_id(0) * 2 + BaseExp;
-	
-	// Load Ws and Midstates into private variables
-	for(i=0; i<16; i++) W[i] = LastWs[i];
-	for(i=0; i<5; i++) H[i] = Midstates[i];
-	
-	// Load the exponent into the W
-	GENERATED__EXP_LOADING_CODE
-      
-    // Take the last part of the hash
-	sha1_block(W,H);
-	
-	// Get and check the FNV hash for each bitmask
-	// Uses code generated on the C# side
-	GENERATED__CHECKING_CODE
-}
-
-// Works with any exp index and starting length
-// Still requires that all of the exponent lie in the last SHA1 block.
-__kernel void normal(__constant uint32* LastWs, __constant uint32* Midstates, __global uint32* Results, uint32 BaseExp,
-						uint8 LenStart, __constant int32* ExpIndexes,							
-						__constant uint32* BitmaskArray, __constant uint16* HashTable, __constant uint32* DataArray)
-{
-}
 
 // Test the SHA hash code
-__kernel void shaTest(__global uint32* success)
+__kernel void shaTest(__global uint* success)
 {
     int i;
-    uint32 W[80];
-    uint32 H[5];
+    uint W[80];
+    uint H[5];
 
     // Zero out W
     for(i=0;i<80;i++) {
@@ -521,12 +375,6 @@ __kernel void shaTest(__global uint32* success)
 
     // Take the SHA
     sha1_block(W, H);
-
-    // Check for success
-    *success = 0;
-    if (H[0] == 0xd3486ae9 && H[1] == 0x136e7856 && H[2] == 0xbc422123 && H[3] == 0x85ea7970 && H[4] == 0x94475802) {
-        *success = 1;
-    }
 
     success[0] = H[0];
     success[1] = H[1];
