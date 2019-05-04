@@ -77,14 +77,19 @@ const char *getErrorString(int error)
     }
 }
 
-std::vector<cl::Device> GetAllDevices(cl::Platform platform)
+std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)
 {
     std::vector<cl::Device> devices;
     platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
 
     //Prints out first device
     auto device = devices.front();
-    std::cout << "Vendor: " << device.getInfo<CL_DEVICE_VENDOR>() << std::endl;
+
+    if (printInfo)
+    {
+        std::cout << "[!] Vendor:  " << device.getInfo<CL_DEVICE_VENDOR>() << std::endl;
+        std::cout << "[!] Version: " << device.getInfo<CL_DEVICE_VERSION>() << std::endl;
+    }
 
     return devices;
 }

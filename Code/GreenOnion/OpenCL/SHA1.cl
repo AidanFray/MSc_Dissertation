@@ -347,46 +347,31 @@ void sha1_block(uint *in, uint *H)
 	H[4] = e;
 }
 
-__kernel void optimized(__constant uint* LastWs, 
-						__constant uint* Midstates, 
-						__global uint* Results, 
-						uint BaseExp,
-						char LenStart, 
-						__constant int* ExpIndexes, // Not used - for compat.
-						__constant uint* BitmaskArray, 
-						__constant ushort* HashTable, 
-						__constant uint* DataArray)
-{
-	ulong exponent;
-	uint fnv,fnv10;
-	
-	uint16 dataaddr;
-	
-	int i;
+// __kernel void optimized(__constant uint* blocks, __global uint* Results, uint BaseExp)
+// {
+// 	ulong exponent;
 
-	uint W[16];
-	uint H[5];
+// 	uint W[16];
+// 	uint H[5];
 	
-	/*GENERATED__ARRAYS*/
-
-	//get_global_id returns the work item id
-	//therefore this code creates an exponent base of the worker number
-	exponent = get_global_id(0) * 2 + BaseExp;
+// 	//get_global_id returns the work item id
+// 	//therefore this code creates an exponent base of the worker number
+// 	exponent = get_global_id(0) * 2 + BaseExp;
 	
-	// Load Ws and Midstates into private variables
-	for(i=0; i<16; i++) W[i] = LastWs[i];
-	for(i=0; i<5; i++) H[i] = Midstates[i];
+// 	// Load Ws and Midstates into private variables
+// 	for(i=0; i<16; i++) W[i] = LastWs[i];
+// 	for(i=0; i<5; i++) H[i] = Midstates[i];
 	
-	// Load the exponent into the W
-	//GENERATED__EXP_LOADING_CODE
+// 	// Load the exponent into the W
+// 	//GENERATED__EXP_LOADING_CODE
       
-    // Take the last part of the hash
-	sha1_block(W,H);
+//     // Take the last part of the hash
+// 	sha1_block(W,H);
 	
-	// Get and check the FNV hash for each bitmask
-	// Uses code generated on the C# side
-	//GENERATED__CHECKING_CODE
-}
+// 	// Get and check the FNV hash for each bitmask
+// 	// Uses code generated on the C# side
+// 	//GENERATED__CHECKING_CODE
+// }
 
 // Test the SHA hash code
 __kernel void shaTest(__global uint* success)
