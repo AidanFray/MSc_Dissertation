@@ -9,9 +9,10 @@
         "${file}",
         "-o",
         "${fileDirname}/${fileBasenameNoExtension}",
+        "${fileDirname}/Crypto/sha1.cpp",
         "-lOpenCL",
-        "-lssl",
-        "-lcrypto"
+        "-lcrypto",
+        "-lssl"
       ],
       "options": {
         "cwd": "/usr/bin"

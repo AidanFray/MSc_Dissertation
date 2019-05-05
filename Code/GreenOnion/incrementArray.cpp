@@ -14,7 +14,7 @@
 int main()
 {
     auto platform = GetPlatform();
-    auto devices = GetAllDevices(platform);
+    auto devices = GetAllDevices(platform, false);
     auto device = devices.front();
 
     cl::Context context(devices);
@@ -41,12 +41,6 @@ int main()
     kernel.setArg(1, outBuf);
 
     cl::CommandQueue queue(context, device);
-
-    queue.enqueueNDRangeKernel(
-        kernel, 
-        cl::NullRange, 
-        cl::NDRange(vec.size())
-    );
 
     queue.enqueueReadBuffer(outBuf, CL_FALSE, 0, sizeof(int) * vec.size(), vec.data());
 

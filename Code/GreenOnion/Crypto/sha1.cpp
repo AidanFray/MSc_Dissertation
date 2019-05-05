@@ -14,15 +14,12 @@
         -- Eugene Hopkinson <slowriot at voxelstorm dot com>
 */
 
-#include "sha1.hpp"
 #include <sstream>
-#include <iomanip>
-#include <fstream>
+#include <vector>
 
 
 static const size_t BLOCK_INTS = 16;  /* number of 32bit integers per SHA1 block */
 static const size_t BLOCK_BYTES = BLOCK_INTS * 4;
-
 
 static void reset(uint32_t digest[], std::string &buffer, uint64_t &transforms)
 {
@@ -98,7 +95,7 @@ static void R4(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const 
  * Hash a single 512-bit block. This is the core of the algorithm.
  */
 
-static void transform(uint32_t digest[], uint32_t block[BLOCK_INTS], uint64_t &transforms)
+static void transform(uint32_t digest[5], uint32_t block[BLOCK_INTS])
 {
     /* Copy digest[] to working vars */
     uint32_t a = digest[0];
@@ -195,110 +192,5 @@ static void transform(uint32_t digest[], uint32_t block[BLOCK_INTS], uint64_t &t
     digest[2] += c;
     digest[3] += d;
     digest[4] += e;
-
-    /* Count the number of transformations */
-    transforms++;
 }
 
-
-static void buffer_to_block(const std::string &buffer, uint32_t block[BLOCK_INTS])
-{
-    /* Convert the std::string (byte buffer) to a uint32_t array (MSB) */
-    for (size_t i = 0; i < BLOCK_INTS; i++)
-    {
-        block[i] = (buffer[4*i+3] & 0xff)
-                   | (buffer[4*i+2] & 0xff)<<8
-                   | (buffer[4*i+1] & 0xff)<<16
-                   | (buffer[4*i+0] & 0xff)<<24;
-    }
-}
-
-
-LocalSHA1::LocalSHA1()
-{
-    reset(digest, buffer, transforms);
-}
-
-
-void LocalSHA1::update(const std::string &s)
-{
-    std::istringstream is(s);
-    update(is);
-}
-
-
-void LocalSHA1::update(std::istream &is)
-{
-    while (true)
-    {
-        char sbuf[BLOCK_BYTES];
-        is.read(sbuf, BLOCK_BYTES - buffer.size());
-        buffer.append(sbuf, (std::size_t)is.gcount());
-        if (buffer.size() != BLOCK_BYTES)
-        {
-            return;
-        }
-        uint32_t block[BLOCK_INTS];
-        buffer_to_block(buffer, block);
-        transform(digest, block, transforms);
-        buffer.clear();
-    }
-}
-
-
-/*
- * Add padding and return the message digest.
- */
-
-std::string LocalSHA1::final()
-{
-    /* Total number of hashed bits */
-    uint64_t total_bits = (transforms*BLOCK_BYTES + buffer.size()) * 8;
-
-    /* Padding */
-    buffer += (char)0x80;
-    size_t orig_size = buffer.size();
-    while (buffer.size() < BLOCK_BYTES)
-    {
-        buffer += (char)0x00;
-    }
-
-    uint32_t block[BLOCK_INTS];
-    buffer_to_block(buffer, block);
-
-    if (orig_size > BLOCK_BYTES - 8)
-    {
-        transform(digest, block, transforms);
-        for (size_t i = 0; i < BLOCK_INTS - 2; i++)
-        {
-            block[i] = 0;
-        }
-    }
-
-    /* Append total_bits, split this uint64_t into two uint32_t */
-    block[BLOCK_INTS - 1] = (uint32_t)total_bits;
-    block[BLOCK_INTS - 2] = (uint32_t)(total_bits >> 32);
-    transform(digest, block, transforms);
-
-    /* Hex std::string */
-    std::ostringstream result;
-    for (size_t i = 0; i < sizeof(digest) / sizeof(digest[0]); i++)
-    {
-        result << std::hex << std::setfill('0') << std::setw(8);
-        result << digest[i];
-    }
-
-    /* Reset for next run */
-    reset(digest, buffer, transforms);
-
-    return result.str();
-}
-
-
-std::string LocalSHA1::from_file(const std::string &filename)
-{
-    std::ifstream stream(filename.c_str(), std::ios::binary);
-    LocalSHA1 checksum;
-    checksum.update(stream);
-    return checksum.final();
-}

@@ -3,6 +3,9 @@ inline uint rotate1(uint a) { return (a << 1) | (a >> 31); }
 inline uint rotate5(uint a) { return (a << 5) | (a >> 27); }
 inline uint rotate30(uint a) { return (a << 30) | (a >> 2); }
 
+int MAX_EXPONENT = 16777215;  
+
+#define TO_HEX(i) (i <= 9 ? '0' + i : 'A' - 10 + i)
 
 void sha1_block(uint *in, uint *H)
 {
@@ -347,31 +350,38 @@ void sha1_block(uint *in, uint *H)
 	H[4] = e;
 }
 
-// __kernel void optimized(__constant uint* blocks, __global uint* Results, uint BaseExp)
-// {
-// 	ulong exponent;
+__kernel void key_hash(__global uint* finalBlock, __global uint* currentDigest, __global uint* outResult)
+{
+	int i;
 
-// 	uint W[16];
-// 	uint H[5];
+	uint W[16];
+	uint H[5];
 	
-// 	//get_global_id returns the work item id
-// 	//therefore this code creates an exponent base of the worker number
-// 	exponent = get_global_id(0) * 2 + BaseExp;
+	// // //get_global_id returns the work item id
+	// // //therefore this code creates an exponent base of the worker number
+	// // exponent = get_global_id(0) * 2 + BaseExp;
 	
-// 	// Load Ws and Midstates into private variables
-// 	for(i=0; i<16; i++) W[i] = LastWs[i];
-// 	for(i=0; i<5; i++) H[i] = Midstates[i];
-	
-// 	// Load the exponent into the W
-// 	//GENERATED__EXP_LOADING_CODE
-      
-//     // Take the last part of the hash
-// 	sha1_block(W,H);
-	
-// 	// Get and check the FNV hash for each bitmask
-// 	// Uses code generated on the C# side
-// 	//GENERATED__CHECKING_CODE
-// }
+	for(i = 0; i < 16; i++) W[i] = finalBlock[i];
+	for(i = 0; i < 5; i++) H[i] = currentDigest[i];
+
+	// The exponenet is embedded in the 4th block
+	// beacuse the original value is 3 we can use some bit
+	// magic to change it to a certain value
+	int newExponent = (get_global_id(0) + 2);
+
+	// Worker numbers need to limit this
+	if newExponent > MAX_EXPONENT
+	{
+		newExponent = MAX_EXPONENT;
+	}
+
+	W[4] ^= 3 ^ newExponent;
+
+    // Take the last part of the hash
+	sha1_block(W,H);
+
+	for(i = 0; i < 5; i++) outResult[i] = H[i];
+}
 
 // Test the SHA hash code
 __kernel void shaTest(__global uint* success)

@@ -4,18 +4,56 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <string>
+#include <string.h>
 #include <sstream>
+#include <cstdlib>
 
 #include <openssl/rsa.h>
 #include <openssl/rand.h>
 #include <openssl/pem.h>
+#include <openssl/sha.h>
 
-#include "Crypto/sha1.hpp"
+#include "Crypto/sha1.cpp"
+#include "Crypto/hash_util.cpp"
+
 #include "OpenCLHelper.cpp"
 
+
 /*
-Used to test that OpenCL is producing the correst result
+    Struct that is used to hold to work for OpenCL
+*/
+class KernelWork
+{
+    public:
+        uint32_t FinalBlock[32];
+        uint32_t CurrentHash[5];
+
+    KernelWork(uint32_t[32], uint32_t[5]);
+};
+
+KernelWork::KernelWork (uint32_t finalBlock[32], uint32_t currentHash[5])
+{
+    //Better way to do this?
+    for(int i=0; i<5; ++i)
+        CurrentHash[i] = currentHash[i];
+
+    for(int i=0; i<32; ++i)
+        FinalBlock[i] = finalBlock[i];
+}
+
+static std::vector<KernelWork> kernel_work;
+
+void print_hash(uint* hash)
+{
+    for(size_t i = 0; i < 5; i++)
+    {
+        std::cout << hash[i];
+    }
+    std::cout << std::endl;
+}
+
+/*
+    Used to test that OpenCL is producing the correst result
 */
 void sha1_test()
 {
@@ -51,32 +89,33 @@ void sha1_test()
     std::cout << std::hex << openclHash[4];
     std::cout << std::endl;
 
-    //Local string
-    const std::string testStr = "Hello world!";
+    const char* ibuf = "Hello world!";
+    unsigned char obuf[20];
 
-    LocalSHA1 checksum;
-    checksum.update(testStr);
-    const std::string localHash = checksum.final();
+    SHA1((unsigned char*)ibuf, strlen(ibuf), obuf);
 
-    std::cout << "Local:  " << localHash << std::endl << std::endl;
+    //Prints the has
+    std::cout << "Local:  ";
+    for (int i = 0; i < 20; ++i) {
+        printf("%02x", obuf[i]);
+    }
+    std::cout << "\n\n";
+
 }
 
 /*
-Converts an RSA key to PGP fingerprint packet defined in RFC 4880
+    Converts an RSA key to PGP public key packet defined in RFC 4880
 */
 std::string rsa_key_to_pgp(std::string n, std::string e)
 {   
-    //##################################################//
-    //TODO: Getting - "gpg: mpi too large (55619 bits)""
-    //##################################################//
-
     //Structure:
-    //                    VER                     ALGO   KEY_LEN       Split                                       
-    // 0x99 [Length, 2]  0x04  [Timestamp, 4] [0x01  0x0800, 3]  [Key] 0011 [Exponent, 3]
+    // ############################################################################ //
+    //  Start   Length   Version  Timestamp   Algo(RSA)    N len     N    Sep   E                                       
+    //  0x99      XX      0x04      XXXX        0x01      0x0800   X..X  0011  XXX
+    // ############################################################################ //
 
-    //TODO: Why is the n for a 1024 key 100 characters long????
-    // 15 includes all the other values aside from the key length
-    int totalLen = 15 + (n.size() / 2);
+    // 13 includes all the other values aside from the key length
+    int totalLen = 13 + (n.size() / 2);
 
     // Key length - is everything but start byte and length 
     std::ostringstream streamHex;
@@ -86,8 +125,8 @@ std::string rsa_key_to_pgp(std::string n, std::string e)
     //Pads values of length
     while (hexLength.length() != 4)  hexLength = "0" + hexLength;
 
-    //DEBUG
-    std::cout << "Length: " << hexLength << std::endl;
+     //Pads values of e
+    while (e.size() != 6)  e = "0" + e;
 
     std::string result = "";
 
@@ -107,12 +146,6 @@ std::string rsa_key_to_pgp(std::string n, std::string e)
     result += "01";
     result += "0400";
 
-    //Pads values of e
-    while (e.size() != 6)  e = "0" + e;
-
-    //TODO: This the correct seperator between n and e?
-    result += "0011";
-
     //Adds the modulus and exponent key
     result += n;
 
@@ -121,59 +154,38 @@ std::string rsa_key_to_pgp(std::string n, std::string e)
 
     result += e;
 
-    std::cout << result << std::endl;
-
     return result;
 }
 
+
 /*
-This method will be run on the CPU to generate work for OpenCL
+    Method that creates PGP fingerprint v4 packet
+    and returns it as hex
 */
-void create_work()
-{
+std::string create_PGP_fingerprint_packet()
+{   
+    //############################################################ // 
+    //TODO: What should be done with RSA's d for the private key?
+    //############################################################ // 
+
     // Generate Key
-    RSA *r = RSA_generate_key(1024, 65537, NULL, NULL);
-
-    BIO *bio = BIO_new(BIO_s_mem());
-    PEM_write_bio_RSAPublicKey(bio, r);
-
-    int pem_pkey_size = BIO_pending(bio);
-    char *pem_pkey = (char*) calloc((pem_pkey_size)+1, 1);
-    BIO_read(bio, pem_pkey, pem_pkey_size);
-
-    std::cout << pem_pkey << std::endl;
-
-    const BIGNUM *n, *e, *d;
+    RSA *r = RSA_generate_key(1024, 3, NULL, NULL);
     
+    const BIGNUM *n, *e, *d;
     RSA_get0_key(r, &n, &e, &d);
 
+    //Converts public key sections to hex
     std::string str_n = BN_bn2hex(n);
     std::string str_e = BN_bn2hex(e);
 
     //Creates the PGP v4 fingerprint packet
-    std::string PGP_v4_packet = rsa_key_to_pgp(str_n, str_e);
-
-    // Just here as an example
-    if (RSA_check_key(r))
-    {
-        std::cout << "KEY VALID" << std::endl;
-    }
-
-    //TODO: Find a way to convert RSA to PGP key???
-
-    //TODO: Hash all but the last block? Better way to do this?
-
-    //TODO: Upload the values to OpenCL
-
-    //TODO: Strech the key out using timestamp and exponent
-
-    //TODO: Add inputs to the kernel
+    return rsa_key_to_pgp(str_n, str_e);
 }
 
 /*
-Communicates with OpenCL and proccess results
+    Communicates with OpenCL and proccess results
 */
-void compute()
+void compute(uint* finalBlock, uint* currentHash)
 {
     int workSize = 0;
     int workGroupSize = 0;
@@ -192,31 +204,88 @@ void compute()
     std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
 
     //Kernel and parameter creation
-    cl::Kernel kernel(program, "optimized");
+    cl::Kernel kernel(program, "key_hash");
 
-    int num_exps = 1;
-    uint* LastWs = new uint[num_exps * 16];
-    uint* Midstates = new uint[num_exps * 5];
-    int* ExpIndexes = new int[num_exps];
-    uint* Results = new uint[128];
+    // Will hold the result of the hash on OpenCL
+    uint outResult[5];
 
-    cl::Buffer bufLastWs(context, CL_MEM_READ_ONLY | CL_MEM_HOST_READ_ONLY, sizeof(LastWs));
-    cl::Buffer bufMidstates(context, CL_MEM_READ_ONLY | CL_MEM_HOST_READ_ONLY, sizeof(Midstates));
-    cl::Buffer bufExpIndexes(context, CL_MEM_READ_ONLY | CL_MEM_HOST_READ_ONLY, sizeof(ExpIndexes));
-    cl::Buffer bufResults(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY, sizeof(Results));
+    int err;
 
-    //TODO: Create pattern buffers
+    cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY  | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 32, finalBlock, &err);
+    cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5 , currentHash, &err);
+    cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, sizeof(outResult));
 
-    //TODO: Assign arguments to the kernel
+    kernel.setArg(0, buf_finalBlock);
+    kernel.setArg(1, buf_currentHash);
+    kernel.setArg(2, buf_out_result);
 
-    //TODO: Start create work threads
+    // Creates the command queue
+    cl::CommandQueue queue(context, device);
 
-    //TODO: Loop around each result for OpenGL
+    // queue.enqueueNDRangeKernel(
+    //     kernel, 
+    //     cl::NullRange, 
+    //     cl::NDRange(100)
+    // );
+
+    queue.enqueueTask(kernel);
+    queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, sizeof(outResult), outResult);
+
+    //TODO: Check that final hash is correct
+    print_hash(outResult);
+    print_hash(currentHash);
+}
+
+
+/*
+    This method will be run on the CPU to generate work for OpenCL
+*/
+void create_work()
+{
+    // ############################ //
+    // Creates PGP fingerprint packet
+    // ############################ //
+
+    auto PGP_v4_packet = create_PGP_fingerprint_packet();
+
+    // Pads and splits it blocks
+    std::string padded_v4 = pad_hex_string_for_sha1(PGP_v4_packet);
+    auto hex_blocks = split_hex_to_blocks(padded_v4, 64);
+
+    // ############################ //
+    //Hashes all but the last block
+    // ############################ //
+    uint32_t digest[5];
+
+    // Init the SHA state
+    digest[0] = 0x67452301;
+    digest[1] = 0xEFCDAB89;
+    digest[2] = 0x98BADCFE;
+    digest[3] = 0x10325476;
+    digest[4] = 0xC3D2E1F0;
+
+    for(size_t i = 0; i < hex_blocks.size() - 1; i++)
+    {
+        uint32_t W[16];
+        hex_block_to_words(W, hex_blocks[i]);
+        transform(digest, W);
+    }
+
+    //Saves the final block
+    uint32_t finalBlock[16]; 
+    hex_block_to_words(finalBlock, hex_blocks[hex_blocks.size() - 1]);
+    
+    // KernelWork work(finalBlock, digest);
+
+    // kernel_work.push_back(work);
+
+    //DEBUG
+    compute(finalBlock, digest);
 }
 
 int main()
 {
     sha1_test();
     create_work();
-    compute();
+    // compute();
 }
