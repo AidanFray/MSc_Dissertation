@@ -3,9 +3,7 @@ inline uint rotate1(uint a) { return (a << 1) | (a >> 31); }
 inline uint rotate5(uint a) { return (a << 5) | (a >> 27); }
 inline uint rotate30(uint a) { return (a << 30) | (a >> 2); }
 
-int MAX_EXPONENT = 16777215;  
-
-#define TO_HEX(i) (i <= 9 ? '0' + i : 'A' - 10 + i)
+//int MAX_EXPONENT = 16777215;  
 
 void sha1_block(uint *in, uint *H)
 {
@@ -357,10 +355,6 @@ __kernel void key_hash(__global uint* finalBlock, __global uint* currentDigest, 
 	uint W[16];
 	uint H[5];
 	
-	// // //get_global_id returns the work item id
-	// // //therefore this code creates an exponent base of the worker number
-	// // exponent = get_global_id(0) * 2 + BaseExp;
-	
 	for(i = 0; i < 16; i++) W[i] = finalBlock[i];
 	for(i = 0; i < 5; i++) H[i] = currentDigest[i];
 
@@ -369,18 +363,19 @@ __kernel void key_hash(__global uint* finalBlock, __global uint* currentDigest, 
 	// magic to change it to a certain value
 	int newExponent = (get_global_id(0) + 2);
 
-	// Worker numbers need to limit this
-	if newExponent > MAX_EXPONENT
-	{
-		newExponent = MAX_EXPONENT;
-	}
-
-	W[4] ^= 3 ^ newExponent;
+	W[4] = W[4] ^ 3 ^ newExponent;
 
     // Take the last part of the hash
 	sha1_block(W,H);
 
-	for(i = 0; i < 5; i++) outResult[i] = H[i];
+	// ############################# //
+	// TODO: This isn't working, need
+	// to find a way to dynamically
+	// provide all the results to an
+	// array back at base??
+	// ############################# //
+
+	for(i = 0; i < 5; i++) outResult[(5 * get_global_id(0) + 1) + i] = H[i];
 }
 
 // Test the SHA hash code

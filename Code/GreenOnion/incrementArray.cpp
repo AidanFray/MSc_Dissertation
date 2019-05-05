@@ -44,8 +44,6 @@ int main()
 
     queue.enqueueReadBuffer(outBuf, CL_FALSE, 0, sizeof(int) * vec.size(), vec.data());
 
-    cl::finish();
-
     std::cout << "Output: " <<vec[100] << std::endl;
 }
 

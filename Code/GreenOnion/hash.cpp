@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sstream>
 #include <cstdlib>
+#include <array>
 
 #include <openssl/rsa.h>
 #include <openssl/rand.h>
@@ -18,6 +19,7 @@
 
 #include "OpenCLHelper.cpp"
 
+int MAX_EXPONENT = 16777215;
 
 /*
     Struct that is used to hold to work for OpenCL
@@ -207,13 +209,15 @@ void compute(uint* finalBlock, uint* currentHash)
     cl::Kernel kernel(program, "key_hash");
 
     // Will hold the result of the hash on OpenCL
-    uint outResult[5];
+    std::vector<uint[5]>  outResult(10);
+
+    auto resultSize = sizeof(uint) * 5 * outResult.size();
 
     int err;
 
     cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY  | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 32, finalBlock, &err);
     cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5 , currentHash, &err);
-    cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, sizeof(outResult));
+    cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
 
     kernel.setArg(0, buf_finalBlock);
     kernel.setArg(1, buf_currentHash);
@@ -229,11 +233,15 @@ void compute(uint* finalBlock, uint* currentHash)
     // );
 
     queue.enqueueTask(kernel);
-    queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, sizeof(outResult), outResult);
+    queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult.data());
 
-    //TODO: Check that final hash is correct
-    print_hash(outResult);
-    print_hash(currentHash);
+    for(size_t i = 0; i < outResult.size(); i++)
+    {
+        print_hash(outResult[i]);
+    }
+
+    // //DEBUG
+    // std::cout << "Hashing complete" << std::endl;   
 }
 
 
