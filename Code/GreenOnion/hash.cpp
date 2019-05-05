@@ -65,14 +65,37 @@ void sha1_test()
 Converts an RSA key to PGP fingerprint packet defined in RFC 4880
 */
 std::string rsa_key_to_pgp(std::string n, std::string e)
-{
-    //Why is the n for a 1024 key 100 characters long????
-    int totalLen = n.size() + e.size();
+{   
+    //##################################################//
+    //TODO: Getting - "gpg: mpi too large (55619 bits)""
+    //##################################################//
+
+    //Structure:
+    //                    VER                     ALGO   KEY_LEN       Split                                       
+    // 0x99 [Length, 2]  0x04  [Timestamp, 4] [0x01  0x0800, 3]  [Key] 0011 [Exponent, 3]
+
+    //TODO: Why is the n for a 1024 key 100 characters long????
+    // 15 includes all the other values aside from the key length
+    int totalLen = 15 + (n.size() / 2);
+
+    // Key length - is everything but start byte and length 
+    std::ostringstream streamHex;
+    streamHex << std::hex << totalLen;
+    std::string hexLength = streamHex.str();
+
+    //Pads values of length
+    while (hexLength.length() != 4)  hexLength = "0" + hexLength;
+
+    //DEBUG
+    std::cout << "Length: " << hexLength << std::endl;
 
     std::string result = "";
 
     // Magic byte
     result += "99";
+
+    //Length of packet
+    result += hexLength;
 
     //Version number
     result += "04";
@@ -80,18 +103,25 @@ std::string rsa_key_to_pgp(std::string n, std::string e)
     //Timestamp, blank because it will be incremented later
     result += "00000000";
 
-    std::ostringstream streamHex;
-    streamHex << std::hex << totalLen;
-    std::string hexLength = streamHex.str();
+    // Algo and key length
+    result += "01";
+    result += "0400";
 
-    //Pads values of length
-    while (hexLength.length() != 4)
-    {
-        hexLength = "0" + hexLength;
-    }
+    //Pads values of e
+    while (e.size() != 6)  e = "0" + e;
+
+    //TODO: This the correct seperator between n and e?
+    result += "0011";
 
     //Adds the modulus and exponent key
-    result += n + e;
+    result += n;
+
+    //TODO: Check this is a split?
+    result += "0011";
+
+    result += e;
+
+    std::cout << result << std::endl;
 
     return result;
 }
@@ -102,7 +132,7 @@ This method will be run on the CPU to generate work for OpenCL
 void create_work()
 {
     // Generate Key
-    RSA *r = RSA_generate_key(1024, 3, NULL, NULL);
+    RSA *r = RSA_generate_key(1024, 65537, NULL, NULL);
 
     BIO *bio = BIO_new(BIO_s_mem());
     PEM_write_bio_RSAPublicKey(bio, r);
