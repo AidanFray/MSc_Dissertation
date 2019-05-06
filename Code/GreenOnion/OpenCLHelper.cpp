@@ -1,4 +1,7 @@
 #include <CL/cl.hpp>
+#include <iostream>
+
+
 
 const char *getErrorString(int error)
 {
@@ -75,6 +78,11 @@ const char *getErrorString(int error)
         case -1005: return "CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR";
         default: return "Unknown OpenCL error";
     }
+}
+
+void opencl_handle_error(int error)
+{
+    std::cout << getErrorString(error) << std::endl;
 }
 
 std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)

@@ -361,21 +361,14 @@ __kernel void key_hash(__global uint* finalBlock, __global uint* currentDigest, 
 	// The exponenet is embedded in the 4th block
 	// beacuse the original value is 3 we can use some bit
 	// magic to change it to a certain value
-	int newExponent = (get_global_id(0) + 2);
+	// int newExponent = (get_global_id(0) + 3);
 
-	W[4] = W[4] ^ 3 ^ newExponent;
+	// W[4] = W[4] ^ 3 ^ newExponent;
 
     // Take the last part of the hash
 	sha1_block(W,H);
 
-	// ############################# //
-	// TODO: This isn't working, need
-	// to find a way to dynamically
-	// provide all the results to an
-	// array back at base??
-	// ############################# //
-
-	for(i = 0; i < 5; i++) outResult[(5 * get_global_id(0) + 1) + i] = H[i];
+	for(i = 0; i < 5; i++) outResult[(5 * get_global_id(0)) + i] = H[i];
 }
 
 // Test the SHA hash code

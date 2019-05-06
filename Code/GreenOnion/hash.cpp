@@ -8,6 +8,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <array>
+#include <time.h>
 
 #include <openssl/rsa.h>
 #include <openssl/rand.h>
@@ -17,42 +18,17 @@
 #include "Crypto/sha1.cpp"
 #include "Crypto/hash_util.cpp"
 
+#include "Util/functions.cpp"
+#include "Util/kernel_work.cpp"
+
 #include "OpenCLHelper.cpp"
 
 int MAX_EXPONENT = 16777215;
 
 /*
-    Struct that is used to hold to work for OpenCL
+    Vector that is used to hold to work for OpenCL
 */
-class KernelWork
-{
-    public:
-        uint32_t FinalBlock[32];
-        uint32_t CurrentHash[5];
-
-    KernelWork(uint32_t[32], uint32_t[5]);
-};
-
-KernelWork::KernelWork (uint32_t finalBlock[32], uint32_t currentHash[5])
-{
-    //Better way to do this?
-    for(int i=0; i<5; ++i)
-        CurrentHash[i] = currentHash[i];
-
-    for(int i=0; i<32; ++i)
-        FinalBlock[i] = finalBlock[i];
-}
-
 static std::vector<KernelWork> kernel_work;
-
-void print_hash(uint* hash)
-{
-    for(size_t i = 0; i < 5; i++)
-    {
-        std::cout << hash[i];
-    }
-    std::cout << std::endl;
-}
 
 /*
     Used to test that OpenCL is producing the correst result
@@ -120,9 +96,7 @@ std::string rsa_key_to_pgp(std::string n, std::string e)
     int totalLen = 13 + (n.size() / 2);
 
     // Key length - is everything but start byte and length 
-    std::ostringstream streamHex;
-    streamHex << std::hex << totalLen;
-    std::string hexLength = streamHex.str();
+    std::string hexLength = integer_to_hex(totalLen);
 
     //Pads values of length
     while (hexLength.length() != 4)  hexLength = "0" + hexLength;
@@ -142,7 +116,7 @@ std::string rsa_key_to_pgp(std::string n, std::string e)
     result += "04";
 
     //Timestamp, blank because it will be incremented later
-    result += "00000000";
+    result += integer_to_hex((int)std::time(nullptr));
 
     // Algo and key length
     result += "01";
@@ -203,20 +177,24 @@ void compute(uint* finalBlock, uint* currentHash)
     auto program = BuildProgram("./OpenCL/SHA1.cl", context);
 
     workGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
-    std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
+    // std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
 
     //Kernel and parameter creation
     cl::Kernel kernel(program, "key_hash");
 
     // Will hold the result of the hash on OpenCL
-    std::vector<uint[5]>  outResult(10);
+    std::vector<uint[5]>  outResult(3);
 
     auto resultSize = sizeof(uint) * 5 * outResult.size();
 
     int err;
 
     cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY  | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 32, finalBlock, &err);
+    if (err != 0) opencl_handle_error(err);
+
     cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5 , currentHash, &err);
+    if (err != 0) opencl_handle_error(err);
+    
     cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
 
     kernel.setArg(0, buf_finalBlock);
@@ -226,68 +204,65 @@ void compute(uint* finalBlock, uint* currentHash)
     // Creates the command queue
     cl::CommandQueue queue(context, device);
 
-    // queue.enqueueNDRangeKernel(
-    //     kernel, 
-    //     cl::NullRange, 
-    //     cl::NDRange(100)
-    // );
+    queue.enqueueNDRangeKernel(
+        kernel, 
+        cl::NullRange, 
+        cl::NDRange(outResult.size())
+    );
 
-    queue.enqueueTask(kernel);
+    clock_t tStart = clock();
     queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult.data());
+    auto tEnd = (double)(clock() - tStart)/CLOCKS_PER_SEC;
+    auto hashPerSecond = MAX_EXPONENT / tEnd;
 
-    for(size_t i = 0; i < outResult.size(); i++)
-    {
-        print_hash(outResult[i]);
-    }
+    // printf("[*] Time taken: %.2fs\n", tEnd);
+    // printf("[*] %.2f MH/s\n", hashPerSecond / 1000000);
+
+    std::cout << "\n[*] OpenCL hashes: " << std::endl;
+    print_hash(outResult[0]);
+    print_hash(outResult[1]);
+    print_hash(outResult[2]);
+
 
     // //DEBUG
-    // std::cout << "Hashing complete" << std::endl;   
+    // std::cout << "[!] Hashing complete" << std::endl;   
 }
-
 
 /*
     This method will be run on the CPU to generate work for OpenCL
 */
 void create_work()
 {
-    // ############################ //
     // Creates PGP fingerprint packet
-    // ############################ //
-
     auto PGP_v4_packet = create_PGP_fingerprint_packet();
 
     // Pads and splits it blocks
     std::string padded_v4 = pad_hex_string_for_sha1(PGP_v4_packet);
     auto hex_blocks = split_hex_to_blocks(padded_v4, 64);
 
-    // ############################ //
+    std::cout << "[*] PGP v4 packet: " << std::endl;
+    std::cout << PGP_v4_packet << "\n\n";
+
     //Hashes all but the last block
-    // ############################ //
-    uint32_t digest[5];
-
-    // Init the SHA state
-    digest[0] = 0x67452301;
-    digest[1] = 0xEFCDAB89;
-    digest[2] = 0x98BADCFE;
-    digest[3] = 0x10325476;
-    digest[4] = 0xC3D2E1F0;
-
-    for(size_t i = 0; i < hex_blocks.size() - 1; i++)
-    {
-        uint32_t W[16];
-        hex_block_to_words(W, hex_blocks[i]);
-        transform(digest, W);
-    }
+    uint digest[5];
+    hash_blocks(hex_blocks, digest, hex_blocks.size() - 1);
 
     //Saves the final block
-    uint32_t finalBlock[16]; 
+    uint finalBlock[16]; 
     hex_block_to_words(finalBlock, hex_blocks[hex_blocks.size() - 1]);
     
-    // KernelWork work(finalBlock, digest);
+    // Adds the word to the vector
+    KernelWork work(finalBlock, digest);
+    kernel_work.push_back(work);
+    
+    //DEBUG:
+    // ################################## // 
+    uint digest_test[5];
+    hash_blocks(hex_blocks, digest_test, hex_blocks.size());
+    std::cout << "[!] PGPv4 local hash result: \n";
+    print_hash(digest_test);
+    // ################################## // 
 
-    // kernel_work.push_back(work);
-
-    //DEBUG
     compute(finalBlock, digest);
 }
 

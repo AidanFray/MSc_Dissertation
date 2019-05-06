@@ -67,3 +67,32 @@ void hex_block_to_words(uint32_t* W, std::string hexString)
         ss >> W[i];
     }
 }
+
+/*
+    Function used to SHA-1 hash a number of blocks. 
+
+    num_of_blocks
+        This variable can be used to specify how many blocks are hashed. This can be 
+        used to obtain an intermediate hash
+
+    hex_blocks
+        512 bit blocks that require hashing
+
+    digest
+        The result of the SHA-1 hash at any stage
+*/
+void hash_blocks(std::vector<std::string> hex_blocks, uint* digest, int num_of_blocks)
+{
+    digest[0] = 0x67452301;
+    digest[1] = 0xEFCDAB89;
+    digest[2] = 0x98BADCFE;
+    digest[3] = 0x10325476;
+    digest[4] = 0xC3D2E1F0;
+    // Full hash
+    for(size_t i = 0; i < num_of_blocks; i++)
+    {
+        uint32_t W[16];
+        hex_block_to_words(W, hex_blocks[i]);
+        transform(digest, W);
+    }
+}

@@ -3,12 +3,11 @@ from Crypto.Hash import SHA1
 import sys
 import re
 
-# if len(sys.argv) != 2:
-#     print("[!] Usage: python signature.py <KEY_FILE>")
-#     exit()
+if len(sys.argv) != 2:
+    print("[!] Usage: python signature.py <KEY_FILE>")
+    exit()
 
-# path = sys.argv[1]
-path = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Code/Misc/test_pub.key"
+path = sys.argv[1]
 
 key = None
 with open(path, "r") as file:

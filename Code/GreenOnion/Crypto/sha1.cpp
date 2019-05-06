@@ -16,6 +16,7 @@
 
 #include <sstream>
 #include <vector>
+#include <iostream>
 
 
 static const size_t BLOCK_INTS = 16;  /* number of 32bit integers per SHA1 block */
@@ -194,3 +195,14 @@ static void transform(uint32_t digest[5], uint32_t block[BLOCK_INTS])
     digest[4] += e;
 }
 
+/*
+    Function used to print arrays
+*/
+static void print_hash(uint* hash)
+{
+    for(size_t i = 0; i < 5; i++)
+    {
+        std::cout << hash[i];
+    }
+    std::cout << std::endl;
+}
