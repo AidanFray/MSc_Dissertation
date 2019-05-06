@@ -20,8 +20,18 @@
 
 #include "Util/functions.cpp"
 #include "Util/kernel_work.cpp"
+#include "Util/OpenCLHelper.cpp"
 
-#include "OpenCLHelper.cpp"
+//########################################################//
+//                     ISSUES                             //
+//########################################################//
+// - Calculated hash does not match 'gpg --list-packets   //
+//   result, this needs to be checked??                   //
+//                                                        //
+// - The hash isn't even matching with CyberChef. I need  //
+//   to make sure these are consistent. Maybe it is to do //
+//   with the endianess of the data?                      //
+//########################################################//
 
 int MAX_EXPONENT = 16777215;
 
@@ -86,40 +96,51 @@ void sha1_test()
 */
 std::string rsa_key_to_pgp(std::string n, std::string e)
 {   
-    //Structure:
+    //Structure 2024 key:
     // ############################################################################ //
     //  Start   Length   Version  Timestamp   Algo(RSA)    N len     N    Sep   E                                       
-    //  0x99      XX      0x04      XXXX        0x01      0x0800   X..X  0011  XXX
+    //  0x98      X       0x04      XXXX        0x01      0x0800   X..X  0011  XXX
     // ############################################################################ //
 
+    //TODO: Check this length variable is correct
     // 13 includes all the other values aside from the key length
     int totalLen = 13 + (n.size() / 2);
+
+    //TODO: Make sure these are all inclusive
+    // How many characters the packet length is
+    int PACKET_LENGTH_CHARS = 2; 
+    int TIMESTAMP_LENGTH_CHARS = 8;
+    int KEY_LENGTH = 1024;
 
     // Key length - is everything but start byte and length 
     std::string hexLength = integer_to_hex(totalLen);
 
     //Pads values of length
-    while (hexLength.length() != 4)  hexLength = "0" + hexLength;
+    while (hexLength.length() < PACKET_LENGTH_CHARS)  hexLength = "0" + hexLength;
 
      //Pads values of e
-    while (e.size() != 6)  e = "0" + e;
+    while (e.size() < 6)  e = "0" + e;
 
     std::string result = "";
 
-    // Magic byte
-    result += "99";
+    // // Magic byte
+    result += "98";
 
-    //Length of packet
+    // //Length of packet
     result += hexLength;
 
     //Version number
     result += "04";
 
-    //Timestamp, blank because it will be incremented later
-    result += integer_to_hex((int)std::time(nullptr));
+    //time of creation
+    std::string timestamp = integer_to_hex((int)std::time(nullptr));
+    while (timestamp.length() < TIMESTAMP_LENGTH_CHARS)  timestamp = "0" + timestamp;
+    result += timestamp;
 
     // Algo and key length
     result += "01";
+
+    //TODO: dynamic key length
     result += "0400";
 
     //Adds the modulus and exponent key
