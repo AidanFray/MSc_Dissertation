@@ -6,7 +6,8 @@
 */
 std::string pad_hex_string_for_sha1(std::string hexString)
 {
-    size_t orig_size = hexString.size();
+    //Size it bits
+    size_t orig_size = hexString.size()* 4;
 
     hexString += "80";
 
@@ -95,4 +96,11 @@ void hash_blocks(std::vector<std::string> hex_blocks, uint* digest, int num_of_b
         hex_block_to_words(W, hex_blocks[i]);
         transform(digest, W);
     }
+}
+
+void hash_string(std::string input, uint* digest)
+{
+    std::string paddedInput = pad_hex_string_for_sha1(input);
+    auto hex_blocks = split_hex_to_blocks(paddedInput, 64);
+    hash_blocks(hex_blocks, digest, hex_blocks.size());
 }

@@ -26,19 +26,38 @@
 //                     ISSUES                             //
 //########################################################//
 // - Calculated hash does not match 'gpg --list-packets   //
-//   result, this needs to be checked??                   //
-//                                                        //
-// - The hash isn't even matching with CyberChef. I need  //
-//   to make sure these are consistent. Maybe it is to do //
-//   with the endianess of the data?                      //
+//   result?                                              //
 //########################################################//
 
+int KEY_LENGTH = 2048;
 int MAX_EXPONENT = 16777215;
+int EXPONENT = 65567;
+
+// Print vars
+bool PRINT_PGPv4_PACKET = false;
+bool PRINT_GPG_OUTPUT = false;
 
 /*
     Vector that is used to hold to work for OpenCL
 */
 static std::vector<KernelWork> kernel_work;
+
+/*
+    Converts an integer to multiprecision integer (RFC 4880)
+*/
+std::string hex_string_to_mpi(std::string hexString)
+{
+    auto binary_string = hex_to_binary(hexString);
+    auto stripped_binary_string = binary_strip_left_zeros(binary_string);
+    auto binary_string_len = integer_to_hex(stripped_binary_string.length());
+
+    //Pads to 2 bytes
+    while (binary_string_len.length() < 4) binary_string_len = "0" + binary_string_len;
+
+    std::string output = binary_string_len + hexString;
+    return output;
+}
+
 
 /*
     Used to test that OpenCL is producing the correst result
@@ -102,58 +121,42 @@ std::string rsa_key_to_pgp(std::string n, std::string e)
     //  0x98      X       0x04      XXXX        0x01      0x0800   X..X  0011  XXX
     // ############################################################################ //
 
-    //TODO: Check this length variable is correct
-    // 13 includes all the other values aside from the key length
-    int totalLen = 13 + (n.size() / 2);
-
     //TODO: Make sure these are all inclusive
     // How many characters the packet length is
-    int PACKET_LENGTH_CHARS = 2; 
+    int PACKET_LENGTH_CHARS = 4; 
     int TIMESTAMP_LENGTH_CHARS = 8;
-    int KEY_LENGTH = 1024;
-
-    // Key length - is everything but start byte and length 
-    std::string hexLength = integer_to_hex(totalLen);
-
-    //Pads values of length
-    while (hexLength.length() < PACKET_LENGTH_CHARS)  hexLength = "0" + hexLength;
-
-     //Pads values of e
-    while (e.size() < 6)  e = "0" + e;
 
     std::string result = "";
-
-    // // Magic byte
-    result += "98";
-
-    // //Length of packet
-    result += hexLength;
 
     //Version number
     result += "04";
 
-    //time of creation
+    //Time of creation
     std::string timestamp = integer_to_hex((int)std::time(nullptr));
+
+    //Pads to 4 bytes
     while (timestamp.length() < TIMESTAMP_LENGTH_CHARS)  timestamp = "0" + timestamp;
     result += timestamp;
 
-    // Algo and key length
+    // Algo number
     result += "01";
 
+    //MPI (N)
     //TODO: dynamic key length
-    result += "0400";
-
-    //Adds the modulus and exponent key
+    result += "0800";
     result += n;
 
-    //TODO: Check this is a split?
-    result += "0011";
+    //MPI (e)
+    result += hex_string_to_mpi(e);
 
-    result += e;
+    //Encapsulates in a fingerprint packet
+    std::string public_packet_len = integer_to_hex(result.length() / 2);
+    while (public_packet_len.length() < 4) public_packet_len = "0" + public_packet_len;
+
+    result = "99" + public_packet_len + result;
 
     return result;
 }
-
 
 /*
     Method that creates PGP fingerprint v4 packet
@@ -166,7 +169,7 @@ std::string create_PGP_fingerprint_packet()
     //############################################################ // 
 
     // Generate Key
-    RSA *r = RSA_generate_key(1024, 3, NULL, NULL);
+    RSA *r = RSA_generate_key(KEY_LENGTH, EXPONENT, NULL, NULL);
     
     const BIGNUM *n, *e, *d;
     RSA_get0_key(r, &n, &e, &d);
@@ -184,6 +187,8 @@ std::string create_PGP_fingerprint_packet()
 */
 void compute(uint* finalBlock, uint* currentHash)
 {
+    int NUM_OF_HASHES = MAX_EXPONENT;
+
     int workSize = 0;
     int workGroupSize = 0;
     int createWorkThreads = 0;
@@ -198,13 +203,13 @@ void compute(uint* finalBlock, uint* currentHash)
     auto program = BuildProgram("./OpenCL/SHA1.cl", context);
 
     workGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
-    // std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
+    std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
 
     //Kernel and parameter creation
     cl::Kernel kernel(program, "key_hash");
 
     // Will hold the result of the hash on OpenCL
-    std::vector<uint[5]>  outResult(3);
+    std::vector<uint[5]>  outResult(NUM_OF_HASHES);
 
     auto resultSize = sizeof(uint) * 5 * outResult.size();
 
@@ -234,19 +239,10 @@ void compute(uint* finalBlock, uint* currentHash)
     clock_t tStart = clock();
     queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult.data());
     auto tEnd = (double)(clock() - tStart)/CLOCKS_PER_SEC;
-    auto hashPerSecond = MAX_EXPONENT / tEnd;
+    auto hashPerSecond = NUM_OF_HASHES / tEnd;
 
-    // printf("[*] Time taken: %.2fs\n", tEnd);
-    // printf("[*] %.2f MH/s\n", hashPerSecond / 1000000);
-
-    std::cout << "\n[*] OpenCL hashes: " << std::endl;
-    print_hash(outResult[0]);
-    print_hash(outResult[1]);
-    print_hash(outResult[2]);
-
-
-    // //DEBUG
-    // std::cout << "[!] Hashing complete" << std::endl;   
+    printf("[*] Time taken: %.2fs\n", tEnd);
+    printf("[*] %.2f MH/s\n", hashPerSecond / 1000000);
 }
 
 /*
@@ -261,8 +257,24 @@ void create_work()
     std::string padded_v4 = pad_hex_string_for_sha1(PGP_v4_packet);
     auto hex_blocks = split_hex_to_blocks(padded_v4, 64);
 
-    std::cout << "[*] PGP v4 packet: " << std::endl;
-    std::cout << PGP_v4_packet << "\n\n";
+    if (PRINT_PGPv4_PACKET)
+    {
+        std::cout << "[*] PGP v4 packet: " << std::endl;
+        std::cout << PGP_v4_packet << "\n\n";
+    }
+    
+    if (PRINT_GPG_OUTPUT)
+    {
+       //## GPG output
+        std::cout << "[*] GPG output: " << std::endl;
+        //Runs it with a local python script
+        std::string command = "python ../Misc/hex_pubkey.py ";
+        command += PGP_v4_packet + "00";
+        command += " | gpg --list-packets";
+
+        std::system(command.c_str());
+        std::cout << "\n\n"; 
+    }
 
     //Hashes all but the last block
     uint digest[5];
@@ -276,13 +288,12 @@ void create_work()
     KernelWork work(finalBlock, digest);
     kernel_work.push_back(work);
     
-    //DEBUG:
-    // ################################## // 
+    // Local hash
     uint digest_test[5];
     hash_blocks(hex_blocks, digest_test, hex_blocks.size());
     std::cout << "[!] PGPv4 local hash result: \n";
     print_hash(digest_test);
-    // ################################## // 
+    std::cout << "\n";
 
     compute(finalBlock, digest);
 }

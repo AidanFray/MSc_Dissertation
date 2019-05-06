@@ -358,6 +358,11 @@ __kernel void key_hash(__global uint* finalBlock, __global uint* currentDigest, 
 	for(i = 0; i < 16; i++) W[i] = finalBlock[i];
 	for(i = 0; i < 5; i++) H[i] = currentDigest[i];
 
+	//########################################### //
+	//TODO: Find a way to update the exponent
+	//		without breaking the packet format
+	//########################################### //
+
 	// The exponenet is embedded in the 4th block
 	// beacuse the original value is 3 we can use some bit
 	// magic to change it to a certain value

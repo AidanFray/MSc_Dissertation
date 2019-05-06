@@ -24,6 +24,8 @@ public_key_len = int(middleHex[2:6], 16)
 # Grabs the header and all of the key information
 pgp_key_information = middleHex[0:(public_key_len * 2) + 6]
 
+print(pgp_key_information)
+
 pgp_key_information_bytes = bytes.fromhex(pgp_key_information)
 
 sha1 = SHA1.new()
