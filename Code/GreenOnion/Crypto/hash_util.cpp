@@ -94,6 +94,7 @@ void hash_blocks(std::vector<std::string> hex_blocks, uint* digest, int num_of_b
     {
         uint32_t W[16];
         hex_block_to_words(W, hex_blocks[i]);
+
         transform(digest, W);
     }
 }

@@ -348,6 +348,17 @@ void sha1_block(uint *in, uint *H)
 	H[4] = e;
 }
 
+uint countBits(uint n) 
+{ 
+   uint count = 0; 
+   while (n) 
+   { 
+        count++; 
+        n >>= 1; 
+    } 
+    return count; 
+}
+
 __kernel void key_hash(__global uint* finalBlock, __global uint* currentDigest, __global uint* outResult)
 {
 	int i;
@@ -355,25 +366,41 @@ __kernel void key_hash(__global uint* finalBlock, __global uint* currentDigest, 
 	uint W[16];
 	uint H[5];
 	
-	for(i = 0; i < 16; i++) W[i] = finalBlock[i];
-	for(i = 0; i < 5; i++) H[i] = currentDigest[i];
+	for(i = 0; i < 16; ++i) W[i] = finalBlock[i];
+	for(i = 0; i < 5; ++i) H[i] = currentDigest[i];
 
-	//########################################### //
-	//TODO: Find a way to update the exponent
-	//		without breaking the packet format
-	//########################################### //
 
 	// The exponenet is embedded in the 4th block
 	// beacuse the original value is 3 we can use some bit
-	// magic to change it to a certain value
-	// int newExponent = (get_global_id(0) + 3);
+	// magic to change it to a certain value. Due to the 
+	// exponent also being a MPI (RFC 4880) we need to deal with
+	// the bit length defined before it. This is done in the same
+	// way as the exponent.
+	int newExponent = (int)get_global_id(0) + 3;
 
-	// W[4] = W[4] ^ 3 ^ newExponent;
+	//TODO: This constraint is due to the exponent currently only having a single byte to work with.
+	//		Currently it is 03, therefore the max if "ff". Need to find a way to extend the value to 2 bytes
+	if (newExponent < 255) 
+	{
+		uint newExponentBitLen = countBits(newExponent);
 
-    // Take the last part of the hash
-	sha1_block(W,H);
+		//This is the original exponent length
+		uint originalExponentLengthMask = 2 << 24;
+		uint newExponentLengthMask = newExponentBitLen << 24;
 
-	for(i = 0; i < 5; i++) outResult[(5 * get_global_id(0)) + i] = H[i];
+		//Updates the bit length of the word
+		W[3] = W[3] ^ originalExponentLengthMask ^ newExponentLengthMask;
+
+		uint originalExponentMask = 3 << 16;
+		uint newExponentMask = newExponent << 16;
+
+		W[3] = W[3] ^ originalExponentMask ^ newExponentMask;
+
+		// Take the last part of the hash
+		sha1_block(W,H);
+	}
+
+	for(i = 0; i < 5; ++i) outResult[(5 * (int)get_global_id(0)) + i] = H[i];
 }
 
 // Test the SHA hash code

@@ -25,17 +25,33 @@
 //########################################################//
 //                     ISSUES                             //
 //########################################################//
-// - Calculated hash does not match 'gpg --list-packets   //
-//   result?                                              //
+// - Hash outputs from OpenCL all have the same end??     //
 //########################################################//
 
 int KEY_LENGTH = 2048;
 int MAX_EXPONENT = 16777215;
-int EXPONENT = 65567;
+int EXPONENT = 3;
+
+int NUM_OF_HASHES = 10;
+
 
 // Print vars
-bool PRINT_PGPv4_PACKET = false;
+bool PRINT_PGPv4_PACKET = true;
 bool PRINT_GPG_OUTPUT = false;
+bool PRINT_SHA1_TEST = false;
+
+/*
+    Function used to print arrays
+*/
+static void print_hash(uint* hash)
+{
+    for(size_t i = 0; i < 5; i++)
+    {
+        std::cout << integer_to_hex(hash[i]) << ":";
+    }
+    std::cout << std::endl;
+}
+
 
 /*
     Vector that is used to hold to work for OpenCL
@@ -187,7 +203,6 @@ std::string create_PGP_fingerprint_packet()
 */
 void compute(uint* finalBlock, uint* currentHash)
 {
-    int NUM_OF_HASHES = MAX_EXPONENT;
 
     int workSize = 0;
     int workGroupSize = 0;
@@ -243,6 +258,16 @@ void compute(uint* finalBlock, uint* currentHash)
 
     printf("[*] Time taken: %.2fs\n", tEnd);
     printf("[*] %.2f MH/s\n", hashPerSecond / 1000000);
+
+
+    for(size_t i = 0; i < NUM_OF_HASHES; i++)
+    {
+        print_hash(outResult[i]);
+    }
+    
+
+
+
 }
 
 /*
@@ -253,6 +278,10 @@ void create_work()
     // Creates PGP fingerprint packet
     auto PGP_v4_packet = create_PGP_fingerprint_packet();
 
+    //DEBUG
+    PGP_v4_packet = "99010b045cd04d5a010800C95EEE4E44FB0609429D59D6197EE3F4E86DCEB2CD2BA09748A44D6DB8B8E4557D87AC335B8E7D8939D689E154C052E07BE6CD393A8FBCB657FFDFE7402D17F418DF21ED1847C1506E624265F12D2DEE08A77B422FD97C95F5451E963B2055910E571CE7157078EF6B6967C1A94EC094F314ABA9E1ABCDD8C68EE0FD3ABCBE1D50F5532EF099E3559BD3B738336D51319AE3CDD36CAEF1AF87C6A72FCACB428AB8D2F20A4E859D5C22ADC9C9A1A9DC99DBE9091BECA725C065A8B4996D5515F3FCD740E4A71B623C67DBC17444326F1E7140A0691255548422ABBF0D404512BE43DE59BBD02B8E3419AE22E17C201D7379B0AD70A309F05F8D70765A07BF422D000203";
+    //
+
     // Pads and splits it blocks
     std::string padded_v4 = pad_hex_string_for_sha1(PGP_v4_packet);
     auto hex_blocks = split_hex_to_blocks(padded_v4, 64);
@@ -262,14 +291,14 @@ void create_work()
         std::cout << "[*] PGP v4 packet: " << std::endl;
         std::cout << PGP_v4_packet << "\n\n";
     }
-    
+
     if (PRINT_GPG_OUTPUT)
     {
        //## GPG output
         std::cout << "[*] GPG output: " << std::endl;
         //Runs it with a local python script
         std::string command = "python ../Misc/hex_pubkey.py ";
-        command += PGP_v4_packet + "00";
+        command += PGP_v4_packet + "99";
         command += " | gpg --list-packets";
 
         std::system(command.c_str());
@@ -300,7 +329,7 @@ void create_work()
 
 int main()
 {
-    sha1_test();
+    if (PRINT_SHA1_TEST) sha1_test();
     create_work();
     // compute();
 }
