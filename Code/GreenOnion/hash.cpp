@@ -26,28 +26,36 @@
 //                     ISSUES                             //
 //########################################################//
 // - Hash outputs from OpenCL all have the same end??     //
+//   but not on my CPU, only on the AMD GPU
 //########################################################//
 
 int KEY_LENGTH = 2048;
 int MAX_EXPONENT = 16777215;
-int EXPONENT = 3;
+int EXPONENT = 0x01000001;
 
-int NUM_OF_HASHES = 10;
-
+int NUM_OF_HASHES = MAX_EXPONENT;
 
 // Print vars
 bool PRINT_PGPv4_PACKET = true;
 bool PRINT_GPG_OUTPUT = false;
-bool PRINT_SHA1_TEST = false;
+bool PRINT_SHA1_TEST = true;
+
 
 /*
     Function used to print arrays
 */
-static void print_hash(uint* hash)
+static void print_hash(uint* hash, int blockLength)
 {
-    for(size_t i = 0; i < 5; i++)
+    for(size_t i = 0; i < blockLength; i++)
     {
-        std::cout << integer_to_hex(hash[i]) << ":";
+        std::string hexString = integer_to_hex(hash[i]);
+
+        //Pads the string
+        while (hexString.length() < 8) hexString = "0" + hexString;
+
+        std::cout << hexString;
+
+        if (i != (blockLength - 1)) std::cout << ":";
     }
     std::cout << std::endl;
 }
@@ -80,8 +88,6 @@ std::string hex_string_to_mpi(std::string hexString)
 */
 void sha1_test()
 {
-    std::cout << "[*] Testing hashing: " << std::endl;
-
     //OpenGL Hash
     auto platform = GetPlatform();
     auto devices = GetAllDevices(platform, true);
@@ -224,16 +230,19 @@ void compute(uint* finalBlock, uint* currentHash)
     cl::Kernel kernel(program, "key_hash");
 
     // Will hold the result of the hash on OpenCL
-    std::vector<uint[5]>  outResult(NUM_OF_HASHES);
+    //##########################################//
+    //TODO: Return only the last two 32bit words//
+    //##########################################//
+    std::vector<uint[2]> outResult(NUM_OF_HASHES);
 
-    auto resultSize = sizeof(uint) * 5 * outResult.size();
+    auto resultSize = sizeof(uint) * 2 * outResult.size();
 
     int err;
 
-    cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY  | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 32, finalBlock, &err);
+    cl::Buffer buf_finalBlock(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, finalBlock, &err);
     if (err != 0) opencl_handle_error(err);
 
-    cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5 , currentHash, &err);
+    cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, currentHash, &err);
     if (err != 0) opencl_handle_error(err);
     
     cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
@@ -244,6 +253,12 @@ void compute(uint* finalBlock, uint* currentHash)
 
     // Creates the command queue
     cl::CommandQueue queue(context, device);
+
+    // queue.enqueueNDRangeKernel(
+    //     kernel, 
+    //     cl::NullRange, 
+    //     cl::NDRange(outResult.size())
+    // );
 
     queue.enqueueNDRangeKernel(
         kernel, 
@@ -259,15 +274,11 @@ void compute(uint* finalBlock, uint* currentHash)
     printf("[*] Time taken: %.2fs\n", tEnd);
     printf("[*] %.2f MH/s\n", hashPerSecond / 1000000);
 
-
-    for(size_t i = 0; i < NUM_OF_HASHES; i++)
+    for(size_t i = 0; i < 10; i++)
     {
-        print_hash(outResult[i]);
+        print_hash(outResult[i], 2);
     }
-    
-
-
-
+    // print_hash(outResult[0], 2);
 }
 
 /*
@@ -279,7 +290,7 @@ void create_work()
     auto PGP_v4_packet = create_PGP_fingerprint_packet();
 
     //DEBUG
-    PGP_v4_packet = "99010b045cd04d5a010800C95EEE4E44FB0609429D59D6197EE3F4E86DCEB2CD2BA09748A44D6DB8B8E4557D87AC335B8E7D8939D689E154C052E07BE6CD393A8FBCB657FFDFE7402D17F418DF21ED1847C1506E624265F12D2DEE08A77B422FD97C95F5451E963B2055910E571CE7157078EF6B6967C1A94EC094F314ABA9E1ABCDD8C68EE0FD3ABCBE1D50F5532EF099E3559BD3B738336D51319AE3CDD36CAEF1AF87C6A72FCACB428AB8D2F20A4E859D5C22ADC9C9A1A9DC99DBE9091BECA725C065A8B4996D5515F3FCD740E4A71B623C67DBC17444326F1E7140A0691255548422ABBF0D404512BE43DE59BBD02B8E3419AE22E17C201D7379B0AD70A309F05F8D70765A07BF422D000203";
+    // PGP_v4_packet = "99010b045cd04d5a010800C95EEE4E44FB0609429D59D6197EE3F4E86DCEB2CD2BA09748A44D6DB8B8E4557D87AC335B8E7D8939D689E154C052E07BE6CD393A8FBCB657FFDFE7402D17F418DF21ED1847C1506E624265F12D2DEE08A77B422FD97C95F5451E963B2055910E571CE7157078EF6B6967C1A94EC094F314ABA9E1ABCDD8C68EE0FD3ABCBE1D50F5532EF099E3559BD3B738336D51319AE3CDD36CAEF1AF87C6A72FCACB428AB8D2F20A4E859D5C22ADC9C9A1A9DC99DBE9091BECA725C065A8B4996D5515F3FCD740E4A71B623C67DBC17444326F1E7140A0691255548422ABBF0D404512BE43DE59BBD02B8E3419AE22E17C201D7379B0AD70A309F05F8D70765A07BF422D000203";
     //
 
     // Pads and splits it blocks
@@ -321,7 +332,7 @@ void create_work()
     uint digest_test[5];
     hash_blocks(hex_blocks, digest_test, hex_blocks.size());
     std::cout << "[!] PGPv4 local hash result: \n";
-    print_hash(digest_test);
+    print_hash(digest_test, 5);
     std::cout << "\n";
 
     compute(finalBlock, digest);
