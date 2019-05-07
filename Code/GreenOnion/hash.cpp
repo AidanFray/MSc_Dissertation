@@ -9,6 +9,9 @@
 #include <cstdlib>
 #include <array>
 #include <time.h>
+#include <stack> 
+#include <thread>
+#include <chrono>
 
 #include <openssl/rsa.h>
 #include <openssl/rand.h>
@@ -29,6 +32,8 @@
 //   but not on my CPU, only on the AMD GPU
 //########################################################//
 
+static std::stack<KernelWork> kernel_work;
+
 int KEY_LENGTH = 2048;
 int MAX_EXPONENT = 16777215;
 int EXPONENT = 0x01000001;
@@ -36,9 +41,11 @@ int EXPONENT = 0x01000001;
 int NUM_OF_HASHES = MAX_EXPONENT;
 
 // Print vars
-bool PRINT_PGPv4_PACKET = true;
+bool PRINT_PGPv4_PACKET = false;
 bool PRINT_GPG_OUTPUT = false;
 bool PRINT_SHA1_TEST = false;
+
+bool running = true;
 
 
 /*
@@ -61,10 +68,19 @@ static void print_hash(uint* hash, int blockLength)
 }
 
 
-/*
-    Vector that is used to hold to work for OpenCL
-*/
-static std::vector<KernelWork> kernel_work;
+
+void key_from_exponent_and_base_packet(std::string basePacket, std::string exponent)
+{
+    std::string keyPacket = basePacket.substr(0, basePacket.length() - 8);
+
+    //Pads exponent
+    while (exponent.length() < 8) exponent = "0" + exponent;
+
+    std::string newPacket = keyPacket + exponent;
+
+    std::cout << newPacket << std::endl;
+}
+
 
 /*
     Converts an integer to multiprecision integer (RFC 4880)
@@ -207,9 +223,8 @@ std::string create_PGP_fingerprint_packet()
 /*
     Communicates with OpenCL and proccess results
 */
-void compute(uint* finalBlock, uint* currentHash)
+void compute()
 {
-
     int workSize = 0;
     int workGroupSize = 0;
     int createWorkThreads = 0;
@@ -218,64 +233,75 @@ void compute(uint* finalBlock, uint* currentHash)
     auto platform = GetPlatform();
     auto devices = GetAllDevices(platform, false);
     auto device = devices.front();
-
-    // Will hold the result of the hash on OpenCL
-    std::vector<uint[2]> outResult(NUM_OF_HASHES);
-    auto resultSize = sizeof(uint) * 2 * outResult.size();
-
     cl::Context context(devices);
-
     auto program = BuildProgram("./OpenCL/SHA1.cl", context);
-
     workGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
     //std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
-
-    //Kernel and parameter creation
     cl::Kernel kernel(program, "key_hash");
-
-    // Creates the command queue
     cl::CommandQueue queue(context, device);
 
-    int loop = 0;
     while (true)
     {
         clock_t tStart = clock();
+        KernelWork work;
 
-        int err;
-        cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, finalBlock, &err);
-        if (err != 0) opencl_handle_error(err);
+        //TODO: wait if there is no work
+        if (kernel_work.size() == 0)
+        {
+            //std::cout << "[!] Not enough work!" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        else
+        {
+            work = kernel_work.top();
+            kernel_work.pop();
 
-        cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, currentHash, &err);
-        if (err != 0) opencl_handle_error(err);
-        
-        cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
+            // Will hold the result of the hash on OpenCL
+            // is size of the hash plus the success value (0x12345678) and exponent used
+            uint outResult[7];
+            auto resultSize = sizeof(uint) * 7;
 
-        kernel.setArg(0, buf_finalBlock);
-        kernel.setArg(1, buf_currentHash);
-        kernel.setArg(2, buf_out_result);
+            int err;
+            cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, work.FinalBlock, &err);
+            if (err != 0) opencl_handle_error(err);
 
-        //TODO: What does this call do?
-        queue.enqueueNDRangeKernel(
-            kernel, 
-            0, 
-            cl::NDRange(outResult.size())
-        );
+            cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
+            if (err != 0) opencl_handle_error(err);
+            
+            cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
 
-        queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult.data());
-        print_hash(outResult[0], 2);
+            kernel.setArg(0, buf_finalBlock);
+            kernel.setArg(1, buf_currentHash);
+            kernel.setArg(2, buf_out_result);
 
-        auto tEnd = (double)(clock() - tStart)/CLOCKS_PER_SEC;
-        auto hashPerSecond = NUM_OF_HASHES / tEnd;
-        printf("[*] %.2f MH/s\n", hashPerSecond / 1000000);
+            //TODO: What does this call do?
+            queue.enqueueNDRangeKernel(
+                kernel, 
+                cl::NullRange, 
+                NUM_OF_HASHES
+            );
 
-        outResult.clear();
-        loop++;
-        // print_hash(outResult[0], 2);
-        // break;
+            queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult);
+
+            auto tEnd = (double)(clock() - tStart)/CLOCKS_PER_SEC;
+            auto hashPerSecond = (int)(NUM_OF_HASHES) / tEnd;
+
+            std::cout << "[*] Current Rate: " << (int)(hashPerSecond / 1000000) << " MH/s\r" << std::flush;
+
+            //Looks for the positive result value
+            if (outResult[0] == (uint)0x12345678)
+            {   
+                std::string exponent = integer_to_hex(outResult[1]);
+
+                std::cout << "\nWe've got one" << std::endl;
+                std::cout << "Exponent: " << exponent << std::endl;
+
+                key_from_exponent_and_base_packet(work.PGP_Packet, exponent);
+
+                break;
+            }
+        }
     }
-    
-
-    
 }
 
 /*
@@ -283,60 +309,72 @@ void compute(uint* finalBlock, uint* currentHash)
 */
 void create_work()
 {
-    // Creates PGP fingerprint packet
-    auto PGP_v4_packet = create_PGP_fingerprint_packet();
-
-    //DEBUG
-    // PGP_v4_packet = "99010b045cd04d5a010800C95EEE4E44FB0609429D59D6197EE3F4E86DCEB2CD2BA09748A44D6DB8B8E4557D87AC335B8E7D8939D689E154C052E07BE6CD393A8FBCB657FFDFE7402D17F418DF21ED1847C1506E624265F12D2DEE08A77B422FD97C95F5451E963B2055910E571CE7157078EF6B6967C1A94EC094F314ABA9E1ABCDD8C68EE0FD3ABCBE1D50F5532EF099E3559BD3B738336D51319AE3CDD36CAEF1AF87C6A72FCACB428AB8D2F20A4E859D5C22ADC9C9A1A9DC99DBE9091BECA725C065A8B4996D5515F3FCD740E4A71B623C67DBC17444326F1E7140A0691255548422ABBF0D404512BE43DE59BBD02B8E3419AE22E17C201D7379B0AD70A309F05F8D70765A07BF422D000203";
-    //
-
-    // Pads and splits it blocks
-    std::string padded_v4 = pad_hex_string_for_sha1(PGP_v4_packet);
-    auto hex_blocks = split_hex_to_blocks(padded_v4, 64);
-
-    if (PRINT_PGPv4_PACKET)
+    while (running)
     {
-        std::cout << "[*] PGP v4 packet: " << std::endl;
-        std::cout << PGP_v4_packet << "\n\n";
+        // Creates PGP fingerprint packet
+        auto PGP_v4_packet = create_PGP_fingerprint_packet();
+
+        // //DEBUG
+        // PGP_v4_packet = "99010e045cd1909c010800D19AC0765A452C3FF2BF055EA1BB69A6EB8B77BE93BFF56340564DE9F85F41E36CFF97FFC2381CE9507C9B44DC050A5F31EB2E5E3E28D09AA027D8C24E7E95E2E3641AC501FC6D6D702F3A652791B8701D32E7A85BF345A2CBAB4DA0FF3B53C437EE7905D21AA58CCB74375F2796728F3C26C836D583E87F9ED8EB120EE7E86F3C4EBAE34A21C1A3D0ACAAE2D0CF7F97AA94395A71F4B79C398B58006EB3EAE9C9CF7698BF75048F963071FC81D84F8CEDB2427539E23C7BE0FB519D525DF3DBBF0898DFEF6D32B417F9E21766CF29C89EE4F082A619D01DE684305DC6E4169B19177528CE2690F910B9BE3213430FDAC6867BE87B2A7966F5CAC88202A4DFF9001901000001";
+        
+        // Pads and splits it blocks
+        std::string padded_v4 = pad_hex_string_for_sha1(PGP_v4_packet);
+        auto hex_blocks = split_hex_to_blocks(padded_v4, 64);
+
+        if (PRINT_PGPv4_PACKET)
+        {
+            std::cout << "[*] PGP v4 packet: " << std::endl;
+            std::cout << PGP_v4_packet << "\n\n";
+        }
+
+        if (PRINT_GPG_OUTPUT)
+        {
+        //## GPG output
+            std::cout << "[*] GPG output: " << std::endl;
+            //Runs it with a local python script
+            std::string command = "python ../Misc/hex_pubkey.py ";
+            command += PGP_v4_packet + "99";
+            command += " | gpg --list-packets";
+
+            std::system(command.c_str());
+            std::cout << "\n\n"; 
+        }
+
+        //Hashes all but the last block
+        uint digest[5];
+        hash_blocks(hex_blocks, digest, hex_blocks.size() - 1);
+
+        //Saves the final block
+        uint finalBlock[16]; 
+        hex_block_to_words(finalBlock, hex_blocks[hex_blocks.size() - 1]);
+        
+        // // Local hash
+        // uint digest_test[5];
+        // hash_blocks(hex_blocks, digest_test, hex_blocks.size());
+        // std::cout << "[!] PGPv4 local hash result: \n";
+        // print_hash(digest_test, 5);
+        // std::cout << "\n";
+
+        //Adds the work
+        KernelWork work(finalBlock, digest, PGP_v4_packet); 
+        kernel_work.push(work);
     }
-
-    if (PRINT_GPG_OUTPUT)
-    {
-       //## GPG output
-        std::cout << "[*] GPG output: " << std::endl;
-        //Runs it with a local python script
-        std::string command = "python ../Misc/hex_pubkey.py ";
-        command += PGP_v4_packet + "99";
-        command += " | gpg --list-packets";
-
-        std::system(command.c_str());
-        std::cout << "\n\n"; 
-    }
-
-    //Hashes all but the last block
-    uint digest[5];
-    hash_blocks(hex_blocks, digest, hex_blocks.size() - 1);
-
-    //Saves the final block
-    uint finalBlock[16]; 
-    hex_block_to_words(finalBlock, hex_blocks[hex_blocks.size() - 1]);
-    
-    // Adds the word to the vector
-    KernelWork work(finalBlock, digest);
-    kernel_work.push_back(work);
-    
-    // Local hash
-    uint digest_test[5];
-    hash_blocks(hex_blocks, digest_test, hex_blocks.size());
-    std::cout << "[!] PGPv4 local hash result: \n";
-    print_hash(digest_test, 5);
-    std::cout << "\n";
-
-    compute(finalBlock, digest);
 }
 
 int main()
 {
     if (PRINT_SHA1_TEST) sha1_test();
-    create_work();
+    std::thread createWorkThread1(create_work);
+    std::thread createWorkThread2(create_work);
+    std::thread createWorkThread3(create_work);
+    std::thread createWorkThread4(create_work);
+    
+    compute();
+
+    //Stops the threads
+    running = false;
+    createWorkThread1.join();
+    createWorkThread2.join();
+    createWorkThread3.join();
+    createWorkThread4.join();
 }

@@ -12,7 +12,8 @@
         "${fileDirname}/Crypto/sha1.cpp",
         "-lOpenCL",
         "-lcrypto",
-        "-lssl"
+        "-lssl",
+        "-pthread"
       ],
       "options": {
         "cwd": "/usr/bin"

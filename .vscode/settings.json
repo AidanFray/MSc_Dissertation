@@ -38,6 +38,10 @@
         "utility": "cpp",
         "algorithm": "cpp",
         "deque": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "thread": "cpp",
+        "chrono": "cpp",
+        "memory": "cpp",
+        "ratio": "cpp"
     }
 }
