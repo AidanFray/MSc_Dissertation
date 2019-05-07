@@ -12,6 +12,7 @@
 #include <stack> 
 #include <thread>
 #include <chrono>
+#include <mutex>
 
 #include <openssl/rsa.h>
 #include <openssl/rand.h>
@@ -22,85 +23,46 @@
 #include "Crypto/hash_util.cpp"
 
 #include "Util/functions.cpp"
-#include "Util/kernel_work.cpp"
 #include "Util/OpenCLHelper.cpp"
 
 //########################################################//
 //                     ISSUES                             //
 //########################################################//
-// - Hash outputs from OpenCL all have the same end??     //
-//   but not on my CPU, only on the AMD GPU
+// TODO:    More accurate representation of hashing speed
+//          needed
+//
+// TODO:    Look into a better way to multi-thread the
+//          work production. ATM I think it's just
+//          running the work on the same thread
+//
+// TODO:    Add RegEx support to the OpenCL program
+//
+// TODO:    The program is being bottle necked by work
+//          generation, is there a faster way to get 
+//          more work for OpenCL??
+//
+// TODO:    Format output public key into a PGP public key
+//          packet
 //########################################################//
 
 static std::stack<KernelWork> kernel_work;
+static std::mutex kernel_work_lock;
 
 int KEY_LENGTH = 2048;
-int MAX_EXPONENT = 16777215;
 int EXPONENT = 0x01000001;
 
-int NUM_OF_HASHES = MAX_EXPONENT;
+// 0x01FFFFFF - 0x01000001
+int NUM_OF_HASHES = 16777215;
 
 // Print vars
 bool PRINT_PGPv4_PACKET = false;
 bool PRINT_GPG_OUTPUT = false;
-bool PRINT_SHA1_TEST = false;
+bool PRINT_SHA1_TEST = true;
 
 bool running = true;
 
-
 /*
-    Function used to print arrays
-*/
-static void print_hash(uint* hash, int blockLength)
-{
-    for(size_t i = 0; i < blockLength; i++)
-    {
-        std::string hexString = integer_to_hex(hash[i]);
-
-        //Pads the string
-        while (hexString.length() < 8) hexString = "0" + hexString;
-
-        std::cout << hexString;
-
-        if (i != (blockLength - 1)) std::cout << ":";
-    }
-    std::cout << std::endl;
-}
-
-
-
-void key_from_exponent_and_base_packet(std::string basePacket, std::string exponent)
-{
-    std::string keyPacket = basePacket.substr(0, basePacket.length() - 8);
-
-    //Pads exponent
-    while (exponent.length() < 8) exponent = "0" + exponent;
-
-    std::string newPacket = keyPacket + exponent;
-
-    std::cout << newPacket << std::endl;
-}
-
-
-/*
-    Converts an integer to multiprecision integer (RFC 4880)
-*/
-std::string hex_string_to_mpi(std::string hexString)
-{
-    auto binary_string = hex_to_binary(hexString);
-    auto stripped_binary_string = binary_strip_left_zeros(binary_string);
-    auto binary_string_len = integer_to_hex(stripped_binary_string.length());
-
-    //Pads to 2 bytes
-    while (binary_string_len.length() < 4) binary_string_len = "0" + binary_string_len;
-
-    std::string output = binary_string_len + hexString;
-    return output;
-}
-
-
-/*
-    Used to test that OpenCL is producing the correst result
+    Used to test that OpenCL is producing the correct result
 */
 void sha1_test()
 {
@@ -127,12 +89,7 @@ void sha1_test()
 
     // Prints out the hash
     std::cout << "OpenCL: ";
-    std::cout << std::hex << openclHash[0];
-    std::cout << std::hex << openclHash[1];
-    std::cout << std::hex << openclHash[2];
-    std::cout << std::hex << openclHash[3];
-    std::cout << std::hex << openclHash[4];
-    std::cout << std::endl;
+    print_hash(openclHash, 5);
 
     const char* ibuf = "Hello world!";
     unsigned char obuf[20];
@@ -151,7 +108,7 @@ void sha1_test()
 /*
     Converts an RSA key to PGP public key packet defined in RFC 4880
 */
-std::string rsa_key_to_pgp(std::string n, std::string e)
+std::string rsa_key_to_pgp(std::string n, std::string e, std::string d)
 {   
     //Structure 2024 key:
     // ############################################################################ //
@@ -193,7 +150,7 @@ std::string rsa_key_to_pgp(std::string n, std::string e)
 
     result = "99" + public_packet_len + result;
 
-    return result;
+    return result + "#" + d;
 }
 
 /*
@@ -215,9 +172,10 @@ std::string create_PGP_fingerprint_packet()
     //Converts public key sections to hex
     std::string str_n = BN_bn2hex(n);
     std::string str_e = BN_bn2hex(e);
+    std::string str_d = BN_bn2hex(d);
 
     //Creates the PGP v4 fingerprint packet
-    return rsa_key_to_pgp(str_n, str_e);
+    return rsa_key_to_pgp(str_n, str_e, str_d);
 }
 
 /*
@@ -245,16 +203,20 @@ void compute()
         clock_t tStart = clock();
         KernelWork work;
 
-        //TODO: wait if there is no work
         if (kernel_work.size() == 0)
         {
-            //std::cout << "[!] Not enough work!" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            //Sleeps if there is no work
+            // std::cout << "[!] Not enough work! Sleeping!" << "\r";
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
         else
         {
-            work = kernel_work.top();
-            kernel_work.pop();
+            {
+                std::lock_guard<std::mutex> lock(kernel_work_lock);
+                work = kernel_work.top();
+                kernel_work.pop();
+            }
+            
 
             // Will hold the result of the hash on OpenCL
             // is size of the hash plus the success value (0x12345678) and exponent used
@@ -292,12 +254,7 @@ void compute()
             if (outResult[0] == (uint)0x12345678)
             {   
                 std::string exponent = integer_to_hex(outResult[1]);
-
-                std::cout << "\nWe've got one" << std::endl;
-                std::cout << "Exponent: " << exponent << std::endl;
-
-                key_from_exponent_and_base_packet(work.PGP_Packet, exponent);
-
+                print_found_key(work, exponent);
                 break;
             }
         }
@@ -312,7 +269,14 @@ void create_work()
     while (running)
     {
         // Creates PGP fingerprint packet
-        auto PGP_v4_packet = create_PGP_fingerprint_packet();
+        auto PGP_v4_packet_with_private_key = create_PGP_fingerprint_packet();
+
+        //PGPv4 fingerprint packet and private key (d) are separated with a "#"
+        std::vector<std::string> result;
+        split(result, PGP_v4_packet_with_private_key, '#');
+
+        std::string PGP_v4_packet = result[0];
+        std::string private_key = result[1];
 
         // //DEBUG
         // PGP_v4_packet = "99010e045cd1909c010800D19AC0765A452C3FF2BF055EA1BB69A6EB8B77BE93BFF56340564DE9F85F41E36CFF97FFC2381CE9507C9B44DC050A5F31EB2E5E3E28D09AA027D8C24E7E95E2E3641AC501FC6D6D702F3A652791B8701D32E7A85BF345A2CBAB4DA0FF3B53C437EE7905D21AA58CCB74375F2796728F3C26C836D583E87F9ED8EB120EE7E86F3C4EBAE34A21C1A3D0ACAAE2D0CF7F97AA94395A71F4B79C398B58006EB3EAE9C9CF7698BF75048F963071FC81D84F8CEDB2427539E23C7BE0FB519D525DF3DBBF0898DFEF6D32B417F9E21766CF29C89EE4F082A619D01DE684305DC6E4169B19177528CE2690F910B9BE3213430FDAC6867BE87B2A7966F5CAC88202A4DFF9001901000001";
@@ -329,7 +293,7 @@ void create_work()
 
         if (PRINT_GPG_OUTPUT)
         {
-        //## GPG output
+            //## GPG output
             std::cout << "[*] GPG output: " << std::endl;
             //Runs it with a local python script
             std::string command = "python ../Misc/hex_pubkey.py ";
@@ -348,16 +312,12 @@ void create_work()
         uint finalBlock[16]; 
         hex_block_to_words(finalBlock, hex_blocks[hex_blocks.size() - 1]);
         
-        // // Local hash
-        // uint digest_test[5];
-        // hash_blocks(hex_blocks, digest_test, hex_blocks.size());
-        // std::cout << "[!] PGPv4 local hash result: \n";
-        // print_hash(digest_test, 5);
-        // std::cout << "\n";
-
-        //Adds the work
-        KernelWork work(finalBlock, digest, PGP_v4_packet); 
-        kernel_work.push(work);
+        //Adds the work to the stack object
+        {
+            std::lock_guard<std::mutex> lock(kernel_work_lock);
+            KernelWork work(finalBlock, digest, PGP_v4_packet, private_key); 
+            kernel_work.push(work);
+        }
     }
 }
 
@@ -366,15 +326,16 @@ int main()
     if (PRINT_SHA1_TEST) sha1_test();
     std::thread createWorkThread1(create_work);
     std::thread createWorkThread2(create_work);
-    std::thread createWorkThread3(create_work);
-    std::thread createWorkThread4(create_work);
     
+    //Lets the work populate
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+
+    std::cout << "[*] Setup complete!" << std::endl;
+
     compute();
 
     //Stops the threads
     running = false;
     createWorkThread1.join();
     createWorkThread2.join();
-    createWorkThread3.join();
-    createWorkThread4.join();
 }

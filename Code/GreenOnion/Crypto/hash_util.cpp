@@ -60,7 +60,7 @@ void hex_block_to_words(uint32_t* W, std::string hexString)
 {
     auto hexWords = split_hex_to_blocks(hexString, 4);
 
-    for(size_t i = 0; i < 16; i++)
+    for(size_t i = 0; i < 16; ++i)
     {
         //Converts hex to integer
         std::stringstream ss;
@@ -90,11 +90,10 @@ void hash_blocks(std::vector<std::string> hex_blocks, uint* digest, int num_of_b
     digest[3] = 0x10325476;
     digest[4] = 0xC3D2E1F0;
     // Full hash
-    for(size_t i = 0; i < num_of_blocks; i++)
+    for(size_t i = 0; i < num_of_blocks; ++i)
     {
         uint32_t W[16];
         hex_block_to_words(W, hex_blocks[i]);
-
         transform(digest, W);
     }
 }
