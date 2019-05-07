@@ -38,7 +38,7 @@ int NUM_OF_HASHES = MAX_EXPONENT;
 // Print vars
 bool PRINT_PGPv4_PACKET = true;
 bool PRINT_GPG_OUTPUT = false;
-bool PRINT_SHA1_TEST = true;
+bool PRINT_SHA1_TEST = false;
 
 
 /*
@@ -219,66 +219,63 @@ void compute(uint* finalBlock, uint* currentHash)
     auto devices = GetAllDevices(platform, false);
     auto device = devices.front();
 
+    // Will hold the result of the hash on OpenCL
+    std::vector<uint[2]> outResult(NUM_OF_HASHES);
+    auto resultSize = sizeof(uint) * 2 * outResult.size();
+
     cl::Context context(devices);
 
     auto program = BuildProgram("./OpenCL/SHA1.cl", context);
 
     workGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
-    std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
+    //std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
 
     //Kernel and parameter creation
     cl::Kernel kernel(program, "key_hash");
 
-    // Will hold the result of the hash on OpenCL
-    //##########################################//
-    //TODO: Return only the last two 32bit words//
-    //##########################################//
-    std::vector<uint[2]> outResult(NUM_OF_HASHES);
-
-    auto resultSize = sizeof(uint) * 2 * outResult.size();
-
-    int err;
-
-    cl::Buffer buf_finalBlock(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, finalBlock, &err);
-    if (err != 0) opencl_handle_error(err);
-
-    cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, currentHash, &err);
-    if (err != 0) opencl_handle_error(err);
-    
-    cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
-
-    kernel.setArg(0, buf_finalBlock);
-    kernel.setArg(1, buf_currentHash);
-    kernel.setArg(2, buf_out_result);
-
     // Creates the command queue
     cl::CommandQueue queue(context, device);
 
-    // queue.enqueueNDRangeKernel(
-    //     kernel, 
-    //     cl::NullRange, 
-    //     cl::NDRange(outResult.size())
-    // );
-
-    queue.enqueueNDRangeKernel(
-        kernel, 
-        cl::NullRange, 
-        cl::NDRange(outResult.size())
-    );
-
-    clock_t tStart = clock();
-    queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult.data());
-    auto tEnd = (double)(clock() - tStart)/CLOCKS_PER_SEC;
-    auto hashPerSecond = NUM_OF_HASHES / tEnd;
-
-    printf("[*] Time taken: %.2fs\n", tEnd);
-    printf("[*] %.2f MH/s\n", hashPerSecond / 1000000);
-
-    for(size_t i = 0; i < 10; i++)
+    int loop = 0;
+    while (true)
     {
-        print_hash(outResult[i], 2);
+        clock_t tStart = clock();
+
+        int err;
+        cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, finalBlock, &err);
+        if (err != 0) opencl_handle_error(err);
+
+        cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, currentHash, &err);
+        if (err != 0) opencl_handle_error(err);
+        
+        cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
+
+        kernel.setArg(0, buf_finalBlock);
+        kernel.setArg(1, buf_currentHash);
+        kernel.setArg(2, buf_out_result);
+
+        //TODO: What does this call do?
+        queue.enqueueNDRangeKernel(
+            kernel, 
+            0, 
+            cl::NDRange(outResult.size())
+        );
+
+        queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult.data());
+        print_hash(outResult[0], 2);
+
+        auto tEnd = (double)(clock() - tStart)/CLOCKS_PER_SEC;
+        auto hashPerSecond = NUM_OF_HASHES / tEnd;
+        printf("[*] %.2f MH/s\n", hashPerSecond / 1000000);
+
+        outResult.clear();
+        loop++;
+        // print_hash(outResult[0], 2);
+        // break;
     }
-    // print_hash(outResult[0], 2);
+    
+
+    
 }
 
 /*
@@ -342,5 +339,4 @@ int main()
 {
     if (PRINT_SHA1_TEST) sha1_test();
     create_work();
-    // compute();
 }

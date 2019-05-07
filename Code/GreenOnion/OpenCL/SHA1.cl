@@ -363,7 +363,7 @@ __kernel void key_hash(__global uint* finalBlock,
 	uint W[16];
 	uint H[5];
 	
-	//Unrolled loops
+	// Unrolled loops
 	//for(i = 0; i < 16; ++i) W[i] = finalBlock[i];
 	W[0] = finalBlock[0];
 	W[1] = finalBlock[1];
@@ -420,6 +420,9 @@ __kernel void key_hash(__global uint* finalBlock,
 
 	// sha1_block() is repeated here due to effcienty reasons.
 	// Take the last part of the hash
+
+	//sha1_block(W, H);
+
 	uint a = H[0];
 	uint b = H[1];
 	uint c = H[2];
