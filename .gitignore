@@ -9,6 +9,7 @@
 *.tex.bak
 *.dvi
 *.fls
+*.out
 
 *.fdb_latexmk
 peda-session-*
