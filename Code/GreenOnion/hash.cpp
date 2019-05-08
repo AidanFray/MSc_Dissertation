@@ -50,9 +50,11 @@ int NUM_OF_HASHES = 16777215;
 // Print vars
 bool PRINT_SHA1_TEST = false;
 
+int MAX_WORK_SIZE = 10000;
+
 // Threading vars
 bool running = true;
-int numberOfThreads = 1;
+int numberOfThreads = 2;
 std::vector<std::thread> workThreads;
 
 /*
@@ -221,8 +223,8 @@ void compute()
 
             // Will hold the result of the hash on OpenCL
             // is size of the hash plus the success value (0x12345678) and exponent used
-            uint outResult[7];
-            auto resultSize = sizeof(uint) * 7;
+            uint outResult[2];
+            auto resultSize = sizeof(uint) * 2;
 
             int err;
             cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, work.FinalBlock, &err);
@@ -241,11 +243,10 @@ void compute()
             queue.enqueueNDRangeKernel(
                 kernel, 
                 cl::NullRange, 
-                NUM_OF_HASHES
+                cl::NDRange(NUM_OF_HASHES, 1)
             );
 
-
-            queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult);
+            queue.enqueueReadBuffer(buf_out_result, CL_FALSE, 0, resultSize, outResult);
 
             auto totalTime = tmr.elapsed();
             tmr.reset();
@@ -279,7 +280,7 @@ void create_work()
     {
         //TODO: find a good max value
         //Stops the program from working too hard
-        if (kernel_work.size() < 1000)
+        if (kernel_work.size() < MAX_WORK_SIZE)
         {
             std::string n, e, d;
             generate_RSA_key(n, e, d);

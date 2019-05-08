@@ -352,7 +352,6 @@ __kernel void key_hash(__global uint* finalBlock,
 {
 	int i;
 
-
 	// We have 3 bytes to work with proving us with 16777215 (2^24)
 	// increments per key
 
@@ -364,7 +363,6 @@ __kernel void key_hash(__global uint* finalBlock,
 	uint H[5];
 	
 	// Unrolled loops
-	//for(i = 0; i < 16; ++i) W[i] = finalBlock[i];
 	W[0] = finalBlock[0];
 	W[1] = finalBlock[1];
 	W[2] = finalBlock[2];
@@ -389,7 +387,6 @@ __kernel void key_hash(__global uint* finalBlock,
 	H[3] = currentDigest[3];
 	H[4] = currentDigest[4];
 
-	
 	//To exponent is split across two words
 	// i.e
 	//
@@ -403,7 +400,6 @@ __kernel void key_hash(__global uint* finalBlock,
 	// This lets us replace bytes is certain positions.
 
 	int newExponent = get_global_id(0) + ORIGINAL_EXPONENT_VALUE;
-
 	
 	//Moves the value to the right i.e. 0x01ffff -> 0x0001ff
 	//This is required due to the bit length taking up the MSByte
@@ -760,12 +756,11 @@ __kernel void key_hash(__global uint* finalBlock,
 	H[4] = e;
 
 	//TODO: Add regex check
-	if (H[4] == 0xffffffff)
+	if (H[4] == 0xffffffff && H[3] == 0xffffffff)
 	{
 		//Used to show the other end we've found a hash
 		outResult[0] = 0x12345678;
 		outResult[1] = newExponent;
-		for(i = 2; i < 7; ++i) outResult[i] = H[i - 1];
 	}
 }
 

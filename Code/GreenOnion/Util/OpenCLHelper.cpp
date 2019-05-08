@@ -90,8 +90,16 @@ std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)
     std::vector<cl::Device> devices;
     platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
 
+    if (devices.size() == 0)
+    {
+        std::cout << "[!] No avaliable devices!" << std::endl;
+        exit(1);
+    }
+
     //Prints out first device
     auto device = devices.front();
+
+
 
     if (printInfo)
     {
