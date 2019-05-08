@@ -2,6 +2,8 @@
 #include <sstream>
 #include <bitset>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 
 #include "conversion.cpp"
@@ -12,6 +14,14 @@
 
 using base64 = cppcodec::base64_rfc4648;
 using hex = cppcodec::hex_upper;
+
+/*
+    TODO
+*/
+void sleep(int milliseconds)
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+}
 
 /*
     Splits a string with a certain delimiter
@@ -79,7 +89,7 @@ void print_found_key(KernelWork work, std::string exponent)
 
     std::cout << "##################################################### " << std::endl;
     std::cout << "Public Key                                            " << std::endl;
-    std::cout << PGP_packet + "\n"                                        << std::endl;
+    // std::cout << PGP_packet + "\n"                                        << std::endl;
     print_public_armour_pgp_key(PGP_packet);
     std::cout << std::endl;
     std::cout << "Private Key                                           " << std::endl;

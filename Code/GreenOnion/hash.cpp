@@ -9,10 +9,11 @@
 #include <cstdlib>
 #include <array>
 #include <time.h>
-#include <stack> 
+#include <queue> 
 #include <thread>
-#include <chrono>
 #include <mutex>
+#include <csignal>
+#include <condition_variable>
 
 #include <openssl/rsa.h>
 #include <openssl/rand.h>
@@ -24,6 +25,8 @@
 
 #include "Util/functions.cpp"
 #include "Util/OpenCLHelper.cpp"
+#include "Util/timer.cpp"
+
 
 //########################################################//
 //                     ISSUES                             //
@@ -45,8 +48,9 @@
 //          packet
 //########################################################//
 
-static std::stack<KernelWork> kernel_work;
+static std::queue<KernelWork> kernel_work;
 static std::mutex kernel_work_lock;
+std::condition_variable condition;
 
 int KEY_LENGTH = 2048;
 int EXPONENT = 0x01000001;
@@ -59,7 +63,10 @@ bool PRINT_PGPv4_PACKET = false;
 bool PRINT_GPG_OUTPUT = false;
 bool PRINT_SHA1_TEST = true;
 
+// Threading vars
 bool running = true;
+int numberOfThreads = 5;
+std::vector<std::thread> workThreads;
 
 /*
     Used to test that OpenCL is producing the correct result
@@ -181,6 +188,7 @@ std::string create_PGP_fingerprint_packet()
 /*
     Communicates with OpenCL and proccess results
 */
+int loops = 0;
 void compute()
 {
     int workSize = 0;
@@ -198,66 +206,72 @@ void compute()
     cl::Kernel kernel(program, "key_hash");
     cl::CommandQueue queue(context, device);
 
+
     while (true)
     {
-        clock_t tStart = clock();
+        Timer tmr;
+
         KernelWork work;
 
-        if (kernel_work.size() == 0)
+        while (kernel_work.empty())
         {
             //Sleeps if there is no work
-            // std::cout << "[!] Not enough work! Sleeping!" << "\r";
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            //std::cout << "[!] Not enough work! Sleeping!" << "\r";
+            // std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
-        else
+        
         {
-            {
-                std::lock_guard<std::mutex> lock(kernel_work_lock);
-                work = kernel_work.top();
-                kernel_work.pop();
-            }
-            
-
-            // Will hold the result of the hash on OpenCL
-            // is size of the hash plus the success value (0x12345678) and exponent used
-            uint outResult[7];
-            auto resultSize = sizeof(uint) * 7;
-
-            int err;
-            cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, work.FinalBlock, &err);
-            if (err != 0) opencl_handle_error(err);
-
-            cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
-            if (err != 0) opencl_handle_error(err);
-            
-            cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
-
-            kernel.setArg(0, buf_finalBlock);
-            kernel.setArg(1, buf_currentHash);
-            kernel.setArg(2, buf_out_result);
-
-            //TODO: What does this call do?
-            queue.enqueueNDRangeKernel(
-                kernel, 
-                cl::NullRange, 
-                NUM_OF_HASHES
-            );
-
-            queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult);
-
-            auto tEnd = (double)(clock() - tStart)/CLOCKS_PER_SEC;
-            auto hashPerSecond = (int)(NUM_OF_HASHES) / tEnd;
-
-            std::cout << "[*] Current Rate: " << (int)(hashPerSecond / 1000000) << " MH/s\r" << std::flush;
-
-            //Looks for the positive result value
-            if (outResult[0] == (uint)0x12345678)
-            {   
-                std::string exponent = integer_to_hex(outResult[1]);
-                print_found_key(work, exponent);
-                break;
-            }
+            std::lock_guard<std::mutex> lock(kernel_work_lock);
+            work = kernel_work.front();
+            kernel_work.pop();
         }
+
+        // Will hold the result of the hash on OpenCL
+        // is size of the hash plus the success value (0x12345678) and exponent used
+        uint outResult[7];
+        auto resultSize = sizeof(uint) * 7;
+
+        int err;
+        cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, work.FinalBlock, &err);
+        if (err != 0) opencl_handle_error(err);
+
+        cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
+        if (err != 0) opencl_handle_error(err);
+        
+        cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
+
+        kernel.setArg(0, buf_finalBlock);
+        kernel.setArg(1, buf_currentHash);
+        kernel.setArg(2, buf_out_result);
+
+        //TODO: What does this call do?
+        queue.enqueueNDRangeKernel(
+            kernel, 
+            cl::NullRange, 
+            NUM_OF_HASHES
+        );
+
+
+        queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult);
+
+        auto totalTime = tmr.elapsed();
+        tmr.reset();
+        auto hashPerSecond = (long)(NUM_OF_HASHES / totalTime);
+
+        // std::cout << "[*] Current Rate: " << (uint)(hashPerSecond / 1000000) << " MH/s\r" << std::flush;
+        std::cout 
+        << "[*] " 
+        << "Current Rate: " <<  hashPerSecond / 1000000 << " MH/s\r" 
+        << std::flush;
+
+        //Looks for the positive result value
+        if (outResult[0] == (uint)0x12345678)
+        {   
+            std::string exponent = integer_to_hex(outResult[1]);
+            print_found_key(work, exponent);
+            break;
+        }
+        loops++;
     }
 }
 
@@ -321,21 +335,37 @@ void create_work()
     }
 }
 
-int main()
-{
-    if (PRINT_SHA1_TEST) sha1_test();
-    std::thread createWorkThread1(create_work);
-    std::thread createWorkThread2(create_work);
-    
-    //Lets the work populate
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
-    std::cout << "[*] Setup complete!" << std::endl;
-
-    compute();
+void signalHandler(int signum) {
+    std::cout << "\n[*] Interrupt signal received.\n";
 
     //Stops the threads
     running = false;
-    createWorkThread1.join();
-    createWorkThread2.join();
+    sleep(1000);
+
+    exit(signum);  
+}
+
+int main()
+{
+    signal(SIGINT, signalHandler);  
+
+    if (PRINT_SHA1_TEST) sha1_test();
+
+    //Creates threads
+    for (size_t i = 0; i < numberOfThreads; i++)
+    {
+        std::thread t(create_work);
+        t.detach();
+    }
+    
+    //Lets the work populate
+    sleep(5000);
+
+    std::cout << "[*] Setup complete!" << std::endl;
+    std::cout << "[D] " << kernel_work.size() << std::endl;
+
+    compute();
+    running = false;
+    sleep(1000);
 }
