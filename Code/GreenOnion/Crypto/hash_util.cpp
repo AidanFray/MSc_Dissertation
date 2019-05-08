@@ -11,12 +11,8 @@ std::string pad_hex_string_for_sha1(std::string hexString)
 
     hexString += "80";
 
-    // Division by 2 because 2 character make a byte
-    // in the hex string
-    while ((hexString.size() / 2) % 64 < 56)
-    {
-        hexString += "00";
-    }
+    // Division by 2 due to hex
+    while ((hexString.size() / 2) % 64 < 56) hexString += "00";
 
     // Length to hex
     std::stringstream stream;

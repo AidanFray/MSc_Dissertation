@@ -50,7 +50,7 @@ int NUM_OF_HASHES = 16777215;
 // Print vars
 bool PRINT_SHA1_TEST = true;
 
-int MAX_WORK_SIZE = 10000;
+int MAX_WORK_SIZE = 1000;
 
 // Threading vars
 bool running = true;
@@ -124,11 +124,10 @@ std::string rsa_key_to_pgp(std::string n, std::string e, int timestamp)
 {   
     //Structure 2024 key:
     // ############################################################################ //
-    //  Start   Length   Version  Timestamp   Algo(RSA)    N len     N    Sep   E                                       
-    //  0x98      X       0x04      XXXX        0x01      0x0800   X..X  0011  XXX
+    //  Start   Length   Version  Timestamp   Algo(RSA)    MPI(n)    MPI(e)                                 
+    //  0x99     XX       0x04      XXXX        0x01         X         X
     // ############################################################################ //
 
-    //TODO: Make sure these are all inclusive
     // How many characters the packet length is
     int PACKET_LENGTH_CHARS = 4; 
     int TIMESTAMP_LENGTH_CHARS = 8;
@@ -140,7 +139,8 @@ std::string rsa_key_to_pgp(std::string n, std::string e, int timestamp)
 
     //Pads to 4 bytes
     std::string timestamp_string = integer_to_hex(timestamp);
-    while (timestamp_string.length() < TIMESTAMP_LENGTH_CHARS)  timestamp_string = "0" + timestamp_string;
+    pad(timestamp_string, TIMESTAMP_LENGTH_CHARS, '0');
+
     result += timestamp_string;
 
     // Algo number
@@ -156,7 +156,7 @@ std::string rsa_key_to_pgp(std::string n, std::string e, int timestamp)
 
     //Encapsulates in a fingerprint packet
     std::string public_packet_len = integer_to_hex(result.length() / 2);
-    while (public_packet_len.length() < 4) public_packet_len = "0" + public_packet_len;
+    pad(public_packet_len, 4, '0');
 
     result = "99" + public_packet_len + result;
 
@@ -199,7 +199,6 @@ void compute()
     //std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
     cl::Kernel kernel(program, "key_hash");
     cl::CommandQueue queue(context, device);
-
 
     while (true)
     {

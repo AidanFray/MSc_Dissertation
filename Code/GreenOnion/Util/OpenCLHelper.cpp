@@ -99,11 +99,9 @@ std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)
     //Prints out first device
     auto device = devices.front();
 
-
-
     if (printInfo)
     {
-        std::cout << "[!] Vendor:  " << device.getInfo<CL_DEVICE_VENDOR>() << std::endl;
+        std::cout << "[!] Device:  " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
         std::cout << "[!] Version: " << device.getInfo<CL_DEVICE_VERSION>() << std::endl;
     }
 

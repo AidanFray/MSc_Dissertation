@@ -768,11 +768,11 @@ __kernel void key_hash(__global uint* finalBlock,
 __kernel void shaTest(__global uint* success)
 {
     int i;
-    uint W[80];
+    uint W[16];
     uint H[5];
 
     // Zero out W
-    for(i=0;i<80;i++) {
+    for(i=0;i<16;i++) {
         W[i] = 0;
     }
 
