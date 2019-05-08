@@ -48,7 +48,7 @@ int EXPONENT = 0x01000001;
 int NUM_OF_HASHES = 16777215;
 
 // Print vars
-bool PRINT_SHA1_TEST = false;
+bool PRINT_SHA1_TEST = true;
 
 int MAX_WORK_SIZE = 10000;
 
@@ -337,9 +337,6 @@ int main()
         t.detach();
     }
     
-
-    std::cout << "[*] Setup complete!" << std::endl;
-
     compute();
     running = false;
     sleep(1000);

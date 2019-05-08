@@ -93,7 +93,7 @@ std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)
     if (devices.size() == 0)
     {
         std::cout << "[!] No avaliable devices!" << std::endl;
-        exit(1);
+        exit(0);
     }
 
     //Prints out first device
@@ -115,6 +115,12 @@ cl::Platform GetPlatform()
     // Creates an obtains the platform
     std::vector<cl::Platform> platforms;
     cl::Platform::get(&platforms);
+
+    if (platforms.size() == 0)
+    {
+        std::cout << "[!] No available OpenCL platforms!" << std::endl;
+        exit(0);
+    }
     auto platform = platforms.front();
     return platform;
 }
@@ -132,7 +138,8 @@ cl::Program BuildProgram(const std::string& fileName, cl::Context context)
 
     if (err != 0)
     {
-        std::cout << "[!] Error building program: " << getErrorString(err) << std::endl;
+        std::cout << "[!] Error building OpenCL program: " << getErrorString(err) << std::endl;
+        exit(0);
     }
 
     return program;
