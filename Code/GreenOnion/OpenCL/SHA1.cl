@@ -756,7 +756,7 @@ __kernel void key_hash(__global uint* finalBlock,
 	H[4] = e;
 
 	//TODO: Add regex check
-	if (H[4] == 0xffffffff && H[3] == 0xffffffff)
+	if (H[4] == 0xffffffff)
 	{
 		//Used to show the other end we've found a hash
 		outResult[0] = 0x12345678;

@@ -50,11 +50,12 @@ int NUM_OF_HASHES = 16777215;
 // Print vars
 bool PRINT_SHA1_TEST = true;
 
+//Set to 0 for no cap
 int MAX_WORK_SIZE = 1000;
 
 // Threading vars
 bool running = true;
-int numberOfThreads = 2;
+int numberOfThreads = 1;
 std::vector<std::thread> workThreads;
 
 /*
@@ -245,7 +246,7 @@ void compute()
                 cl::NDRange(NUM_OF_HASHES, 1)
             );
 
-            queue.enqueueReadBuffer(buf_out_result, CL_FALSE, 0, resultSize, outResult);
+            queue.enqueueReadBuffer(buf_out_result, CL_TRUE, 0, resultSize, outResult);
 
             auto totalTime = tmr.elapsed();
             tmr.reset();
@@ -279,7 +280,8 @@ void create_work()
     {
         //TODO: find a good max value
         //Stops the program from working too hard
-        if (kernel_work.size() < MAX_WORK_SIZE)
+
+        if (kernel_work.size() < MAX_WORK_SIZE || MAX_WORK_SIZE == 0)
         {
             std::string n, e, d;
             generate_RSA_key(n, e, d);
