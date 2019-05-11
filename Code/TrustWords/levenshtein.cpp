@@ -13,9 +13,9 @@
 //      need to be cleaned 
 // ########################################## //
 
-int DIFFERENCE_TOLERANCE = 1;
+int DIFFERENCE_TOLERANCE = 2;
 
-std::string inputFileName = "./en_unique.csv";
+std::string inputFileName = "./WordLists/EN/en_unique.csv";
 std::string outputFileName = "similar.csv";
 std::map<std::string, std::vector<std::string>> similarWords;
 
