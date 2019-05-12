@@ -42,6 +42,16 @@
         "thread": "cpp",
         "chrono": "cpp",
         "memory": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "csignal": "cpp",
+        "cstddef": "cpp",
+        "complex": "cpp",
+        "condition_variable": "cpp",
+        "list": "cpp",
+        "functional": "cpp",
+        "mutex": "cpp",
+        "numeric": "cpp",
+        "typeindex": "cpp",
+        "variant": "cpp"
     }
 }

@@ -15,15 +15,26 @@ std::string integer_to_hex(int integer)
 }
 
 /*
-    Hex --> Binary
+    Converts a hex string to an 32-bit integer
 */
-std::string hex_to_binary(std::string hexString)
+uint hex_to_integer(std::string hexString)
 {
     std::stringstream ss;
     ss << std::hex << hexString;
 
-    int n;
+    uint n;
     ss >> n;
+
+    return n;
+}
+
+/*
+    Hex --> Binary
+*/
+std::string hex_to_binary(std::string hexString)
+{
+    
+    int n = hex_to_integer(hexString);
     std::bitset<32> b(n);
 
     return b.to_string();

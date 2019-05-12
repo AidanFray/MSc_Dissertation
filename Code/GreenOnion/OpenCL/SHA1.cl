@@ -3,7 +3,7 @@ inline uint rotate1(uint a) { return (a << 1) | (a >> 31); }
 inline uint rotate5(uint a) { return (a << 5) | (a >> 27); }
 inline uint rotate30(uint a) { return (a << 30) | (a >> 2); }
 
-void sha1_block(uint *in, uint *H)
+void sha1_block(uint *W, uint *H)
 {
 	uint a = H[0];
 	uint b = H[1];
@@ -13,67 +13,67 @@ void sha1_block(uint *in, uint *H)
 	uint f;
 	uint x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15;
 
-	x0 = in[0];
+	x0 = W[0];
 	f = (c & b) | andnot(d,b);
 	e = rotate5(a) + f + e + 0x5a827999 + x0;
 	b = rotate30(b);
-	x1 = in[1];
+	x1 = W[1];
 	f = (b & a) | andnot(c,a);
 	d = rotate5(e) + f + d + 0x5a827999 + x1;
 	a = rotate30(a);
-	x2 = in[2];
+	x2 = W[2];
 	f = (a & e) | andnot(b,e);
 	c = rotate5(d) + f + c + 0x5a827999 + x2;
 	e = rotate30(e);
-	x3 = in[3];
+	x3 = W[3];
 	f = (e & d) | andnot(a,d);
 	b = rotate5(c) + f + b + 0x5a827999 + x3;
 	d = rotate30(d);
-	x4 = in[4];
+	x4 = W[4];
 	f = (d & c) | andnot(e,c);
 	a = rotate5(b) + f + a + 0x5a827999 + x4;
 	c = rotate30(c);
-	x5 = in[5];
+	x5 = W[5];
 	f = (c & b) | andnot(d,b);
 	e = rotate5(a) + f + e + 0x5a827999 + x5;
 	b = rotate30(b);
-	x6 = in[6];
+	x6 = W[6];
 	f = (b & a) | andnot(c,a);
 	d = rotate5(e) + f + d + 0x5a827999 + x6;
 	a = rotate30(a);
-	x7 = in[7];
+	x7 = W[7];
 	f = (a & e) | andnot(b,e);
 	c = rotate5(d) + f + c + 0x5a827999 + x7;
 	e = rotate30(e);
-	x8 = in[8];
+	x8 = W[8];
 	f = (e & d) | andnot(a,d);
 	b = rotate5(c) + f + b + 0x5a827999 + x8;
 	d = rotate30(d);
-	x9 = in[9];
+	x9 = W[9];
 	f = (d & c) | andnot(e,c);
 	a = rotate5(b) + f + a + 0x5a827999 + x9;
 	c = rotate30(c);
-	x10 = in[10];
+	x10 = W[10];
 	f = (c & b) | andnot(d,b);
 	e = rotate5(a) + f + e + 0x5a827999 + x10;
 	b = rotate30(b);
-	x11 = in[11];
+	x11 = W[11];
 	f = (b & a) | andnot(c,a);
 	d = rotate5(e) + f + d + 0x5a827999 + x11;
 	a = rotate30(a);
-	x12 = in[12];
+	x12 = W[12];
 	f = (a & e) | andnot(b,e);
 	c = rotate5(d) + f + c + 0x5a827999 + x12;
 	e = rotate30(e);
-	x13 = in[13];
+	x13 = W[13];
 	f = (e & d) | andnot(a,d);
 	b = rotate5(c) + f + b + 0x5a827999 + x13;
 	d = rotate30(d);
-	x14 = in[14];
+	x14 = W[14];
 	f = (d & c) | andnot(e,c);
 	a = rotate5(b) + f + a + 0x5a827999 + x14;
 	c = rotate30(c);
-	x15 = in[15];
+	x15 = W[15];
 	f = (c & b) | andnot(d,b);
 	e = rotate5(a) + f + e + 0x5a827999 + x15;
 	b = rotate30(b);
@@ -348,6 +348,8 @@ void sha1_block(uint *in, uint *H)
 
 __kernel void key_hash(__global uint* finalBlock, 
 					   __global uint* currentDigest, 
+					   __global uint* target_keys,
+					   __global uint* target_keys_size,
 					   __global uint* outResult)
 {
 	int i;
@@ -414,7 +416,6 @@ __kernel void key_hash(__global uint* finalBlock,
 	int exponenetMaskRight = (lastByte * 0x1000000) ^ (lastByteNew * 0x1000000);
 	W[4] = W[4] ^ exponenetMaskRight;
 
-	//sha1_block() unrolled
 	uint a = H[0];
 	uint b = H[1];
 	uint c = H[2];
@@ -755,12 +756,19 @@ __kernel void key_hash(__global uint* finalBlock,
 	H[3] = d;
 	H[4] = e;
 
-	//TODO: Add regex check
-	if (H[4] == 0xffffffff)
+	int x;
+	for(x = 0; x < target_keys_size[0]; x++)
 	{
-		//Used to show the other end we've found a hash
-		outResult[0] = 0x12345678;
-		outResult[1] = newExponent;
+		uint leftSide = target_keys[x * 2];
+		uint rightSide = target_keys[(x * 2) + 1];
+
+		if (H[0] == leftSide && H[1] == rightSide)
+		{
+			//Used to show the other end we've found a hash
+			outResult[0] = 0x12345678;
+			outResult[1] = newExponent;
+			break;
+		}
 	}
 }
 

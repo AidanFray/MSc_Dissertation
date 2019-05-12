@@ -111,7 +111,7 @@ void print_found_key(KernelWork work, std::string exponent)
     std::cout << "Private Key                                           " << std::endl;
     std::cout << work.Private_Key + "\n"                                  << std::endl;
     //Runs it through gpg
-    std::string command = "echo \"" + armour_key + "\" | gpg --list-packets";
+    std::string command = "echo \"" + armour_key + "\" | gpg --list-packets -v";
     std::system(command.c_str());
     std::cout << std::endl;
     std::cout << "##################################################### " << "\n\n";

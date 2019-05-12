@@ -58,6 +58,9 @@ bool running = true;
 int numberOfThreads = 1;
 std::vector<std::thread> workThreads;
 
+//TODO: Pass as parameter
+std::string target_keys_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
+
 /*
     Used to test that OpenCL is producing the correct result
 */
@@ -182,6 +185,45 @@ void generate_RSA_key(std::string &str_n, std::string &str_e, std::string &str_d
 }
 
 /*
+    TODO
+*/
+void convert_target_keys_to_opencl_param(std::vector<std::array<uint, 2>> targetKeys, uint* target_key_values)
+{
+    for (size_t i = 0; i < targetKeys.size(); i++)
+    {
+        auto key_values = targetKeys[i];
+
+        for (size_t x = 0; x < 2; x++)
+        {
+            target_key_values[(i * 2) + x] = key_values[x];
+        }
+    }
+}
+
+/*
+    TODO
+*/
+std::vector<std::array<uint, 2>> load_target_keys(std::string filePath)
+{
+    std::ifstream infile(filePath);
+
+    std::string line;
+    std::vector<std::array<uint, 2>> keys;
+    while (getline(infile, line))
+    {
+        int len = line.length();
+        int mid = len / 2;
+
+        std::string lineLeft = line.substr(0, mid);
+        std::string lineRight = line.substr(mid, len);
+
+        keys.push_back({hex_to_integer(lineLeft), hex_to_integer(lineRight)});
+    }
+
+    return keys;
+}
+
+/*
     Communicates with OpenCL and proccess results
 */
 void compute()
@@ -200,6 +242,12 @@ void compute()
     //std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
     cl::Kernel kernel(program, "key_hash");
     cl::CommandQueue queue(context, device);
+
+    // Loads keys program will be searching for
+    auto target_keys = load_target_keys(target_keys_file_path);
+    uint target_key_opencl[target_keys.size() * 2];
+    convert_target_keys_to_opencl_param(target_keys, target_key_opencl);
+    uint target_key_size_opencl[1] {target_keys.size()};
 
     while (true)
     {
@@ -225,6 +273,7 @@ void compute()
             // is size of the hash plus the success value (0x12345678) and exponent used
             uint outResult[2];
             auto resultSize = sizeof(uint) * 2;
+            auto target_keys_size = target_keys.size() * sizeof(uint) * 2;
 
             int err;
             cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, work.FinalBlock, &err);
@@ -233,11 +282,19 @@ void compute()
             cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
             if (err != 0) opencl_handle_error(err);
             
+            cl::Buffer buf_targetKeys(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, target_keys_size, target_key_opencl, &err);
+            if (err != 0) opencl_handle_error(err);
+
+            cl::Buffer buf_targetKeysSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), target_key_size_opencl, &err);
+            if (err != 0) opencl_handle_error(err);
+
             cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
 
             kernel.setArg(0, buf_finalBlock);
             kernel.setArg(1, buf_currentHash);
-            kernel.setArg(2, buf_out_result);
+            kernel.setArg(2, buf_targetKeys);
+            kernel.setArg(3, buf_targetKeysSize);
+            kernel.setArg(4, buf_out_result);
 
             //TODO: What does this call do?
             queue.enqueueNDRangeKernel(
