@@ -52,7 +52,9 @@
 			"tuple": "cpp",
 			"typeinfo": "cpp",
 			"utility": "cpp",
-			"queue": "cpp"
+			"queue": "cpp",
+			"list": "cpp",
+			"numeric": "cpp"
 		},
 		"files.exclude": {
 			"**/*.toc": true,

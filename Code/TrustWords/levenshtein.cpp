@@ -2,25 +2,17 @@
 #include <stdlib.h>
 #include <map>
 #include <vector>
-#include <fstream>
 #include <sstream>
+#include <fstream>
 
-// ########################################## //
-//                  TODO                      //
-// ########################################## //
-// TODO For some godly reason some words are
-//      repeated in the word set, these will 
-//      need to be cleaned 
-// ########################################## //
+int DIFFERENCE_TOLERANCE = 1;
 
-int DIFFERENCE_TOLERANCE = 2;
-
-std::string inputFileName = "./WordLists/EN/en_unique.csv";
-std::string outputFileName = "similar.csv";
+std::string inputFileName = "";
+std::string outputFileName = "";
 std::map<std::string, std::vector<std::string>> similarWords;
 
 /*
-    TODO
+    Calculates the levistien distance of two words
 */
 int lev_distance(std::string word1, std::string word2)
 {
@@ -60,7 +52,7 @@ int lev_distance(std::string word1, std::string word2)
 }
 
 /*
-    TODO
+    Compares each word using it's levistien distance
 */
 void find_similar_words(std::vector<std::string> words)
 {
@@ -108,7 +100,7 @@ void find_similar_words(std::vector<std::string> words)
 }
 
 /*
-    TODO
+    Saves the similar words to a specified file
 */
 void save_similar_words_to_file()
 {
@@ -132,62 +124,42 @@ void save_similar_words_to_file()
 }
 
 /*
-    https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
-*/
-std::vector<std::string> get_next_line_and_split_into_tokens(std::istream& str)
-{
-    std::vector<std::string>   result;
-    std::string                line;
-    std::getline(str,line);
-
-    std::stringstream          lineStream(line);
-    std::string                cell;
-
-    while(std::getline(lineStream,cell, ','))
-    {
-        result.push_back(cell);
-    }
-    // This checks for a trailing comma with no data after it.
-    if (!lineStream && cell.empty())
-    {
-        // If there was a trailing comma then add an empty element.
-        result.push_back("");
-    }
-    return result;
-}
-
-/*
     Loads a CSV file and splits values
 */
 std::vector<std::string> load_CSV(std::string filePath)
 {
-    std::ifstream infile(filePath);
+
+    std::ifstream input(filePath);
+
+    std::string line;
     std::vector<std::string> words;
-    std::vector<std::string> line;
-
-    while (true) 
+    for( std::string line; getline(input, line); )
     {
-        line = get_next_line_and_split_into_tokens(infile);
-
-        if (line[0] == "en")
-        {
-            words.push_back(line[2]);
-        }
-        else break;
-    } 
+        words.push_back(line);
+    }
 
     return words;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+    if ( argc != 3)
+    {
+        std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH>" << std::endl;
+        exit(0);
+    }
+
+    // Sets the args
+    inputFileName = argv[1];
+    outputFileName = argv[2];
+
     int loop = 0;
     auto words = load_CSV(inputFileName);
 
-    // For VSCode debugging
     if (words.empty())
     {
-        words = load_CSV("/home/user/Github/Cyber-Security-Individual-Project/Code/TrustWords/en.csv");
+        std::cout << "[!] No words loaded!" << std::endl;
+        exit(0);
     }
 
     find_similar_words(words);
