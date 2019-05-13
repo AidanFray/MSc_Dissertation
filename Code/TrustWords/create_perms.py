@@ -9,6 +9,9 @@ import os
 ##################################################
 # - Functionality to change fingerprints via the
 #   command line
+#
+# - ISSUE: Program runs out of memory when running
+#          it with massive number
 ###################################################
 
 # DEBUG - For VSCode
@@ -16,10 +19,13 @@ import os
 file_path = "."
 
 # The fingerprint of the target
-UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379 1111"
+UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379"
 
 # The fingerprint we can change via MITM
-CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3 1111"
+CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"
+
+# Stops the program from generating permutations that fill the RAM
+MAX_PEM_SIZE = 2000000000
 
 mappings_hex_to_word = {}
 mappings_word_to_hex = {}
@@ -51,7 +57,6 @@ def load_mappings(fileName):
                 mappings_word_to_hex[word].append(word_hex)
             else:
                 mappings_word_to_hex.update({word : [word_hex]})
-
 def load_similar_mappings(fileName):
     """
     Loads the mapping that have been found to be similar
@@ -70,6 +75,16 @@ def load_similar_mappings(fileName):
         similar_words = line_parts[1:-1]
 
         mappings_similar_words.update({base_word : similar_words})
+
+def save_permutations(perms):
+    """
+    Saves the potential key permutations to file
+    """
+
+    with open("./target_keys.txt", "w") as file:
+        for p in perms:
+            file.write(p.upper())
+            file.write("\n")
 
 def finger_print_to_words(fingerprint, PRINT=True):
     """
@@ -97,7 +112,6 @@ def finger_print_to_words(fingerprint, PRINT=True):
         print("#" * 100)
 
     return trustwords
-
 def XOR_fingerprints(fingerprint1, fingerprint2):
     """
     XORs two fingerprints, this is usefull because pEp
@@ -155,12 +169,12 @@ def gen_all_same_perms(wordslist, PRINT=True):
     for word in wordslist:
         mappings.append(mappings_word_to_hex[word])
 
-    perms = create_all_permutations(mappings)
+    if check_pem_size(mappings):
+        perms = gen_permutations(mappings)
 
     if PRINT: print(f"[*] Mapping allows {len(perms)} samec combinations!")
 
     return perms
-
 def gen_all_similar_perms(trustwords, PRINT=True):
     """
     This method takes multi-mappings (Same word multiple value) and
@@ -195,17 +209,20 @@ def gen_all_similar_perms(trustwords, PRINT=True):
 
         fingerprint_chunks.append(perms)
 
-    perms = create_all_permutations(fingerprint_chunks)
-
-    if PRINT: print(f"[*] Mapping allows {len(perms)} different combinations!")
+    if check_pem_size(fingerprint_chunks):
+        perms = gen_permutations(fingerprint_chunks)
+        if PRINT: print(f"[*] Mapping allows {len(perms)} different combinations!")
 
     return perms
-
-def create_all_permutations(lists):
+def gen_permutations(lists):
     """
     This method uses ittertools to create all the
     permutations of fingerprints
     """
+
+    perm_size = 1
+    for l in lists:
+        perm_size *= len(l) 
 
     size = len(lists)
 
@@ -258,16 +275,16 @@ def create_all_permutations(lists):
                 ))
     else:
         raise Exception("Invalid permutation size!")
+def check_pem_size(lists):
+    perm_size = 1
+    for l in lists:
+        perm_size *= len(l) 
 
-def save_permutations(perms):
-    """
-    Saves the potential key permutations to file
-    """
-
-    with open("./target_keys.txt", "w") as file:
-        for p in perms:
-            file.write(p.upper())
-            file.write("\n")
+    if perm_size > MAX_PEM_SIZE:
+        print(f"[!] Permutation too big at: {perm_size}. Ignoring due to RAM constraints")
+        return False
+    else:
+        return True
 
 def create_random_fingerprint(number_of_words):
     sha = SHA1.new()
@@ -275,7 +292,6 @@ def create_random_fingerprint(number_of_words):
     digest = sha.hexdigest()
 
     return digest[:number_of_words *  4]
-
 def determine_average_perms(number_of_words, all_perms=True):
 
     loops = 50000
@@ -301,6 +317,7 @@ def args():
     parser.add_argument("--average-multi", dest="average_multi", action="store_true")
     parser.add_argument("--average", dest="average", action="store_true")
     parser.add_argument("-l", dest="language", nargs=1, action="store")
+    parser.add_argument("-sm", dest="similar", nargs=1, action="store")
 
     args = parser.parse_args()
 
@@ -308,9 +325,13 @@ def args():
     if args.language:
         language = args.language[0]
 
-    # INIT - Loading code
+    # Loads the file paths
+    if args.similar:
+        similar_mappings_file_name = args.similar[0]
+    else:
+        similar_mappings_file_name = f"Wordlists/{language.upper()}/{language.lower()}_similar.csv"
+
     dictionary_file_name = f"Wordlists/{language.upper()}/{language.lower()}.csv"
-    similar_mappings_file_name = f"Wordlists/{language.upper()}/{language.lower()}_similar.csv"
 
     load_mappings(dictionary_file_name)
     load_similar_mappings(similar_mappings_file_name)

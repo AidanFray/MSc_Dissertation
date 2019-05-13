@@ -760,11 +760,21 @@ __kernel void key_hash(__global uint* finalBlock,
 		uint leftSide = target_keys[x * 2];
 		uint rightSide = target_keys[(x * 2) + 1];
 
-		// These lines are used to compare if a value is equal
-		// if leftside and H[0] are equal they will cancel out
-		// this will leave the successfull variable (0x12345678)
-		outResult[0] = 0x12345678 	^ leftSide ^ H[0] ^ rightSide ^ H[1];
-		outResult[1] = newExponent  ^ leftSide ^ H[0] ^ rightSide ^ H[1];
+		// // These lines are used to compare if a value is equal
+		// // if leftside and H[0] are equal they will cancel out
+		// // this will leave the successfull variable (0x12345678)
+		// outResult[0] = 0x12345678 	^ leftSide ^ H[0] ^ rightSide ^ H[1];
+		// outResult[1] = newExponent  ^ leftSide ^ H[0] ^ rightSide ^ H[1];
+
+		if (H[0] == leftSide)
+		{
+			if (H[1] == rightSide)
+			{
+				outResult[0] = 0x12345678;
+				outResult[1] = newExponent;
+			}
+			
+		}
 	}
 
 	// // Debug

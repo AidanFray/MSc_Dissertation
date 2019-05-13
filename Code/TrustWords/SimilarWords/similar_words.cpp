@@ -11,12 +11,46 @@ int DIFFERENCE_TOLERANCE = 1;
 
 std::string inputFileName = "";
 std::string outputFileName = "";
-std::map<std::string, std::vector<std::string>> similarWords;
 
 
 // TODO: pass these as parameters
-bool LEV_DISTANCE = false;
-bool SOUNDEX = true;
+static bool LEV_DISTANCE = false;
+static bool SOUNDEX = false;
+
+std::string SOUNDEX_CLI_TAG = "-s";
+std::string LEV_CLI_TAG = "-l";
+
+/*
+    Saves the similar words to a specified file
+*/
+void save_similar_words_to_file(ofstream &outFile, std::vector<std::string> sim_words)
+{
+    for (std::string word : sim_words)
+    {
+        outFile << word << ",";
+    }
+
+    outFile << "\n";
+    outFile << std::flush;
+}
+
+/*
+    Loads a CSV file and splits values
+*/
+std::vector<std::string> load_CSV(std::string filePath)
+{
+
+    std::ifstream input(filePath);
+
+    std::string line;
+    std::vector<std::string> words;
+    for( std::string line; getline(input, line); )
+    {
+        words.push_back(line);
+    }
+
+    return words;
+}
 
 /*
     Calculates the levistien distance of two words
@@ -63,16 +97,25 @@ int lev_distance(std::string word1, std::string word2)
 */
 void find_similar_words(std::vector<std::string> words)
 {
+    // ## Note ##
+    // The format of saving to file after every word alongside a refresh of the vector is 
+    // to solve the issue of the vector getting too large and causing my Linux OS to freeze
+    // the I/O slows down the operation but now I'm not guessing if the input will be too big 
+
+    std::vector<std::string> sim_words;
+    std::ofstream outFile (outputFileName);
+
     int loop = 0;
     for (std::string word_y : words)
     {
+        // Recreates the vector for this word_y
+        sim_words.clear();
+        sim_words.push_back(word_y);
+
         std::string wordY_soundex = soundex(word_y);
         
-        std::string word_x;
-        for (size_t i = 0; i < words.size(); i++)
+        for (std::string word_x : words)
         {
-            word_x = words[i];
-
              // Makes sure the same words aren't checked
             if (word_y != word_x)
             {
@@ -93,27 +136,7 @@ void find_similar_words(std::vector<std::string> words)
                 // Adds the word to the dictionary  
                 if (add_word)
                 {
-                    // Not found in dictionary
-                    if (similarWords.count(word_y) == 0)
-                    {
-
-                        std::vector<std::string> sim_words;
-                        sim_words.push_back(word_x);
-
-                        similarWords.insert(
-                            std::pair
-                            <
-                                std::string, 
-                                std::vector<std::string>
-                            >
-                            (word_y, sim_words));
-                    }
-                    // Found in dictionary
-                    else
-                    {   
-                        similarWords[word_y].push_back(word_x);
-                    }
-
+                    sim_words.push_back(word_x);
                     add_word = false;
                 }
     
@@ -121,62 +144,55 @@ void find_similar_words(std::vector<std::string> words)
         }
         std::cout << "[*] Line: " << loop << "/" << words.size() << "\r" << std::flush;
         loop++;
+
+        // Saves the word to file
+        save_similar_words_to_file(outFile, sim_words);
     }
+    outFile.close();
 }
 
 /*
-    Saves the similar words to a specified file
+    Prints the usage for the script
 */
-void save_similar_words_to_file()
+void usage()
 {
-    std::ofstream outFile (outputFileName);
-
-    for (std::pair<std::string, std::vector<std::string>> wordPair : similarWords)
-    {
-        auto word = wordPair.first;
-        auto simWords = wordPair.second;
-
-        outFile << word << ",";
-
-        for (std::string simWord : simWords)
-        {
-            outFile << simWord << ",";
-        }
-        outFile << "\n";
-    }
-
-    outFile.close(); 
+    std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH> <MODE> [-s|-l]" << std::endl;
+    exit(0);
 }
 
 /*
-    Loads a CSV file and splits values
+    TODO
 */
-std::vector<std::string> load_CSV(std::string filePath)
+void parse_program_mode(std::string commandInput)
 {
-
-    std::ifstream input(filePath);
-
-    std::string line;
-    std::vector<std::string> words;
-    for( std::string line; getline(input, line); )
+    if (commandInput == SOUNDEX_CLI_TAG)
     {
-        words.push_back(line);
+        SOUNDEX = true;
     }
-
-    return words;
+    else if (commandInput == LEV_CLI_TAG)
+    {
+        LEV_DISTANCE = true;
+    }
+    else
+    {
+        std::cout << "[!] Error: Please select a mode!" << std::endl;
+        usage();
+    }
 }
 
 int main(int argc, char *argv[])
 {
-    if ( argc != 3)
+    if ( argc != 4)
     {
-        std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH>" << std::endl;
-        exit(0);
+        usage();
     }
 
     // Sets the args
     inputFileName = argv[1];
     outputFileName = argv[2];
+    std::string mode = argv[3];
+
+    parse_program_mode(mode);
 
     int loop = 0;
     auto words = load_CSV(inputFileName);
@@ -188,5 +204,5 @@ int main(int argc, char *argv[])
     }
 
     find_similar_words(words);
-    save_similar_words_to_file();
+    // save_similar_words_to_file();
 }
