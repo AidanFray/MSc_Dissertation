@@ -16,10 +16,10 @@ import os
 file_path = "."
 
 # The fingerprint of the target
-UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379"
+UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379 1111"
 
 # The fingerprint we can change via MITM
-CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"
+CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3 1111"
 
 mappings_hex_to_word = {}
 mappings_word_to_hex = {}
@@ -278,7 +278,7 @@ def create_random_fingerprint(number_of_words):
 
 def determine_average_perms(number_of_words, all_perms=True):
 
-    loops = 20000
+    loops = 50000
     total = 0
 
     for x in range(loops):

@@ -5,11 +5,18 @@
 #include <sstream>
 #include <fstream>
 
+#include "soundex.cpp"
+
 int DIFFERENCE_TOLERANCE = 1;
 
 std::string inputFileName = "";
 std::string outputFileName = "";
 std::map<std::string, std::vector<std::string>> similarWords;
+
+
+// TODO: pass these as parameters
+bool LEV_DISTANCE = false;
+bool SOUNDEX = true;
 
 /*
     Calculates the levistien distance of two words
@@ -59,6 +66,8 @@ void find_similar_words(std::vector<std::string> words)
     int loop = 0;
     for (std::string word_y : words)
     {
+        std::string wordY_soundex = soundex(word_y);
+        
         std::string word_x;
         for (size_t i = 0; i < words.size(); i++)
         {
@@ -67,9 +76,22 @@ void find_similar_words(std::vector<std::string> words)
              // Makes sure the same words aren't checked
             if (word_y != word_x)
             {
-                int diff = lev_distance(word_y, word_x);
+                bool add_word = false;
 
-                if (diff <= DIFFERENCE_TOLERANCE)
+                if (LEV_DISTANCE)
+                {
+                    int diff = lev_distance(word_y, word_x);
+                    add_word = diff <= DIFFERENCE_TOLERANCE;
+                        
+                }
+                else if (SOUNDEX)
+                {
+                    std::string wordX_soundex = soundex(word_x);
+                    add_word = wordX_soundex == wordY_soundex;
+                }
+
+                // Adds the word to the dictionary  
+                if (add_word)
                 {
                     // Not found in dictionary
                     if (similarWords.count(word_y) == 0)
@@ -91,7 +113,10 @@ void find_similar_words(std::vector<std::string> words)
                     {   
                         similarWords[word_y].push_back(word_x);
                     }
+
+                    add_word = false;
                 }
+    
             }
         }
         std::cout << "[*] Line: " << loop << "/" << words.size() << "\r" << std::flush;
