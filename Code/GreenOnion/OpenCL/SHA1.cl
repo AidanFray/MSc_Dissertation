@@ -352,8 +352,6 @@ __kernel void key_hash(__global uint* finalBlock,
 					   __global uint* target_keys_size,
 					   __global uint* outResult)
 {
-	int i;
-
 	// We have 3 bytes to work with proving us with 16777215 (2^24)
 	// increments per key
 
@@ -382,7 +380,6 @@ __kernel void key_hash(__global uint* finalBlock,
 	W[14] = finalBlock[14];
 	W[15] = finalBlock[15];
 
-	//for(i = 0; i < 5; ++i) H[i] = currentDigest[i];
 	H[0] = currentDigest[0];
 	H[1] = currentDigest[1];
 	H[2] = currentDigest[2];
@@ -756,20 +753,27 @@ __kernel void key_hash(__global uint* finalBlock,
 	H[3] = d;
 	H[4] = e;
 
-	int x;
-	for(x = 0; x < target_keys_size[0]; x++)
+
+	// Compares all the potential keys
+	for(int x = 0; x < target_keys_size[0]; ++x)
 	{
 		uint leftSide = target_keys[x * 2];
 		uint rightSide = target_keys[(x * 2) + 1];
 
-		if (H[0] == leftSide && H[1] == rightSide)
-		{
-			//Used to show the other end we've found a hash
-			outResult[0] = 0x12345678;
-			outResult[1] = newExponent;
-			break;
-		}
+		// These lines are used to compare if a value is equal
+		// if leftside and H[0] are equal they will cancel out
+		// this will leave the successfull variable (0x12345678)
+		outResult[0] = 0x12345678 	^ leftSide ^ H[0] ^ rightSide ^ H[1];
+		outResult[1] = newExponent  ^ leftSide ^ H[0] ^ rightSide ^ H[1];
 	}
+
+	// // Debug
+	// // Used to show how much of a hit multi-string comparison is
+	// if (H[0] == 0xffffffff && H[1] == 0xffffffff)
+	// {
+	// 	outResult[0] = 0x12345678;
+	// 	outResult[1] = newExponent;
+	// }
 }
 
 // Test the SHA hash code

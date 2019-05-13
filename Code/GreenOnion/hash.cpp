@@ -59,7 +59,7 @@ int numberOfThreads = 1;
 std::vector<std::thread> workThreads;
 
 //TODO: Pass as parameter
-std::string target_keys_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
+std::string target_keys_file_path = "./target_keys.txt";
 
 /*
     Used to test that OpenCL is producing the correct result
@@ -247,8 +247,14 @@ void compute()
     auto target_keys = load_target_keys(target_keys_file_path);
     uint target_key_opencl[target_keys.size() * 2];
     convert_target_keys_to_opencl_param(target_keys, target_key_opencl);
-    uint target_key_size_opencl[1] {target_keys.size()};
+    uint target_key_size_opencl[1] {(uint)target_keys.size()};
 
+    if (target_keys.size() == 0)
+    {
+        std::cout << "[*] No target keys loaded! Exiting!" << std::endl;
+        exit(0);
+    }
+    
     while (true)
     {
         Timer tmr;
@@ -273,20 +279,20 @@ void compute()
             // is size of the hash plus the success value (0x12345678) and exponent used
             uint outResult[2];
             auto resultSize = sizeof(uint) * 2;
-            auto target_keys_size = target_keys.size() * sizeof(uint) * 2;
+            auto target_keys_size = target_keys.size() * (sizeof(uint) * 2);
 
             int err;
             cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, work.FinalBlock, &err);
-            if (err != 0) opencl_handle_error(err);
+            if (err != 0) opencl_handle_error(err, "final_block");
 
             cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
-            if (err != 0) opencl_handle_error(err);
+            if (err != 0) opencl_handle_error(err, "current_hash");
             
-            cl::Buffer buf_targetKeys(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, target_keys_size, target_key_opencl, &err);
-            if (err != 0) opencl_handle_error(err);
+            cl::Buffer buf_targetKeys(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * sizeof(target_key_opencl), target_key_opencl, &err);
+            if (err != 0) opencl_handle_error(err, "target_key_opencl");
 
             cl::Buffer buf_targetKeysSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), target_key_size_opencl, &err);
-            if (err != 0) opencl_handle_error(err);
+            if (err != 0) opencl_handle_error(err, "target_key_size_opencl");
 
             cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
 

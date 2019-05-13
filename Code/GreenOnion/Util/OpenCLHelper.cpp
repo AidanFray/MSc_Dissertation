@@ -80,9 +80,10 @@ const char *getErrorString(int error)
     }
 }
 
-void opencl_handle_error(int error)
+void opencl_handle_error(int error, std::string name="")
 {
-    std::cout << getErrorString(error) << std::endl;
+    std::cout << "[!] " << getErrorString(error) << ": " << name << std::endl;
+    exit(error);
 }
 
 std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)
