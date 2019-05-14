@@ -12,8 +12,6 @@ int DIFFERENCE_TOLERANCE = 1;
 std::string inputFileName = "";
 std::string outputFileName = "";
 
-
-// TODO: pass these as parameters
 static bool LEV_DISTANCE = false;
 static bool SOUNDEX = false;
 

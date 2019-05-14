@@ -35,6 +35,8 @@
 //
 // TODO:    Format output public key into a PGP public key
 //          packet
+//
+// TODO:    Pass output file path as a parameter
 //########################################################//
 
 static std::queue<KernelWork> kernel_work;
@@ -58,7 +60,7 @@ bool running = true;
 int numberOfThreads = 1;
 std::vector<std::thread> workThreads;
 
-//TODO: Pass as parameter
+
 std::string target_keys_file_path = "./target_keys.txt";
 
 /*
@@ -151,7 +153,6 @@ std::string rsa_key_to_pgp(std::string n, std::string e, int timestamp)
     result += "01";
 
     //MPI (N)
-    //TODO: dynamic key length
     result += "0800";
     result += n;
 
@@ -168,7 +169,7 @@ std::string rsa_key_to_pgp(std::string n, std::string e, int timestamp)
 }
 
 /*
-    TODO
+    Generates an RSA key to be sent to the GPU
 */
 void generate_RSA_key(std::string &str_n, std::string &str_e, std::string &str_d)
 {
@@ -185,7 +186,7 @@ void generate_RSA_key(std::string &str_n, std::string &str_e, std::string &str_d
 }
 
 /*
-    TODO
+    Converts the keys to check to two 32-bit integers
 */
 void convert_target_keys_to_opencl_param(std::vector<std::array<uint, 2>> targetKeys, uint* target_key_values)
 {
@@ -201,7 +202,7 @@ void convert_target_keys_to_opencl_param(std::vector<std::array<uint, 2>> target
 }
 
 /*
-    TODO
+    Loads the keys hashes the program should be searching for
 */
 std::vector<std::array<uint, 2>> load_target_keys(std::string filePath)
 {
@@ -302,7 +303,6 @@ void compute()
             kernel.setArg(3, buf_targetKeysSize);
             kernel.setArg(4, buf_out_result);
 
-            //TODO: What does this call do?
             queue.enqueueNDRangeKernel(
                 kernel, 
                 cl::NullRange, 
@@ -341,9 +341,7 @@ void create_work()
 {
     while (running)
     {
-        //TODO: find a good max value
-        //Stops the program from working too hard
-
+        //Stops the program from working too hard by capping the max work size
         if (kernel_work.size() < MAX_WORK_SIZE || MAX_WORK_SIZE == 0)
         {
             std::string n, e, d;

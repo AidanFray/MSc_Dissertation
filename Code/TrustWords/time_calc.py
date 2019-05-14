@@ -20,5 +20,7 @@ time_seconds = 2**(4*length_in_chars-1) / HASHSPEED / permutations
 
 time_days = time_seconds / 3600 / 24
 
-print(f"[*] It will take {round(time_days, 2)} days!")
-print(f"[*] It will take {round(time_days / 365, 2)} years!")
+print(f"[*] It will take:")
+print(f"[*] {round(time_seconds, 2)} seconds!")
+print(f"[*] {round(time_days, 2)} days!")
+print(f"[*] {round(time_days / 365, 2)} years!")
