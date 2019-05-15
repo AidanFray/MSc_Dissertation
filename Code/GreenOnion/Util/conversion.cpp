@@ -31,12 +31,12 @@ uint hex_to_integer(std::string hexString)
 /*
     TODO
 */
-long hex_to_64bit_integer(std::string hexString)
+unsigned long hex_to_64bit_integer(std::string hexString)
 {
     std::stringstream ss;
     ss << std::hex << hexString;
 
-    long n;
+    unsigned long n;
     ss >> n;
 
     return n;

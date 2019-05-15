@@ -3,37 +3,47 @@
 #include "BloomFilter.h"
 #include "MurmurHash3.cpp"
 
-BloomFilter::BloomFilter(uint64_t size, uint8_t numHashes): m_bits(size), m_numHashes(numHashes) 
+BloomFilter::BloomFilter(unsigned long size, short numHashes): m_bits(size), m_numHashes(numHashes) 
 {}
 
-std::array<uint64_t, 2> hash(long value) 
+std::array<uint, 2> hash(unsigned long value) 
 {
-  std::array<uint64_t, 2> hashValue;
-  MurmurHash3_x86_128(&value, sizeof(value), 0, hashValue.data());
+  uint leftSide = value >> 32;
+  uint rightSide = (uint)value;
 
-  return hashValue;
+  std::array<uint, 2> hashValues;
+  hashValues[0] = MurmurHash3_x86_32(&leftSide, sizeof(leftSide), 0);
+  hashValues[1] = MurmurHash3_x86_32(&rightSide, sizeof(leftSide), 0);
+
+  return hashValues;
 }
 
-inline uint64_t nthHash(uint8_t n, uint64_t hashA, uint64_t hashB, uint64_t filterSize) 
+inline uint64_t nthHash(uint8_t n, int hashA, int hashB, uint64_t filterSize) 
 {
     return (hashA + n * hashB) % filterSize;
 }
 
-void BloomFilter::add(long value) 
+void BloomFilter::add(unsigned long value) 
 {
   auto hashValues = hash(value);
 
   for (int n = 0; n < m_numHashes; n++) {
-      m_bits[nthHash(n, hashValues[0], hashValues[1], m_bits.size())] = true;
+
+      auto pos = nthHash(n, hashValues[0], hashValues[1], m_bits.size());
+
+      m_bits[pos] = true;
   }
 }
 
-bool BloomFilter::possiblyContains(long value) const 
+bool BloomFilter::possiblyContains(unsigned long value) const 
 {
   auto hashValues = hash(value);
 
   for (int n = 0; n < m_numHashes; n++) {
-      if (!m_bits[nthHash(n, hashValues[0], hashValues[1], m_bits.size())]) {
+
+      auto d = nthHash(n, hashValues[0], hashValues[1], m_bits.size());
+
+      if (!m_bits[d]) {
           return false;
       }
   }

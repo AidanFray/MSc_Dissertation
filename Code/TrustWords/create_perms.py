@@ -14,7 +14,7 @@ import os
 file_path = "."
 
 # The fingerprint of the target
-UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379"
+UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CE3 F379"
 
 # The fingerprint we can change via MITM
 CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"

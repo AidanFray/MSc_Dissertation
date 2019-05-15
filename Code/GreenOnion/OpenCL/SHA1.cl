@@ -4,46 +4,51 @@ inline uint rotate5(uint a) { return (a << 5) | (a >> 27); }
 inline uint rotate30(uint a) { return (a << 30) | (a >> 2); }
 
 
-uint murmur3_64(const long* key)
+// ################################## MUR MUR ##################################### //
+uint MurmurHash3_x86_32 (uint key)
 {
-	uint seed = 0;
-	size_t len = sizeof(long);
+		uint len = sizeof(uint);
+		uint seed = 0;
 
-	long h = seed;
-	if (len > 3) {
-		const long* key_x4 = (const long*) key;
-		size_t i = len >> 2;
-		do {
-			long k = *key_x4++;
-			k *= 0xcc9e2d51;
-			k = (k << 15) | (k >> 17);
-			k *= 0x1b873593;
-			h ^= k;
-			h = (h << 13) | (h >> 19);
-			h = h * 5 + 0xe6546b64;
-		} while (--i);
-		key = (const ushort*) key_x4;
-	}
-	if (len & 3) {
-		size_t i = len & 3;
-		long k = 0;
-		do {
-			k <<= 8;
-			k |= key[i - 1];
-		} while (--i);
-		k *= 0xcc9e2d51;
+		uint c1 = 0xcc9e2d51;
+		uint c2 = 0x1b873593;
+		uint m = 5;
+		uint n = 0xe6546b64;
+
+		uint h = seed;
+
+		// 4 byte chunks are supposed to loop here
+		// but we're only dealing with 32-bit ints here
+		// so we don't need to loop
+		uint k;
+		k  = key;
+		k *= c1;
 		k = (k << 15) | (k >> 17);
-		k *= 0x1b873593;
+		k *= c2;
+
 		h ^= k;
-	}
-	h ^= len;
-	h ^= h >> 16;
-	h *= 0x85ebca6b;
-	h ^= h >> 13;
-	h *= 0xc2b2ae35;
-	h ^= h >> 16;
-	return h;
+		h = (h << 13) | (h >> 19);
+		h  = (h * m) + n;
+
+		h ^= len;
+		h ^= (h >> 16);
+		h *= 0x85ebca6b;
+		h ^= (h >> 13);
+		h *= 0xc2b2ae35;
+		h ^= (h >> 16);
+
+		return h;		
+} 
+inline long nthHash(short n, int hashA, int hashB, long filterSize) 
+{
+		return (hashA + n * hashB) % filterSize;
 }
+bool checkMatch(uint h0, uint h1, long filterSize, bool* bitVector)
+{
+	
+}
+// ############################################################################### //
+
 
 
 void sha1_block(uint *W, uint *H)
@@ -392,7 +397,7 @@ void sha1_block(uint *W, uint *H)
 __kernel void key_hash(__global uint* finalBlock, 
 					   __global uint* currentDigest, 
 					   __global bool* bitVector,
-					   __global uint* bitVectorSize,
+					   __global long* bitVectorSize,
 					   __global uint* outResult)
 {
 	// We have 3 bytes to work with proving us with 16777215 (2^24)
@@ -441,7 +446,8 @@ __kernel void key_hash(__global uint* finalBlock,
 	// that the same value XORd == 0, anything XORd with 0 becauses itself.
 	// This lets us replace bytes is certain positions.
 
-	int newExponent = get_global_id(0) + ORIGINAL_EXPONENT_VALUE;
+	// int newExponent = get_global_id(0) + ORIGINAL_EXPONENT_VALUE;
+	int newExponent = ORIGINAL_EXPONENT_VALUE;
 	
 	//Moves the value to the right i.e. 0x01ffff -> 0x0001ff
 	//This is required due to the bit length taking up the MSByte
@@ -796,22 +802,24 @@ __kernel void key_hash(__global uint* finalBlock,
 	H[3] = d;
 	H[4] = e;
 
+	uint l = MurmurHash3_x86_32(H[0]);
+	uint r = MurmurHash3_x86_32(H[1]);
 
-	//DEBUG
-	//Combines the first two values of the digest into a 64-bit integer
-	long digest_start = (long)H[0];
-	digest_start += H[1];
+	//Checks for a matach
+	int num_of_hashes = 1;
+	bool match = true;
 
-	long h = murmur3_64(digest_start);
-	//
+	outResult[0] = 0x12345678;
+	outResult[1] = (l + 0 * r) % bitVectorSize[0];
 
-	// Debug
-	// Used to show how much of a hit multi-string comparison is
-	if (H[0] == 0xffffffff && H[1] == 0xffffffff)
-	{
-		outResult[0] = 0x12345678;
-		outResult[1] = newExponent;
-	}
+	// if(match)
+	// {
+	// 	outResult[0] = 0x12345678;
+	// 	outResult[1] = newExponent;
+	// }
+
+	// outResult[0] = 0x12345678;
+	// outResult[1] = bitVector[0xc6c12];
 }
 
 // Test the SHA hash code

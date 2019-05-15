@@ -11,7 +11,8 @@ def usage():
 if len(sys.argv) != 3:
     usage()
 
-HASHSPEED = 2700000000
+HASHSPEED = 25
+HASHSPEED *= 1000000
 
 length_in_chars = float(sys.argv[1])
 permutations = float(sys.argv[2])

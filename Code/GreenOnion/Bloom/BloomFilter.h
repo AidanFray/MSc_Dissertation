@@ -3,10 +3,10 @@
 
 class BloomFilter {
 public:
-  BloomFilter(uint64_t size, uint8_t numHashes);
+  BloomFilter(unsigned long size, short numHashes);
 
-  void add(long value);
-  bool possiblyContains(long value) const;
+  void add(unsigned long value);
+  bool possiblyContains(unsigned long value) const;
 
   uint8_t m_numHashes;
   std::vector<bool> m_bits;

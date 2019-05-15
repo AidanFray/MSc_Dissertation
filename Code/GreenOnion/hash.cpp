@@ -62,7 +62,8 @@ int numberOfThreads = 1;
 std::vector<std::thread> workThreads;
 
 
-std::string target_keys_file_path = "./target_keys.txt";
+// std::string target_keys_file_path = "./target_keys.txt";
+std::string target_keys_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
 
 /*
     Used to test that OpenCL is producing the correct result
@@ -213,6 +214,12 @@ std::vector<bool> load_bloom_filter(BloomFilter &bf, std::string filePath)
     {
         auto integer = hex_to_64bit_integer(line);
         bf.add(integer);
+
+        if(!bf.possiblyContains(integer))
+        {
+            std::cout << "Error with bloom" << std::endl;
+            exit(0);
+        }
     }
 
     // Returns the bit vector
@@ -240,12 +247,14 @@ void compute()
     cl::Kernel kernel(program, "key_hash");
     cl::CommandQueue queue(context, device);
 
+    auto BLOOM_SIZE = 1000000;
+
     // TODO: Decide on correct length and number of hashes
-    BloomFilter bf(100000, 2);
+    BloomFilter bf(BLOOM_SIZE, 1);
     load_bloom_filter(bf, target_keys_file_path);
 
     auto bloom_bit_vector = bf.m_bits;
-    uint bloom_bit_vector_size[1] = {bloom_bit_vector.size()};
+    long bloom_bit_vector_size[1] = {BLOOM_SIZE};
 
     //TODO: Better way to do this, maybe loading the bloom filter in as a bool array
     bool bloom_bit_vector_array[bloom_bit_vector.size()];
@@ -289,7 +298,7 @@ void compute()
             cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (sizeof(bool) * bloom_bit_vector.size()), bloom_bit_vector_array, &err);
             if (err != 0) opencl_handle_error(err, "bit_vector");
 
-            cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), bloom_bit_vector_size, &err);
+            cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), bloom_bit_vector_size, &err);
             if (err != 0) opencl_handle_error(err, "bit_vector_size");
             
             cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
@@ -351,6 +360,8 @@ void create_work()
             for (size_t i = 0; i < 1000; i++)
             {
                 auto PGP_v4_packet = rsa_key_to_pgp(n, e, timestamp + i);
+
+                PGP_v4_packet = "99010e045cdc0a08010800CF627D8A1A852BFE197C77263AC73EEF5D2735E414C4515E2F367A0F765F56E79D1439349C7D9B0DF94BC9E45AD867D03627027BC7B2E79CEB0E66E36E3791CBBDC770892B058ACEA68258717388BCDC53F8938ADD3584B2D4E8B15934995D4D981CCEC8769B2821D4E9F0D98AE1DD2994C933855DC4704B997C8F07DEE68BC7C270D373A581EB3758AB5572D10137EB685F164B719C43A7A95F2222E0CD3E718CC7846877A7461DA921E33D90E19E49EE87EAFAFA6B46764CCB62020CB73C544BD256BF29BC2ADDFF4B4391988486B41FD69D5F44A3E03176094D758786753339082DF828B9017659B635DCCA7B95667454372A62F74BB340D4016A01384723001901000001";
 
                 uint finalBlock[16]; 
                 uint intermediate_digest[5];
