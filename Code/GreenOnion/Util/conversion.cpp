@@ -2,6 +2,19 @@
 #include <sstream>
 #include <bitset>
 
+
+/*
+    UInt32 --> Hex
+*/
+std::string unsigned_integer_to_hex(uint integer)
+{
+    std::ostringstream streamHex;
+    streamHex << std::hex << integer;
+    std::string hexValue = streamHex.str();
+
+    return hexValue;
+}
+
 /*
     Int32 --> Hex
 */
@@ -95,3 +108,22 @@ std::string hex_string_to_mpi(std::string hexString)
     std::string output = binary_string_len + hexString;
     return output;
 }
+
+/*
+    TODO
+*/
+std::string sha_digest_to_sting(uint *digest, int len)
+{
+    std::string result;
+    for (size_t i = 0; i < len; i++)
+    {
+        result += unsigned_integer_to_hex(digest[i]);
+    }
+    
+    return result;
+}
+
+
+/*
+    TODO
+*/

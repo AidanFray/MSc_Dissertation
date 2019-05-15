@@ -14,11 +14,13 @@
 #include <mutex>
 #include <csignal>
 #include <condition_variable>
+#include <map>
 
 #include <openssl/rsa.h>
 #include <openssl/rand.h>
 #include <openssl/pem.h>
 #include <openssl/sha.h>
+#include <bits/stdc++.h> 
 
 #include "Crypto/sha1.cpp"
 #include "Crypto/hash_util.cpp"
@@ -32,12 +34,10 @@
 //########################################################//
 //                     ISSUES                             //
 //########################################################//
-// TODO:    Add RegEx support to the OpenCL program
-//
-// TODO:    Format output public key into a PGP public key
-//          packet
-//
-// TODO:    Pass output file path as a parameter
+// TODO:    If there is more than one match per OpenCL loop
+//          it will overwrite the previous match.
+//          The solution for this will be the implement a 
+//          way to return multiple matches for each run
 //########################################################//
 
 static std::queue<KernelWork> kernel_work;
@@ -206,20 +206,20 @@ void convert_target_keys_to_opencl_param(std::vector<std::array<uint, 2>> target
 /*
     Loads the keys hashes the program should be searching for
 */
-std::vector<bool> load_bloom_filter(BloomFilter &bf, std::string filePath)
+std::vector<bool> load_filters(BloomFilter &bf, std::map<std::string, bool> &hash_table, std::string filePath)
 {
     std::string line;
     std::ifstream infile(filePath);
     while (getline(infile, line))
     {
         auto integer = hex_to_64bit_integer(line);
+
+        // Adds the value to the bloom bit array
         bf.add(integer);
 
-        if(!bf.possiblyContains(integer))
-        {
-            std::cout << "Error with bloom" << std::endl;
-            exit(0);
-        }
+        // Adds the value to the hash table
+        // this is for checking the false positives of the bloom later
+        hash_table[line] = true;
     }
 
     // Returns the bit vector
@@ -232,6 +232,7 @@ std::vector<bool> load_bloom_filter(BloomFilter &bf, std::string filePath)
 */
 void compute()
 {
+    int false_positives = 0;
     int workSize = 0;
     int workGroupSize = 0;
     int createWorkThreads = 0;
@@ -247,14 +248,20 @@ void compute()
     cl::Kernel kernel(program, "key_hash");
     cl::CommandQueue queue(context, device);
 
+
+    //################################  FILTERS ## #######################################//
+    //TODO : refactor
+    std::map<std::string, bool> target_keys_hash_table;
+
     //TODO: Move these to a better location
     //      These will also require passing to the OpenCL kernel
     auto BLOOM_SIZE = 1000000;
-    auto NUMBER_OF_HASHES = 10;
+    auto NUMBER_OF_HASHES = 2;
 
+    std::cout << "[*] Creating bloom filter....." << std::endl;
     // TODO: Decide on correct length and number of hashes
     BloomFilter bf(BLOOM_SIZE, NUMBER_OF_HASHES);
-    load_bloom_filter(bf, target_keys_file_path);
+    load_filters(bf, target_keys_hash_table, target_keys_file_path);
 
     auto bloom_bit_vector = bf.m_bits;
     long bloom_bit_vector_size[1] = {BLOOM_SIZE};
@@ -265,6 +272,8 @@ void compute()
     {
         bloom_bit_vector_array[i] = bloom_bit_vector[i];
     }
+    std::cout << "[*] Bloom filter complete!" << std::endl;
+    //#####################################################################################//
 
     while (true)
     {
@@ -328,7 +337,7 @@ void compute()
             std::cout 
             << "[*]" 
             << " Current Rate: " <<  hashPerSecond / 1000000 << " MH/s" 
-            << " Work Size: "     << kernel_work.size()
+            << " False positives: "     << false_positives
             << "\r"
             << std::flush;
 
@@ -336,8 +345,27 @@ void compute()
             if (outResult[0] == (uint)0x12345678)
             {   
                 std::string exponent = integer_to_hex(outResult[1]);
-                print_found_key(work, exponent);
-                break;
+
+                //Recreates the key
+                auto x = key_from_exponent_and_base_packet(work.PGP_Packet, exponent);
+                
+                //Obtains the hash of the key
+                uint digest[5];
+                hash_string(x, digest);
+                auto hex_digest = sha_digest_to_sting(digest, 2);
+
+                // If true an actual key is found
+                if(target_keys_hash_table.count(hex_digest))
+                {
+                    print_found_key(work, exponent);
+                    break;
+                }
+                else
+                {
+                    false_positives++;
+                    outResult[0] = 0xffffffff;
+                }
+                
             }
         }
     }

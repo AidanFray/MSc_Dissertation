@@ -17,7 +17,7 @@ file_path = "."
 UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CE3 F379"
 
 # The fingerprint we can change via MITM
-CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"
+CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D4"
 
 # Stops the program from generating permutations that fill the RAM
 MAX_PEM_SIZE = 2000000000
@@ -78,7 +78,7 @@ def save_permutations(perms):
 
     with open("./target_keys.txt", "w") as file:
         for p in perms:
-            file.write(p.upper())
+            file.write(p.lower())
             file.write("\n")
 
 def finger_print_to_words(fingerprint, PRINT=True):

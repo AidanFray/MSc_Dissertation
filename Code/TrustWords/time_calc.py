@@ -11,7 +11,7 @@ def usage():
 if len(sys.argv) != 3:
     usage()
 
-HASHSPEED = 25
+HASHSPEED = 1600
 HASHSPEED *= 1000000
 
 length_in_chars = float(sys.argv[1])

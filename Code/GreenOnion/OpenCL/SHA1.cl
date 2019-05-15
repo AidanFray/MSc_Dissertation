@@ -3,8 +3,6 @@ inline uint rotate1(uint a) { return (a << 1) | (a >> 31); }
 inline uint rotate5(uint a) { return (a << 5) | (a >> 27); }
 inline uint rotate30(uint a) { return (a << 30) | (a >> 2); }
 
-
-// ################################## MUR MUR ##################################### //
 uint MurmurHash3_x86_32 (uint key)
 {
 		uint len = sizeof(uint);
@@ -39,17 +37,6 @@ uint MurmurHash3_x86_32 (uint key)
 
 		return h;		
 } 
-inline long nthHash(short n, int hashA, int hashB, long filterSize) 
-{
-		return (hashA + n * hashB) % filterSize;
-}
-bool checkMatch(uint h0, uint h1, long filterSize, bool* bitVector)
-{
-	
-}
-// ############################################################################### //
-
-
 
 void sha1_block(uint *W, uint *H)
 {
@@ -806,18 +793,18 @@ __kernel void key_hash(__global uint* finalBlock,
 	uint r = MurmurHash3_x86_32(H[1]);
 
 	//Checks for a matach
-	int num_of_hashes = 10;
+	int num_of_hashes = 2;
 	bool match = true;
 
 	for(int n = 0; n < num_of_hashes; n++)
 	{		
-			uint pos = (l + n * r) % bitVectorSize[0];
+		uint pos = (l + n * r) % bitVectorSize[0];
 
-			if(!bitVector[pos])
-			{
-					match = false;
-					break;
-			}
+		if(!bitVector[pos])
+		{
+			match = false;
+			break;
+		}
 	}
 
 	if(match)

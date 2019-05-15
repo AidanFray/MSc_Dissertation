@@ -54,7 +54,22 @@
 			"utility": "cpp",
 			"queue": "cpp",
 			"list": "cpp",
-			"numeric": "cpp"
+			"numeric": "cpp",
+			"csetjmp": "cpp",
+			"cfenv": "cpp",
+			"charconv": "cpp",
+			"cinttypes": "cpp",
+			"codecvt": "cpp",
+			"complex": "cpp",
+			"cuchar": "cpp",
+			"forward_list": "cpp",
+			"unordered_set": "cpp",
+			"functional": "cpp",
+			"future": "cpp",
+			"scoped_allocator": "cpp",
+			"shared_mutex": "cpp",
+			"typeindex": "cpp",
+			"valarray": "cpp"
 		},
 		"files.exclude": {
 			"**/*.toc": true,
