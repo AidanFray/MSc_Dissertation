@@ -27,6 +27,7 @@
 #include "Util/OpenCLHelper.cpp"
 #include "Util/timer.cpp"
 
+#include "Bloom/BloomFilter.cpp"
 
 //########################################################//
 //                     ISSUES                             //
@@ -204,25 +205,20 @@ void convert_target_keys_to_opencl_param(std::vector<std::array<uint, 2>> target
 /*
     Loads the keys hashes the program should be searching for
 */
-std::vector<std::array<uint, 2>> load_target_keys(std::string filePath)
+std::vector<bool> load_bloom_filter(BloomFilter &bf, std::string filePath)
 {
-    std::ifstream infile(filePath);
-
     std::string line;
-    std::vector<std::array<uint, 2>> keys;
+    std::ifstream infile(filePath);
     while (getline(infile, line))
     {
-        int len = line.length();
-        int mid = len / 2;
-
-        std::string lineLeft = line.substr(0, mid);
-        std::string lineRight = line.substr(mid, len);
-
-        keys.push_back({hex_to_integer(lineLeft), hex_to_integer(lineRight)});
+        auto integer = hex_to_64bit_integer(line);
+        bf.add(integer);
     }
 
-    return keys;
+    // Returns the bit vector
+    return bf.m_bits;
 }
+
 
 /*
     Communicates with OpenCL and proccess results
@@ -244,18 +240,20 @@ void compute()
     cl::Kernel kernel(program, "key_hash");
     cl::CommandQueue queue(context, device);
 
-    // Loads keys program will be searching for
-    auto target_keys = load_target_keys(target_keys_file_path);
-    uint target_key_opencl[target_keys.size() * 2];
-    convert_target_keys_to_opencl_param(target_keys, target_key_opencl);
-    uint target_key_size_opencl[1] {(uint)target_keys.size()};
+    // TODO: Decide on correct length and number of hashes
+    BloomFilter bf(100000, 2);
+    load_bloom_filter(bf, target_keys_file_path);
 
-    if (target_keys.size() == 0)
+    auto bloom_bit_vector = bf.m_bits;
+    uint bloom_bit_vector_size[1] = {bloom_bit_vector.size()};
+
+    //TODO: Better way to do this, maybe loading the bloom filter in as a bool array
+    bool bloom_bit_vector_array[bloom_bit_vector.size()];
+    for (size_t i = 0; i < bloom_bit_vector.size(); i++)
     {
-        std::cout << "[*] No target keys loaded! Exiting!" << std::endl;
-        exit(0);
+        bloom_bit_vector_array[i] = bloom_bit_vector[i];
     }
-    
+
     while (true)
     {
         Timer tmr;
@@ -280,7 +278,6 @@ void compute()
             // is size of the hash plus the success value (0x12345678) and exponent used
             uint outResult[2];
             auto resultSize = sizeof(uint) * 2;
-            auto target_keys_size = target_keys.size() * (sizeof(uint) * 2);
 
             int err;
             cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, work.FinalBlock, &err);
@@ -288,19 +285,19 @@ void compute()
 
             cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
             if (err != 0) opencl_handle_error(err, "current_hash");
+
+            cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (sizeof(bool) * bloom_bit_vector.size()), bloom_bit_vector_array, &err);
+            if (err != 0) opencl_handle_error(err, "bit_vector");
+
+            cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), bloom_bit_vector_size, &err);
+            if (err != 0) opencl_handle_error(err, "bit_vector_size");
             
-            cl::Buffer buf_targetKeys(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * sizeof(target_key_opencl), target_key_opencl, &err);
-            if (err != 0) opencl_handle_error(err, "target_key_opencl");
-
-            cl::Buffer buf_targetKeysSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), target_key_size_opencl, &err);
-            if (err != 0) opencl_handle_error(err, "target_key_size_opencl");
-
             cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
 
             kernel.setArg(0, buf_finalBlock);
             kernel.setArg(1, buf_currentHash);
-            kernel.setArg(2, buf_targetKeys);
-            kernel.setArg(3, buf_targetKeysSize);
+            kernel.setArg(2, buf_bitVector);
+            kernel.setArg(3, buf_bitVectorSize);
             kernel.setArg(4, buf_out_result);
 
             queue.enqueueNDRangeKernel(

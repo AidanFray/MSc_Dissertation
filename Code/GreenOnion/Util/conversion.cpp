@@ -29,6 +29,21 @@ uint hex_to_integer(std::string hexString)
 }
 
 /*
+    TODO
+*/
+long hex_to_64bit_integer(std::string hexString)
+{
+    std::stringstream ss;
+    ss << std::hex << hexString;
+
+    long n;
+    ss >> n;
+
+    return n;
+}
+
+
+/*
     Hex --> Binary
 */
 std::string hex_to_binary(std::string hexString)

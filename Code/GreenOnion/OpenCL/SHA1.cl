@@ -3,6 +3,49 @@ inline uint rotate1(uint a) { return (a << 1) | (a >> 31); }
 inline uint rotate5(uint a) { return (a << 5) | (a >> 27); }
 inline uint rotate30(uint a) { return (a << 30) | (a >> 2); }
 
+
+uint murmur3_64(const long* key)
+{
+	uint seed = 0;
+	size_t len = sizeof(long);
+
+	long h = seed;
+	if (len > 3) {
+		const long* key_x4 = (const long*) key;
+		size_t i = len >> 2;
+		do {
+			long k = *key_x4++;
+			k *= 0xcc9e2d51;
+			k = (k << 15) | (k >> 17);
+			k *= 0x1b873593;
+			h ^= k;
+			h = (h << 13) | (h >> 19);
+			h = h * 5 + 0xe6546b64;
+		} while (--i);
+		key = (const ushort*) key_x4;
+	}
+	if (len & 3) {
+		size_t i = len & 3;
+		long k = 0;
+		do {
+			k <<= 8;
+			k |= key[i - 1];
+		} while (--i);
+		k *= 0xcc9e2d51;
+		k = (k << 15) | (k >> 17);
+		k *= 0x1b873593;
+		h ^= k;
+	}
+	h ^= len;
+	h ^= h >> 16;
+	h *= 0x85ebca6b;
+	h ^= h >> 13;
+	h *= 0xc2b2ae35;
+	h ^= h >> 16;
+	return h;
+}
+
+
 void sha1_block(uint *W, uint *H)
 {
 	uint a = H[0];
@@ -348,8 +391,8 @@ void sha1_block(uint *W, uint *H)
 
 __kernel void key_hash(__global uint* finalBlock, 
 					   __global uint* currentDigest, 
-					   __global uint* target_keys,
-					   __global uint* target_keys_size,
+					   __global bool* bitVector,
+					   __global uint* bitVectorSize,
 					   __global uint* outResult)
 {
 	// We have 3 bytes to work with proving us with 16777215 (2^24)
@@ -754,36 +797,21 @@ __kernel void key_hash(__global uint* finalBlock,
 	H[4] = e;
 
 
-	// Compares all the potential keys
-	for(int x = 0; x < target_keys_size[0]; ++x)
+	//DEBUG
+	//Combines the first two values of the digest into a 64-bit integer
+	long digest_start = (long)H[0];
+	digest_start += H[1];
+
+	long h = murmur3_64(digest_start);
+	//
+
+	// Debug
+	// Used to show how much of a hit multi-string comparison is
+	if (H[0] == 0xffffffff && H[1] == 0xffffffff)
 	{
-		uint leftSide = target_keys[x * 2];
-		uint rightSide = target_keys[(x * 2) + 1];
-
-		// // These lines are used to compare if a value is equal
-		// // if leftside and H[0] are equal they will cancel out
-		// // this will leave the successfull variable (0x12345678)
-		// outResult[0] = 0x12345678 	^ leftSide ^ H[0] ^ rightSide ^ H[1];
-		// outResult[1] = newExponent  ^ leftSide ^ H[0] ^ rightSide ^ H[1];
-
-		if (H[0] == leftSide)
-		{
-			if (H[1] == rightSide)
-			{
-				outResult[0] = 0x12345678;
-				outResult[1] = newExponent;
-			}
-			
-		}
+		outResult[0] = 0x12345678;
+		outResult[1] = newExponent;
 	}
-
-	// // Debug
-	// // Used to show how much of a hit multi-string comparison is
-	// if (H[0] == 0xffffffff && H[1] == 0xffffffff)
-	// {
-	// 	outResult[0] = 0x12345678;
-	// 	outResult[1] = newExponent;
-	// }
 }
 
 // Test the SHA hash code
