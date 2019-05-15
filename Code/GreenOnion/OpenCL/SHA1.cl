@@ -806,20 +806,25 @@ __kernel void key_hash(__global uint* finalBlock,
 	uint r = MurmurHash3_x86_32(H[1]);
 
 	//Checks for a matach
-	int num_of_hashes = 1;
+	int num_of_hashes = 10;
 	bool match = true;
 
-	outResult[0] = 0x12345678;
-	outResult[1] = (l + 0 * r) % bitVectorSize[0];
+	for(int n = 0; n < num_of_hashes; n++)
+	{		
+			uint pos = (l + n * r) % bitVectorSize[0];
 
-	// if(match)
-	// {
-	// 	outResult[0] = 0x12345678;
-	// 	outResult[1] = newExponent;
-	// }
+			if(!bitVector[pos])
+			{
+					match = false;
+					break;
+			}
+	}
 
-	// outResult[0] = 0x12345678;
-	// outResult[1] = bitVector[0xc6c12];
+	if(match)
+	{
+		outResult[0] = 0x12345678;
+		outResult[1] = newExponent;
+	}
 }
 
 // Test the SHA hash code

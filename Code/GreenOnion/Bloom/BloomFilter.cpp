@@ -18,7 +18,7 @@ std::array<uint, 2> hash(unsigned long value)
   return hashValues;
 }
 
-inline uint64_t nthHash(uint8_t n, int hashA, int hashB, uint64_t filterSize) 
+long nthHash(uint8_t n, uint hashA, uint hashB, long filterSize) 
 {
     return (hashA + n * hashB) % filterSize;
 }
@@ -30,7 +30,6 @@ void BloomFilter::add(unsigned long value)
   for (int n = 0; n < m_numHashes; n++) {
 
       auto pos = nthHash(n, hashValues[0], hashValues[1], m_bits.size());
-
       m_bits[pos] = true;
   }
 }
