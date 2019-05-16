@@ -65,6 +65,8 @@ std::vector<std::thread> workThreads;
 // std::string target_keys_file_path = "./target_keys.txt";
 std::string target_keys_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
 
+std::string kernel_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/OpenCL/SHA1.cl";
+
 /*
     Used to test that OpenCL is producing the correct result
 */
@@ -206,7 +208,7 @@ void convert_target_keys_to_opencl_param(std::vector<std::array<uint, 2>> target
 /*
     Loads the keys hashes the program should be searching for
 */
-std::vector<bool> load_filters(BloomFilter &bf, std::map<std::string, bool> &hash_table, std::string filePath)
+void load_filters(BloomFilter &bf, std::map<std::string, bool> &hash_table, std::string filePath)
 {
     std::string line;
     std::ifstream infile(filePath);
@@ -221,9 +223,21 @@ std::vector<bool> load_filters(BloomFilter &bf, std::map<std::string, bool> &has
         // this is for checking the false positives of the bloom later
         hash_table[line] = true;
     }
+}
 
-    // Returns the bit vector
-    return bf.m_bits;
+/*
+    TODO
+*/
+uint get_target_key_length(std::string filePath)
+{
+    int number_of_lines = 0;
+    std::string line;
+    std::ifstream myfile(filePath);
+
+    while (std::getline(myfile, line))
+        ++number_of_lines;
+
+    return number_of_lines;
 }
 
 
@@ -232,7 +246,9 @@ std::vector<bool> load_filters(BloomFilter &bf, std::map<std::string, bool> &has
 */
 void compute()
 {
+    int loops = 1;
     int false_positives = 0;
+
     int workSize = 0;
     int workGroupSize = 0;
     int createWorkThreads = 0;
@@ -242,7 +258,7 @@ void compute()
     auto devices = GetAllDevices(platform, false);
     auto device = devices.front();
     cl::Context context(devices);
-    auto program = BuildProgram("./OpenCL/SHA1.cl", context);
+    auto program = BuildProgram(kernel_file_path, context);
     workGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
     //std::cout << "[*] Work Group size set to: " << workGroupSize << std::endl;
     cl::Kernel kernel(program, "key_hash");
@@ -255,11 +271,24 @@ void compute()
 
     //TODO: Move these to a better location
     //      These will also require passing to the OpenCL kernel
-    auto BLOOM_SIZE = 1000000;
+    auto number_of_target_keys = get_target_key_length(target_keys_file_path);
+
+    if (number_of_target_keys == 0)
+    {
+        std::cout << "[!] Error: No target keys have been loaded. Please check the target_keys.txt file" << std::endl;
+        exit(0);
+    }
+    std::cout << "[*] Number of target keys loaded: " << number_of_target_keys << std::endl;
+
+    auto BLOOM_SIZE = calculate_bloom_size(number_of_target_keys);
+
+    //DEBUG
+    BLOOM_SIZE = 1700000;
+    
     auto NUMBER_OF_HASHES = 2;
 
     std::cout << "[*] Creating bloom filter....." << std::endl;
-    // TODO: Decide on correct length and number of hashes
+
     BloomFilter bf(BLOOM_SIZE, NUMBER_OF_HASHES);
     load_filters(bf, target_keys_hash_table, target_keys_file_path);
 
@@ -327,10 +356,18 @@ void compute()
             auto hashPerSecond = (long)(NUM_OF_HASHES / totalTime);
 
             // std::cout << "[*] Current Rate: " << (uint)(hashPerSecond / 1000000) << " MH/s\r" << std::flush;
+
+            auto HPS = std::to_string(hashPerSecond / 1000000);
+            pad(HPS, 4, '0');
+
+            double fp_percentage = ((double)false_positives / (double)loops) * 100;
+
             std::cout 
             << "[*]" 
-            << " Current Rate: " <<  hashPerSecond / 1000000 << " MH/s" 
-            << " False positives: "     << false_positives
+            << " -- Current Rate:  "       << HPS << " MH/s" 
+            << " -- Loops: "               << loops 
+            << " -- FP: "                  << false_positives
+            << " -- FP Percentage: "       << fp_percentage << "%"
             << "\r"
             << std::flush;
 
@@ -358,8 +395,8 @@ void compute()
                     false_positives++;
                     outResult[0] = 0xffffffff;
                 }
-                
             }
+            loops++;
         }
     }
 }
@@ -384,6 +421,9 @@ void create_work()
             for (size_t i = 0; i < 1000; i++)
             {
                 auto PGP_v4_packet = rsa_key_to_pgp(n, e, timestamp + i);
+
+                //DEBUG
+                // PGP_v4_packet = "99010e045cdd5d39010800A963BD6AF2ED6CD5DAE0CCDF363F649A8850D3476715E9F3540EF5DA47A761AFC129ACE0004D2E7A0B33CD6760175F3BE7315DBA4300A6C4480FD250474164AB15C32207DBEE8340FE8D2D394F52FE4B3C51B9D217C245B41433DBB631F8B85601BCB133345EF769DA33D98DF8C98D04B6D958F324C4C329E5AD29BEB267863E70024434D1E7D42FD92D67FD1BFE7037C708A94F09C7481A6CEDC51A010005ABF9F7E36EFF31C6BD039C17EED160ECD788716ED7638EF176F435049CFF31CB014F9348A8C29185ECBAF65F63D73C963174F17DC6F1CA33F49C442DDF8389EA67C9E5A89DCDD2A645C1B00839268BF4558A43BBD7BD3CA6111831334AFA16EBE3001901000001";
 
                 uint finalBlock[16]; 
                 uint intermediate_digest[5];

@@ -26,7 +26,7 @@ typedef unsigned __int64 uint64_t;
 
 //-----------------------------------------------------------------------------
 
-uint MurmurHash3_x86_32  ( const uint * key, int len, uint32_t seed);
+uint MurmurHash3_x86_32  ( const uint long * key, int len, uint32_t seed);
 
 //-----------------------------------------------------------------------------
 

@@ -3,10 +3,9 @@ inline uint rotate1(uint a) { return (a << 1) | (a >> 31); }
 inline uint rotate5(uint a) { return (a << 5) | (a >> 27); }
 inline uint rotate30(uint a) { return (a << 30) | (a >> 2); }
 
-uint MurmurHash3_x86_32 (uint key)
+uint MurmurHash3_x86_32 (uint key, uint seed)
 {
-		uint len = sizeof(uint);
-		uint seed = 0;
+		uint len = sizeof(key);
 
 		uint c1 = 0xcc9e2d51;
 		uint c2 = 0x1b873593;
@@ -433,8 +432,7 @@ __kernel void key_hash(__global uint* finalBlock,
 	// that the same value XORd == 0, anything XORd with 0 becauses itself.
 	// This lets us replace bytes is certain positions.
 
-	// int newExponent = get_global_id(0) + ORIGINAL_EXPONENT_VALUE;
-	int newExponent = ORIGINAL_EXPONENT_VALUE;
+	int newExponent = get_global_id(0) + ORIGINAL_EXPONENT_VALUE;
 	
 	//Moves the value to the right i.e. 0x01ffff -> 0x0001ff
 	//This is required due to the bit length taking up the MSByte
@@ -789,18 +787,16 @@ __kernel void key_hash(__global uint* finalBlock,
 	H[3] = d;
 	H[4] = e;
 
-	uint l = MurmurHash3_x86_32(H[0]);
-	uint r = MurmurHash3_x86_32(H[1]);
-
 	//Checks for a matach
 	int num_of_hashes = 2;
 	bool match = true;
 
 	for(int n = 0; n < num_of_hashes; n++)
 	{		
-		uint pos = (l + n * r) % bitVectorSize[0];
+		uint l = MurmurHash3_x86_32(H[0], n) % bitVectorSize[0];
+		uint r = MurmurHash3_x86_32(H[1], n) % bitVectorSize[0];
 
-		if(!bitVector[pos])
+		if(!bitVector[l] || !bitVector[r])
 		{
 			match = false;
 			break;

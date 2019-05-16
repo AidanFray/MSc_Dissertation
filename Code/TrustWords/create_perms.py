@@ -3,6 +3,7 @@ import itertools
 import argparse
 from Crypto.Hash import SHA1
 import os
+import base64
 
 ##################################################
 # TODO - Functionality to change fingerprints via
@@ -17,7 +18,7 @@ file_path = "."
 UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CE3 F379"
 
 # The fingerprint we can change via MITM
-CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D4"
+CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"
 
 # Stops the program from generating permutations that fill the RAM
 MAX_PEM_SIZE = 2000000000
@@ -329,6 +330,38 @@ def determine_average_perms(number_of_words, all_perms=True):
     print(f"[!] Max: {max_perm}")
     print(f"[!] Min: {min_perm}")
 
+def generate_words_for_PGP_keys(key_path_1, key_path_2):
+    
+    # TODO: Add ability to pass the first key
+    # key_data_1 = []
+    # with open(key_path_1) as key1:
+    #     key_data_1 = key1.readlines()
+    
+    # TEMP
+    key_finger_print_2 = "7E6C 4BF0 5CE3 F379".replace(" ", "")
+
+    key_data_2 = []
+    with open(key_path_2) as key2:
+        key_data_2 = key2.readlines()
+
+
+    key_base64_1= ""
+
+    # Skips headers and formatting lines
+    for l in key_data_2[1:-2]:
+        key_base64_1 += l.strip()
+
+    key_bytes_1 = base64.b64decode(key_base64_1)
+
+    sha1 = SHA1.new()
+    sha1.update(key_bytes_1)
+
+    key_finger_print_1 = sha1.hexdigest()[:16].upper()
+
+    combined_key = XOR_fingerprints(key_finger_print_1, key_finger_print_2)
+
+    finger_print_to_words(combined_key)
+
 def args():
     parser = argparse.ArgumentParser(description='Compute similar TrustWord keys')
 
@@ -338,6 +371,7 @@ def args():
     parser.add_argument("-l", dest="language", nargs=1, action="store")
     parser.add_argument("-sm", dest="similar", nargs=1, action="store")
     parser.add_argument("-n", dest="num_words", nargs=1, type=int, action="store")
+    parser.add_argument("--keys", dest="keys", nargs=2, action="store")
 
     args = parser.parse_args()
 
@@ -349,6 +383,8 @@ def args():
     if args.num_words:
         number_of_words = args.num_words[0]
 
+    
+
     # Loads the file paths
     if args.similar:
         similar_mappings_file_name = args.similar[0]
@@ -359,6 +395,10 @@ def args():
 
     load_mappings(dictionary_file_name)
     load_similar_mappings(similar_mappings_file_name)
+
+    if args.keys:
+        generate_words_for_PGP_keys(args.keys[0], args.keys[1])
+        exit()
 
     # Finds number of average multi mapping perms
     if args.average_multi:
