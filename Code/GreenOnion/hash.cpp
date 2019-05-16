@@ -263,15 +263,8 @@ void compute()
     BloomFilter bf(BLOOM_SIZE, NUMBER_OF_HASHES);
     load_filters(bf, target_keys_hash_table, target_keys_file_path);
 
-    auto bloom_bit_vector = bf.m_bits;
     long bloom_bit_vector_size[1] = {BLOOM_SIZE};
 
-    //TODO: Better way to do this, maybe loading the bloom filter in as a bool array
-    bool bloom_bit_vector_array[bloom_bit_vector.size()];
-    for (size_t i = 0; i < bloom_bit_vector.size(); i++)
-    {
-        bloom_bit_vector_array[i] = bloom_bit_vector[i];
-    }
     std::cout << "[*] Bloom filter complete!" << std::endl;
     //#####################################################################################//
 
@@ -307,7 +300,7 @@ void compute()
             cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
             if (err != 0) opencl_handle_error(err, "current_hash");
 
-            cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (sizeof(bool) * bloom_bit_vector.size()), bloom_bit_vector_array, &err);
+            cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (sizeof(bool) * BLOOM_SIZE), bf.m_bits, &err);
             if (err != 0) opencl_handle_error(err, "bit_vector");
 
             cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), bloom_bit_vector_size, &err);

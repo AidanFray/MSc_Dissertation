@@ -245,5 +245,8 @@
         "**/*.nvuser": true,
         "**/.mfractor/": true,
         "**/.localhistory/": true
-    }
+    },
+    "cSpell.words": [
+        "chrono"
+    ]
 }

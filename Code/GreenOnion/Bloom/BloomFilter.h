@@ -9,5 +9,6 @@ public:
   bool possiblyContains(unsigned long value) const;
 
   uint8_t m_numHashes;
-  std::vector<bool> m_bits;
+  bool *m_bits;
+  unsigned long m_size;
 };
