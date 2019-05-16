@@ -61,11 +61,12 @@ bool running = true;
 int numberOfThreads = 1;
 std::vector<std::thread> workThreads;
 
+//DEBUG
+// std::string target_keys_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
+// std::string kernel_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/OpenCL/SHA1.cl";
 
-// std::string target_keys_file_path = "./target_keys.txt";
-std::string target_keys_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
-
-std::string kernel_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/OpenCL/SHA1.cl";
+std::string target_keys_file_path = "./target_keys.txt";
+std::string kernel_file_path = "./OpenCL/SHA1.cl";
 
 /*
     Used to test that OpenCL is producing the correct result
