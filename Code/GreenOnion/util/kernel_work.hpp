@@ -11,10 +11,16 @@ class KernelWork
     public:
         uint FinalBlock[16];
         uint CurrentHash[5];
-        std::string PGP_Packet;
-        std::string Private_Key;
+        std::string m_fingerprintPacket;
 
-    KernelWork(uint[16], uint[5], std::string, std::string);
+        // RSA key elements
+        std::string m_n;
+        std::string m_d;
+        std::string m_p;
+        std::string m_q;
+        std::string m_u;
+
+    KernelWork(uint[16], uint[5], std::string, std::string, std::string, std::string, std::string, std::string);
     KernelWork();
 };
 

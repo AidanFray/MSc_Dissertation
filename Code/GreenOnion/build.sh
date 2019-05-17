@@ -1,4 +1,5 @@
-g++ hash.cpp ./crypto/*.cpp \
+g++ hash.cpp \
+    ./crypto/*.cpp \
     ./util/*.cpp \
     ./bloom/*.cpp \
     -pthread \

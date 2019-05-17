@@ -68,6 +68,7 @@ std::string hex_to_binary(std::string hexString)
     return b.to_string();
 }
 
+
 /*
     Strips the left most zeros from a binary value
 */
@@ -94,13 +95,37 @@ std::string binary_strip_left_zeros(std::string binaryString)
 }
 
 /*
+    TODO
+*/
+std::string hex_strip_left_zeros(std::string hexString)
+{
+    while (hexString[0] == '0')
+    {
+        hexString = hexString.substr(1, hexString.length());
+    }
+
+    return hexString;
+}
+
+
+/*
     Hex to multiprecision integer (MPI - RFC 4880)
 */
 std::string hex_string_to_mpi(std::string hexString)
 {
-    auto binary_string = hex_to_binary(hexString);
-    auto stripped_binary_string = binary_strip_left_zeros(binary_string);
-    auto binary_string_len = integer_to_hex(stripped_binary_string.length());
+
+
+    // This method converts all but the most significant byte into binary and adds that to
+    // the size of all hex char * 4
+    //
+    // This is because the MSB may have leading zeros when converted to binary
+
+    auto msb = hex_to_binary(hexString.substr(0, 2));
+    auto msb_stripped = binary_strip_left_zeros(msb);
+
+    int binary_len = ((hexString.length() - 2) * 4) + msb_stripped.length();
+
+    auto binary_string_len = integer_to_hex(binary_len);
 
     //Pads to 2 bytes
     while (binary_string_len.length() < 4) binary_string_len = "0" + binary_string_len;

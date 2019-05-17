@@ -286,9 +286,10 @@ void compute()
                 //TODO: Encapsulate all here into a single method
 
                 std::string exponent = integer_to_hex(outResult[1]);
+                pad(exponent, 8, '0');
 
                 //Recreates the key
-                auto x = key_from_exponent_and_base_packet(work.PGP_Packet, exponent);
+                auto x = key_from_exponent_and_base_packet(work.m_fingerprintPacket, exponent);
                 
                 //Obtains the hash of the key
                 uint digest[5];
@@ -322,8 +323,8 @@ void create_work()
         //Stops the program from working too hard by capping the max work size
         if (kernel_work.size() < MAX_WORK_SIZE || MAX_WORK_SIZE == 0)
         {
-            std::string n, e, d;
-            generate_rsa_key(n, e, d, KEY_LENGTH, EXPONENT);
+            std::string n, e, d, p, q, u;
+            generate_rsa_key(n, e, d, p, q, u, KEY_LENGTH, EXPONENT);
 
             // Creates PGP fingerprint packet
             int timestamp = (int)std::time(nullptr);
@@ -331,7 +332,7 @@ void create_work()
             // Stretches out the key using the time stamp 
             for (size_t i = 0; i < 1000; i++)
             {
-                auto PGP_v4_packet = rsa_key_to_pgp(n, e, timestamp + i);
+                auto PGP_v4_packet = create_pgp_v4_fingerprint_packet(n, e, timestamp + i);
 
                 //DEBUG
                 // PGP_v4_packet = "99010e045cdd5d39010800A963BD6AF2ED6CD5DAE0CCDF363F649A8850D3476715E9F3540EF5DA47A761AFC129ACE0004D2E7A0B33CD6760175F3BE7315DBA4300A6C4480FD250474164AB15C32207DBEE8340FE8D2D394F52FE4B3C51B9D217C245B41433DBB631F8B85601BCB133345EF769DA33D98DF8C98D04B6D958F324C4C329E5AD29BEB267863E70024434D1E7D42FD92D67FD1BFE7037C708A94F09C7481A6CEDC51A010005ABF9F7E36EFF31C6BD039C17EED160ECD788716ED7638EF176F435049CFF31CB014F9348A8C29185ECBAF65F63D73C963174F17DC6F1CA33F49C442DDF8389EA67C9E5A89DCDD2A645C1B00839268BF4558A43BBD7BD3CA6111831334AFA16EBE3001901000001";
@@ -343,7 +344,7 @@ void create_work()
                 //Adds the work to the stack object
                 {
                     std::lock_guard<std::mutex> lock(kernel_work_lock);
-                    KernelWork work(finalBlock, intermediate_digest, PGP_v4_packet, d); 
+                    KernelWork work(finalBlock, intermediate_digest, PGP_v4_packet, n, d, p, q, u); 
                     kernel_work.push(work);
                 }
             }
