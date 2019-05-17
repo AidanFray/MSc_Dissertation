@@ -3,6 +3,9 @@
 
 // https://gist.github.com/gongzhitaao/7062087
 
+#ifndef TIMER_H
+#define TIMER_H
+
 class Timer
 {
 public:
@@ -15,3 +18,5 @@ private:
     typedef std::chrono::duration<double, std::ratio<1> > second_;
     std::chrono::time_point<clock_> beg_;
 };
+
+#endif

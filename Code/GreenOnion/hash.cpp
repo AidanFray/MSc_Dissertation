@@ -15,11 +15,7 @@
 #include <queue> 
 #include <map>
 
-#include <openssl/rsa.h>
-#include <openssl/rand.h>
-#include <openssl/pem.h>
 #include <openssl/sha.h>
-#include <bits/stdc++.h> 
 
 #include "util/conversion.hpp"
 #include "util/functions.hpp"
@@ -36,17 +32,24 @@
 //########################################################//
 //                     ISSUES                             //
 //########################################################//
+// TODO: Do a clean up of includes. Maybe there is a 
+//       vscode module?
+//
 // TODO: pass in 'target_keys.txt' as a parameter to the
 //       script
+//
+// TODO: Format of the output keys should be in ascii armor 
+//       this makes it easier for them to be piped into a 
+//       file. This can be implemented in the pgp.cpp file
 //########################################################//
 
 static std::queue<KernelWork> kernel_work;
 static std::mutex kernel_work_lock;
-std::condition_variable condition;
 
 int KEY_LENGTH = 2048;
 int EXPONENT = 0x01000001;
 
+// The amount of hashes per loop
 // 0x01FFFFFF - 0x01000001
 int NUM_OF_HASHES = 16777215;
 
@@ -112,58 +115,8 @@ void sha1_test()
 }
 
 /*
-    Hashes all but the last block of the PGP packet
-*/
-void hash_packet(uint *finalBlock, uint *digest, std::string PGP_v4_packet)
-{
-    // Pads and splits it blocks
-    std::string padded_v4 = pad_hex_string_for_sha1(PGP_v4_packet);
-    auto hex_blocks = split_hex_to_blocks(padded_v4, 64);
-
-    //Hashes all but the last block
-    hash_blocks(hex_blocks, digest, hex_blocks.size() - 1);
-
-    //Saves the final block
-    hex_block_to_words(finalBlock, hex_blocks[hex_blocks.size() - 1]);
-}
-
-
-
-/*
-    Generates an RSA key to be sent to the GPU
-*/
-void generate_RSA_key(std::string &str_n, std::string &str_e, std::string &str_d)
-{
-    // Generate Key
-    RSA *r = RSA_generate_key(KEY_LENGTH, EXPONENT, NULL, NULL);
-    
-    const BIGNUM *n, *e, *d;
-    RSA_get0_key(r, &n, &e, &d);
-
-    //Converts public key sections to hex
-    str_n = BN_bn2hex(n);
-    str_e = BN_bn2hex(e);
-    str_d = BN_bn2hex(d);
-}
-
-/*
-    Converts the keys to check to two 32-bit integers
-*/
-void convert_target_keys_to_opencl_param(std::vector<std::array<uint, 2>> targetKeys, uint* target_key_values)
-{
-    for (size_t i = 0; i < targetKeys.size(); i++)
-    {
-        auto key_values = targetKeys[i];
-
-        for (size_t x = 0; x < 2; x++)
-        {
-            target_key_values[(i * 2) + x] = key_values[x];
-        }
-    }
-}
-
-/*
-    Loads the keys hashes the program should be searching for
+    Loads the keys hashes the program should be searching for. 
+    It's loaded into a bloom filter and a hash table (required for checking false positives)
 */
 void load_filters(BloomFilter &bf, std::map<std::string, bool> &hash_table, std::string filePath)
 {
@@ -183,7 +136,7 @@ void load_filters(BloomFilter &bf, std::map<std::string, bool> &hash_table, std:
 }
 
 /*
-    TODO
+    Gets the number of target keys being loaded into the program
 */
 uint get_target_key_length(std::string filePath)
 {
@@ -196,7 +149,6 @@ uint get_target_key_length(std::string filePath)
 
     return number_of_lines;
 }
-
 
 /*
     Communicates with OpenCL and proccess results
@@ -331,6 +283,8 @@ void compute()
             //Looks for the positive result value
             if (outResult[0] == (uint)0x12345678)
             {   
+                //TODO: Encapsulate all here into a single method
+
                 std::string exponent = integer_to_hex(outResult[1]);
 
                 //Recreates the key
@@ -369,7 +323,7 @@ void create_work()
         if (kernel_work.size() < MAX_WORK_SIZE || MAX_WORK_SIZE == 0)
         {
             std::string n, e, d;
-            generate_RSA_key(n, e, d);
+            generate_rsa_key(n, e, d, KEY_LENGTH, EXPONENT);
 
             // Creates PGP fingerprint packet
             int timestamp = (int)std::time(nullptr);
@@ -384,7 +338,7 @@ void create_work()
 
                 uint finalBlock[16]; 
                 uint intermediate_digest[5];
-                hash_packet(finalBlock, intermediate_digest, PGP_v4_packet);
+                sha1_hash_all_but_final_block_of_pgp_packet(finalBlock, intermediate_digest, PGP_v4_packet);
                 
                 //Adds the work to the stack object
                 {
@@ -400,7 +354,6 @@ void create_work()
         }
     }
 }
-
 
 void signalHandler(int signum) 
 {

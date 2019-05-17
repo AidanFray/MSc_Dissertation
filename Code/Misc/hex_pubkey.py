@@ -5,7 +5,6 @@ import sys
 Script that converts hex to public key packet for Gpg
 """
 
-
 string = sys.argv[1]
 
 b = bytes.fromhex(string);

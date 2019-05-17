@@ -1,8 +1,13 @@
 #include <string>
 
+#include <openssl/rsa.h>
+#include <openssl/rand.h>
+#include <openssl/pem.h>
+
 #include "conversion.hpp"
 #include "functions.hpp"
 #include "kernel_work.hpp"
+#include "../crypto/hash_util.hpp"
 
 #include "../cppcodec/cppcodec/base64_rfc4648.hpp"
 #include "../cppcodec/cppcodec/hex_upper.hpp"
@@ -91,6 +96,39 @@ std::string get_public_key_pgp_armor(std::string PGP_packet)
     public_key += "-----END PGP PUBLIC KEY BLOCK-----\n";
 
     return public_key;
+}
+
+/*
+    Generates an RSA key to be sent to the GPU
+*/
+void generate_rsa_key(std::string &str_n, std::string &str_e, std::string &str_d, int key_length, int exponent)
+{
+    // Generate Key
+    RSA *r = RSA_generate_key(key_length, exponent, NULL, NULL);
+    
+    const BIGNUM *n, *e, *d;
+    RSA_get0_key(r, &n, &e, &d);
+
+    //Converts public key sections to hex
+    str_n = BN_bn2hex(n);
+    str_e = BN_bn2hex(e);
+    str_d = BN_bn2hex(d);
+}
+
+/*
+    Hashes all but the last block of the PGP packet
+*/
+void sha1_hash_all_but_final_block_of_pgp_packet(uint *finalBlock, uint *digest, std::string PGP_v4_packet)
+{
+    // Pads and splits it blocks
+    std::string padded_v4 = pad_hex_string_for_sha1(PGP_v4_packet);
+    auto hex_blocks = split_hex_to_blocks(padded_v4, 64);
+
+    //Hashes all but the last block
+    hash_blocks(hex_blocks, digest, hex_blocks.size() - 1);
+
+    //Saves the final block
+    hex_block_to_words(finalBlock, hex_blocks[hex_blocks.size() - 1]);
 }
 
 /*
