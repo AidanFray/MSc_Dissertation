@@ -112,7 +112,7 @@ std::string hex_string_to_mpi(std::string hexString)
 /*
     TODO
 */
-std::string sha_digest_to_sting(uint *digest, int len)
+std::string sha_digest_to_string(uint *digest, int len)
 {
     std::string result;
     for (size_t i = 0; i < len; i++)
@@ -122,8 +122,3 @@ std::string sha_digest_to_sting(uint *digest, int len)
     
     return result;
 }
-
-
-/*
-    TODO
-*/

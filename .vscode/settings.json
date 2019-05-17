@@ -52,7 +52,20 @@
         "mutex": "cpp",
         "numeric": "cpp",
         "typeindex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "csetjmp": "cpp",
+        "cfenv": "cpp",
+        "charconv": "cpp",
+        "cinttypes": "cpp",
+        "codecvt": "cpp",
+        "cuchar": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "future": "cpp",
+        "scoped_allocator": "cpp",
+        "shared_mutex": "cpp",
+        "valarray": "cpp",
+        "string": "cpp"
     },
     "files.exclude": {
         "**/*.toc": true,
@@ -247,6 +260,7 @@
         "**/.localhistory/": true
     },
     "cSpell.words": [
+        "armor",
         "chrono"
     ]
 }

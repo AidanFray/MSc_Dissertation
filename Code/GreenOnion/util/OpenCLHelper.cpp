@@ -1,7 +1,6 @@
 #include <CL/cl.hpp>
 #include <iostream>
-
-
+#include <fstream>
 
 const char *getErrorString(int error)
 {

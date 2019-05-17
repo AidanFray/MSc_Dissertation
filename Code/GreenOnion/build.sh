@@ -1,4 +1,13 @@
-g++ hash.cpp ./Crypto/sha1.cpp -pthread -lOpenCL -lcrypto -lssl -o GreenOnion.out
+g++ hash.cpp ./crypto/*.cpp \
+    ./util/*.cpp \
+    ./bloom/*.cpp \
+    -pthread \
+    -lOpenCL \
+    -lcrypto \
+    -lssl \
+    -o \
+    GreenOnion.out \
+
 rc=$?; 
 if [[ $rc != 0 ]]; 
 then 

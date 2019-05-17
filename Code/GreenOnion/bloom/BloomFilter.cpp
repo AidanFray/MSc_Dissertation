@@ -1,8 +1,8 @@
 #include <array>
 #include <math.h> 
 
-#include "BloomFilter.h"
-#include "MurmurHash3.cpp"
+#include "BloomFilter.hpp"
+#include "MurmurHash3.h"
 
 BloomFilter::BloomFilter(unsigned long size, short numHashes): m_numHashes(numHashes) 
 {
@@ -14,13 +14,13 @@ void BloomFilter::add(unsigned long value)
 {
     for (int n = 0; n < m_numHashes; n++) {
 
-        uint l_value = value >> 32;
-        uint r_value = (uint)value;
+        uint32_t l_value = value >> 32;
+        uint32_t r_value = (uint32_t)value;
 
-        uint l = MurmurHash3_x86_32(&l_value, sizeof(l_value), n) % m_size;
+        uint32_t l = MurmurHash3_x86_32(&l_value, sizeof(l_value), n) % m_size;
         m_bits[l] = true;
 
-        uint r = MurmurHash3_x86_32(&r_value, sizeof(r_value), n) % m_size;
+        uint32_t r = MurmurHash3_x86_32(&r_value, sizeof(r_value), n) % m_size;
         m_bits[r] = true;
     }
 }

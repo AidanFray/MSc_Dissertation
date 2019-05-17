@@ -18,10 +18,8 @@
 #include <vector>
 #include <iostream>
 
-static const size_t BLOCK_INTS = 16;  /* number of 32bit integers per SHA1 block */
-static const size_t BLOCK_BYTES = BLOCK_INTS * 4;
 
-static void reset(uint32_t digest[], std::string &buffer, uint64_t &transforms)
+void reset(uint32_t digest[], std::string &buffer, uint64_t &transforms)
 {
     /* SHA1 initialization constants */
     digest[0] = 0x67452301;
@@ -34,68 +32,57 @@ static void reset(uint32_t digest[], std::string &buffer, uint64_t &transforms)
     buffer = "";
     transforms = 0;
 }
-
-
-static uint32_t rol(const uint32_t value, const size_t bits)
+uint32_t rol(const uint32_t value, const size_t bits)
 {
     return (value << bits) | (value >> (32 - bits));
 }
-
-
-static uint32_t blk(const uint32_t block[BLOCK_INTS], const size_t i)
+uint32_t blk(const uint32_t block[16], const size_t i)
 {
     return rol(block[(i+13)&15] ^ block[(i+8)&15] ^ block[(i+2)&15] ^ block[i], 1);
 }
-
 
 /*
  * (R0+R1), R2, R3, R4 are the different operations used in SHA1
  */
 
-static void R0(const uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+void R0(const uint32_t block[16], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
     z += ((w&(x^y))^y) + block[i] + 0x5a827999 + rol(v, 5);
     w = rol(w, 30);
 }
 
-
-static void R1(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+void R1(uint32_t block[16], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
     block[i] = blk(block, i);
     z += ((w&(x^y))^y) + block[i] + 0x5a827999 + rol(v, 5);
     w = rol(w, 30);
 }
 
-
-static void R2(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+void R2(uint32_t block[16], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
     block[i] = blk(block, i);
     z += (w^x^y) + block[i] + 0x6ed9eba1 + rol(v, 5);
     w = rol(w, 30);
 }
 
-
-static void R3(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+void R3(uint32_t block[16], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
     block[i] = blk(block, i);
     z += (((w|x)&y)|(w&x)) + block[i] + 0x8f1bbcdc + rol(v, 5);
     w = rol(w, 30);
 }
 
-
-static void R4(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
+void R4(uint32_t block[16], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
     block[i] = blk(block, i);
     z += (w^x^y) + block[i] + 0xca62c1d6 + rol(v, 5);
     w = rol(w, 30);
 }
 
-
 /*
  * Hash a single 512-bit block. This is the core of the algorithm.
  */
-
-static void transform(uint32_t digest[5], uint32_t block[BLOCK_INTS])
+void transform(uint32_t digest[5], uint32_t block[16])
 {
     /* Copy digest[] to working vars */
     uint32_t a = digest[0];

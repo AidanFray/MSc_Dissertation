@@ -1,14 +1,22 @@
 #include <vector>
 #include <cstdint> 
 
+#ifndef BloomFilter_H
+#define BloomFilter_H
+
 class BloomFilter {
 public:
   BloomFilter(unsigned long size, short numHashes);
 
   void add(unsigned long value);
-  bool possiblyContains(unsigned long value) const;
 
   uint8_t m_numHashes;
-  bool *m_bits;
   unsigned long m_size;
+
+  // Bloom filter bit vector
+  bool *m_bits;
 };
+
+#endif
+
+long calculate_bloom_size(long num_of_elements);

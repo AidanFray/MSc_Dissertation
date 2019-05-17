@@ -7,13 +7,12 @@
 #include <string.h>
 #include <sstream>
 #include <cstdlib>
-#include <array>
-#include <time.h>
-#include <queue> 
+#include <csignal>
 #include <thread>
 #include <mutex>
-#include <csignal>
-#include <condition_variable>
+#include <time.h>
+#include <array>
+#include <queue> 
 #include <map>
 
 #include <openssl/rsa.h>
@@ -22,22 +21,23 @@
 #include <openssl/sha.h>
 #include <bits/stdc++.h> 
 
-#include "Crypto/sha1.cpp"
-#include "Crypto/hash_util.cpp"
+#include "util/conversion.hpp"
+#include "util/functions.hpp"
+#include "util/kernel_work.hpp"
+#include "util/OpenCLHelper.hpp"
+#include "util/pgp.hpp"
+#include "util/timer.hpp"
 
-#include "Util/functions.cpp"
-#include "Util/OpenCLHelper.cpp"
-#include "Util/timer.cpp"
+#include "crypto/sha1.hpp"
+#include "crypto/hash_util.hpp"
 
-#include "Bloom/BloomFilter.cpp"
+#include "bloom/BloomFilter.hpp"
 
 //########################################################//
 //                     ISSUES                             //
 //########################################################//
-// TODO:    If there is more than one match per OpenCL loop
-//          it will overwrite the previous match.
-//          The solution for this will be the implement a 
-//          way to return multiple matches for each run
+// TODO: pass in 'target_keys.txt' as a parameter to the
+//       script
 //########################################################//
 
 static std::queue<KernelWork> kernel_work;
@@ -66,7 +66,7 @@ std::vector<std::thread> workThreads;
 // std::string kernel_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/OpenCL/SHA1.cl";
 
 std::string target_keys_file_path = "./target_keys.txt";
-std::string kernel_file_path = "./OpenCL/SHA1.cl";
+std::string kernel_file_path = "./opencl/SHA1.cl";
 
 /*
     Used to test that OpenCL is producing the correct result
@@ -80,9 +80,9 @@ void sha1_test()
 
     cl::Context context(devices);
 
-    auto program = BuildProgram("./OpenCL/SHA1.cl", context);
+    auto program = BuildProgram(kernel_file_path, context);
 
-    // 160 bit
+    // 160 bit digest
     uint openclHash[5];
 
     cl::Buffer valueBuf(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY, sizeof(openclHash));
@@ -109,7 +109,6 @@ void sha1_test()
         printf("%02x", obuf[i]);
     }
     std::cout << "\n\n";
-
 }
 
 /*
@@ -128,50 +127,7 @@ void hash_packet(uint *finalBlock, uint *digest, std::string PGP_v4_packet)
     hex_block_to_words(finalBlock, hex_blocks[hex_blocks.size() - 1]);
 }
 
-/*
-    Converts an RSA key to PGP public key packet defined in RFC 4880
-*/
-std::string rsa_key_to_pgp(std::string n, std::string e, int timestamp)
-{   
-    //Structure 2024 key:
-    // ############################################################################ //
-    //  Start   Length   Version  Timestamp   Algo(RSA)    MPI(n)    MPI(e)                                 
-    //  0x99     XX       0x04      XXXX        0x01         X         X
-    // ############################################################################ //
 
-    // How many characters the packet length is
-    int PACKET_LENGTH_CHARS = 4; 
-    int TIMESTAMP_LENGTH_CHARS = 8;
-
-    std::string result = "";
-
-    //Version number
-    result += "04";
-
-    //Pads to 4 bytes
-    std::string timestamp_string = integer_to_hex(timestamp);
-    pad(timestamp_string, TIMESTAMP_LENGTH_CHARS, '0');
-
-    result += timestamp_string;
-
-    // Algo number
-    result += "01";
-
-    //MPI (N)
-    result += "0800";
-    result += n;
-
-    //MPI (e)
-    result += hex_string_to_mpi(e);
-
-    //Encapsulates in a fingerprint packet
-    std::string public_packet_len = integer_to_hex(result.length() / 2);
-    pad(public_packet_len, 4, '0');
-
-    result = "99" + public_packet_len + result;
-
-    return result;
-}
 
 /*
     Generates an RSA key to be sent to the GPU
@@ -383,7 +339,7 @@ void compute()
                 //Obtains the hash of the key
                 uint digest[5];
                 hash_string(x, digest);
-                auto hex_digest = sha_digest_to_sting(digest, 2);
+                auto hex_digest = sha_digest_to_string(digest, 2);
 
                 // If true an actual key is found
                 if(target_keys_hash_table.count(hex_digest))

@@ -1,6 +1,8 @@
 #include <sstream>
 #include <vector>
 
+#include "sha1.hpp"
+
 /*
     Adds SHA-1 padding to a hex string
 */
@@ -78,7 +80,7 @@ void hex_block_to_words(uint32_t* W, std::string hexString)
     digest
         The result of the SHA-1 hash at any stage
 */
-void hash_blocks(std::vector<std::string> hex_blocks, uint* digest, int num_of_blocks)
+void hash_blocks(std::vector<std::string> hex_blocks, uint32_t* digest, int num_of_blocks)
 {
     digest[0] = 0x67452301;
     digest[1] = 0xEFCDAB89;
@@ -94,7 +96,7 @@ void hash_blocks(std::vector<std::string> hex_blocks, uint* digest, int num_of_b
     }
 }
 
-void hash_string(std::string input, uint* digest)
+void hash_string(std::string input, uint32_t* digest)
 {
     std::string paddedInput = pad_hex_string_for_sha1(input);
     auto hex_blocks = split_hex_to_blocks(paddedInput, 64);
