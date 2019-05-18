@@ -1,10 +1,11 @@
 #include <string.h>
+#include <iostream>
 #include <sstream>
 #include <bitset>
 #include <vector>
 #include <chrono>
 #include <thread>
-#include <iostream>
+#include <math.h>
 
 #include "../cppcodec/cppcodec/base64_rfc4648.hpp"
 #include "../cppcodec/cppcodec/hex_upper.hpp"
@@ -73,4 +74,42 @@ void print_hash(uint* hash, int blockLength)
         std::cout << hexString;
     }
     std::cout << std::endl;
+}
+
+/*
+    TODO
+*/
+std::string split_string_with_newline_sep(std::string inputString, int lineLength)
+{
+    std::string outputString = "";
+
+    for (size_t i = 0; i < ceil(inputString.length() / 64) + 1; i++)
+    {
+        int start_pos = i * lineLength;
+        int end_pos = start_pos + lineLength;
+
+        // Caps the value
+        if (end_pos >= inputString.length())
+        {
+            end_pos = inputString.length();
+        }
+
+        outputString += inputString.substr(start_pos, (end_pos - start_pos));
+        outputString += "\n";
+    }
+    
+    return outputString;
+}
+
+/*
+    TODO
+*/
+long sum_all_bytes_in_a_hex_string(std::string hexString)
+{
+    long total = 0;
+    for (size_t i = 0; i < hexString.length(); i += 2)
+    {
+        total += hex_to_integer(hexString.substr(i, 2));
+    }
+    return total;
 }

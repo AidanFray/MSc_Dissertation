@@ -37,10 +37,6 @@
 //
 // TODO: pass in 'target_keys.txt' as a parameter to the
 //       script
-//
-// TODO: Format of the output keys should be in ascii armor 
-//       this makes it easier for them to be piped into a 
-//       file. This can be implemented in the pgp.cpp file
 //########################################################//
 
 static std::queue<KernelWork> kernel_work;
@@ -65,8 +61,8 @@ int numberOfThreads = 1;
 std::vector<std::thread> workThreads;
 
 //DEBUG
-// std::string target_keys_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
-// std::string kernel_file_path = "/home/user/Github/Cyber-Security-Individual-Project/Code/GreenOnion/OpenCL/SHA1.cl";
+// std::string target_keys_file_path = "~/GitHub/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
+// std::string kernel_file_path = "~/GitHub/Cyber-Security-Individual-Project/Code/GreenOnion/opencl/SHA1.cl";
 
 std::string target_keys_file_path = "./target_keys.txt";
 std::string kernel_file_path = "./opencl/SHA1.cl";
@@ -334,8 +330,8 @@ void create_work()
             {
                 auto PGP_v4_packet = create_pgp_v4_fingerprint_packet(n, e, timestamp + i);
 
-                //DEBUG
-                // PGP_v4_packet = "99010e045cdd5d39010800A963BD6AF2ED6CD5DAE0CCDF363F649A8850D3476715E9F3540EF5DA47A761AFC129ACE0004D2E7A0B33CD6760175F3BE7315DBA4300A6C4480FD250474164AB15C32207DBEE8340FE8D2D394F52FE4B3C51B9D217C245B41433DBB631F8B85601BCB133345EF769DA33D98DF8C98D04B6D958F324C4C329E5AD29BEB267863E70024434D1E7D42FD92D67FD1BFE7037C708A94F09C7481A6CEDC51A010005ABF9F7E36EFF31C6BD039C17EED160ECD788716ED7638EF176F435049CFF31CB014F9348A8C29185ECBAF65F63D73C963174F17DC6F1CA33F49C442DDF8389EA67C9E5A89DCDD2A645C1B00839268BF4558A43BBD7BD3CA6111831334AFA16EBE3001901000001";
+                // DEBUG
+                // PGP_v4_packet = "99010e045cdfe0dd010800D06223A61A67F848EC1F7C6739D8FE22BD6A0C6083E309149FC8BD081B99CCDA10A1182F8690402CCE679626B77157A039B543C7239D597534572F0A91BC1FA001355B45D1FC05CBC900F043E3A9C055DA3D35D3FBCDCFC1CF82D006A81943599E445B797489C496462F7AAB3BD1BB4E40D994E3A78F0E28149E242BBCF3661F07827E728B5C259FCF0A8EA3CA37822602620DA8C89C27F0DF226AE84EA7F1980F9CEE2373C707610C45536903B3E03B37B98D979ADA24B68748A2321EB51D986BF29048108F31592C1B11B7E34B34BE5185435BE0F0B6F9C11C9CA9FFEEB8060A63F7A594B1CC72A61E9E505EEE023FDA8D2B1356015E74D6513D20B228BC5F001901000001";
 
                 uint finalBlock[16]; 
                 uint intermediate_digest[5];
