@@ -1,21 +1,19 @@
-#include <string>
-#include <utility>
-#include <exception>
-#include <tuple>
-#include <bitset>
-#include <math.h>
+#include <openssl/ossl_typ.h>                       // for BIGNUM, BN_CTX, RSA
+#include <openssl/rsa.h>                            // for RSA_generate_key
+#include <openssl/bn.h>                             // for BN_bn2hex, BN_CTX...
+#include <sys/types.h>                              // for uint
+#include <iostream>                                 // for endl, operator<<
+#include <cstdlib>                                  // for system, NULL
+#include <bitset>                                   // for bitset
+#include <string>                                   // for string, allocator
+#include <vector>                                   // for vector
 
-#include <openssl/rsa.h>
-#include <openssl/rand.h>
-#include <openssl/pem.h>
-
-#include "conversion.hpp"
-#include "functions.hpp"
-#include "kernel_work.hpp"
-#include "../crypto/hash_util.hpp"
-
-#include "../cppcodec/cppcodec/base64_rfc4648.hpp"
-#include "../cppcodec/cppcodec/hex_upper.hpp"
+#include "../cppcodec/cppcodec/base64_rfc4648.hpp"  // for base64_rfc4648
+#include "../cppcodec/cppcodec/hex_upper.hpp"       // for hex_upper
+#include "../crypto/hash_util.hpp"                  // for hash_blocks, hex_...
+#include "kernel_work.hpp"                          // for KernelWork
+#include "conversion.hpp"                           // for hex_string_to_mpi
+#include "functions.hpp"                            // for pad, split_string...
 
 using base64 = cppcodec::base64_rfc4648;
 using hex = cppcodec::hex_upper;

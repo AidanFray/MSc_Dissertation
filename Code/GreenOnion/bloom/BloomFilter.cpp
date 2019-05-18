@@ -1,8 +1,6 @@
-#include <array>
-#include <math.h> 
-
+#include <math.h>         // for log, abs
+#include "MurmurHash3.h"  // for MurmurHash3_x86_32
 #include "BloomFilter.hpp"
-#include "MurmurHash3.h"
 
 BloomFilter::BloomFilter(unsigned long size, short numHashes): m_numHashes(numHashes) 
 {

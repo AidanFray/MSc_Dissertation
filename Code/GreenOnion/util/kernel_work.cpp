@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "kernel_work.hpp"
 
 KernelWork::KernelWork (

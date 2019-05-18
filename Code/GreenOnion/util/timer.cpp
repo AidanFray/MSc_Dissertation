@@ -1,6 +1,4 @@
-#include <iostream>
-#include <chrono>
-
+#include <chrono>  // for duration_cast, operator-, duration, system_clock::...
 #include "timer.hpp"
 
 Timer::Timer() : beg_(clock_::now()) \

@@ -1,5 +1,4 @@
-#include <vector>
-#include <cstdint> 
+#include <cstdint>  // for uint8_t
 
 #ifndef BloomFilter_H
 #define BloomFilter_H

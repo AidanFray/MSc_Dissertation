@@ -1,6 +1,12 @@
-#include <CL/cl.hpp>
-#include <iostream>
-#include <fstream>
+#include <CL/cl.h>    // for CL_DEVICE_NAME, CL_DEVICE_TYPE_ALL, CL_DEVICE_V...
+#include <stdlib.h>   // for exit
+#include <CL/cl.hpp>  // for Device, Platform, Program, Context, Program::So...
+#include <iostream>   // for operator<<, basic_ostream, endl, cout, ostream
+#include <iterator>   // for istreambuf_iterator, operator!=
+#include <string>     // for operator<<, string
+#include <utility>    // for make_pair
+#include <vector>     // for vector
+#include <fstream>    // for ifstream
 
 const char *getErrorString(int error)
 {
@@ -142,4 +148,3 @@ cl::Program BuildProgram(const std::string& fileName, cl::Context context)
 
     return program;
 }
-

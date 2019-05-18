@@ -1,4 +1,6 @@
-#include <string>
+#include <stddef.h>  // for size_t
+#include <stdint.h>  // for uint32_t, uint64_t
+#include <string>    // for string
 
 #ifndef SHA1_H
 #define SHA1_H

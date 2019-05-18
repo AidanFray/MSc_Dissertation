@@ -1,5 +1,6 @@
-#include <sstream>
-#include <vector>
+#include <stdint.h>  // for uint32_t
+#include <string>    // for string
+#include <vector>    // for vector
 
 std::string pad_hex_string_for_sha1(std::string hexString);
 std::vector<std::string> split_hex_to_blocks(std::string hexString, int blockSizeInBytes);

@@ -1,6 +1,6 @@
-#include <string>
-
-#include "kernel_work.hpp"
+#include <sys/types.h>     // for uint
+#include <string>          // for string
+#include "kernel_work.hpp" // for KernelWork
 
 void generate_rsa_key(
                         std::string &str_n,

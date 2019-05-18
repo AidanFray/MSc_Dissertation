@@ -1,5 +1,6 @@
-#include <CL/cl.hpp>
-#include <vector>
+#include <CL/cl.hpp>  // for Context (ptr only), Device (ptr only), Platform
+#include <string>     // for string
+#include <vector>     // for vector
 
 const char *getErrorString(int error); 
 void opencl_handle_error(int error, std::string name="");

@@ -1,4 +1,5 @@
-#include <string>
+#include <sys/types.h>  // for uint
+#include <string>       // for string
 
 // Hex
 std::string unsigned_integer_to_hex(uint integer);

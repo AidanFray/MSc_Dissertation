@@ -1,7 +1,10 @@
-#include <sstream>
-#include <vector>
+#include <stddef.h>  // for size_t
+#include <stdint.h>  // for uint32_t
+#include <sstream>   // for stringstream, hex, basic_ostream, basic_ostream<...
+#include <string>    // for string, operator+, operator<<
+#include <vector>    // for vector
+#include "sha1.hpp"  // for transform
 
-#include "sha1.hpp"
 
 /*
     Adds SHA-1 padding to a hex string

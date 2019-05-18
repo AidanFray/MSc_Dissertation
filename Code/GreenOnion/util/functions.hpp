@@ -1,5 +1,6 @@
-#include <string>
-#include <vector>
+#include <sys/types.h>  // for uint
+#include <string>       // for string
+#include <vector>       // for vector
 
 void pad(std::string &inputString, int minimumLength, char paddingChar);
 void sleep(int milliseconds);

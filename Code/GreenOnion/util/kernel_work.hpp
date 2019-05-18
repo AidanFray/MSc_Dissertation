@@ -1,4 +1,5 @@
-#include <iostream>
+#include <sys/types.h>  // for uint
+#include <string>       // for string
 
 #ifndef KernelWork_H
 #define KernelWork_H

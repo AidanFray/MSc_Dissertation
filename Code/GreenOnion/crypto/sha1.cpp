@@ -14,9 +14,9 @@
         -- Eugene Hopkinson <slowriot at voxelstorm dot com>
 */
 
-#include <sstream>
-#include <vector>
-#include <iostream>
+#include <stddef.h>  // for size_t
+#include <stdint.h>  // for uint32_t, uint64_t
+#include <string>    // for string
 
 
 void reset(uint32_t digest[], std::string &buffer, uint64_t &transforms)
