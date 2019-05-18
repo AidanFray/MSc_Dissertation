@@ -1,7 +1,6 @@
-#include <string>
-#include <sstream>
-#include <bitset>
-
+#include <bitset>       // for bitset
+#include <sstream>      // for hex, ostringstream, stringstream, basic_ostream
+#include <string>       // for string, operator+, operator<<, basic_string
 
 /*
     UInt32 --> Hex

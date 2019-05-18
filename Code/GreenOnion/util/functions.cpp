@@ -1,15 +1,15 @@
-#include <string.h>
-#include <iostream>
-#include <sstream>
-#include <bitset>
-#include <vector>
-#include <chrono>
-#include <thread>
-#include <math.h>
-
-#include "../cppcodec/cppcodec/base64_rfc4648.hpp"
-#include "../cppcodec/cppcodec/hex_upper.hpp"
-#include "conversion.hpp"
+#include <math.h>                                   // for ceil
+#include <string.h>                                 // for size_t
+#include <sys/types.h>                              // for uint
+#include <chrono>                                   // for milliseconds
+#include <iostream>                                 // for basic_istream, cout
+#include <string>                                   // for string, operator+
+#include <thread>                                   // for sleep_for
+#include <vector>                                   // for vector
+#include <sstream>                                  // for sstream
+#include "../cppcodec/cppcodec/base64_rfc4648.hpp"  // for base64_rfc4648
+#include "../cppcodec/cppcodec/hex_upper.hpp"       // for hex_upper
+#include "conversion.hpp"                           // for hex_to_integer
 
 using base64 = cppcodec::base64_rfc4648;
 using hex = cppcodec::hex_upper;

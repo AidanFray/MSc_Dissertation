@@ -1,39 +1,37 @@
+#include <CL/cl.hpp>              // for Buffer, Kernel, CommandQueue, Context
+#include <CL/cl.h>                // for CL_MEM_COPY_HOST_PTR, CL_MEM_READ_ONLY
 
+#include <openssl/sha.h>          // for SHA1
+#include <sys/types.h>            // for uint
+#include <string.h>               // for strlen
+#include <iostream>               // for operator<<, basic_ostream, cout
+#include <stdio.h>                // for printf
+#include <fstream>                // for ifstream
+#include <csignal>                // for signal, SIGINT
+#include <cstdlib>                // for exit, size_t
+#include <chrono>                 // for milliseconds
+#include <string>                 // for string, getline, operator<<, to_string
+#include <thread>                 // for thread, sleep_for
+#include <vector>                 // for vector
+#include <ctime>                  // for time
+#include <mutex>                  // for mutex, lock_guard
+#include <queue>                  // for queue
+#include <map>                    // for map
 
-#include <CL/cl.hpp>
-#include <fstream>
-#include <iostream>
-#include <iomanip>
-#include <string.h>
-#include <sstream>
-#include <cstdlib>
-#include <csignal>
-#include <thread>
-#include <mutex>
-#include <time.h>
-#include <array>
-#include <queue> 
-#include <map>
-
-#include <openssl/sha.h>
-
-#include "util/conversion.hpp"
-#include "util/functions.hpp"
-#include "util/kernel_work.hpp"
-#include "util/OpenCLHelper.hpp"
-#include "util/pgp.hpp"
-#include "util/timer.hpp"
-
-#include "crypto/sha1.hpp"
-#include "crypto/hash_util.hpp"
-
-#include "bloom/BloomFilter.hpp"
+#include "bloom/BloomFilter.hpp"  // for BloomFilter, calculate_bloom_size
+#include "util/OpenCLHelper.hpp"  // for opencl_handle_error, BuildProgram
+#include "util/kernel_work.hpp"   // for KernelWork
+#include "crypto/hash_util.hpp"   // for hash_string
+#include "util/conversion.hpp"    // for hex_to_64bit_integer, integer_to_hex
+#include "util/functions.hpp"     // for sleep, pad, key_from_exponent_and_b...
+#include "util/timer.hpp"         // for Timer
+#include "util/pgp.hpp"           // for create_pgp_v4_fingerprint_packet
 
 //########################################################//
 //                     ISSUES                             //
 //########################################################//
-// TODO: Do a clean up of includes. Maybe there is a 
-//       vscode module?
+// TODO: Continue using "include-what-you-use" to format
+//       the includes are mark what they're being used for
 //
 // TODO: pass in 'target_keys.txt' as a parameter to the
 //       script
@@ -118,7 +116,7 @@ void load_filters(BloomFilter &bf, std::map<std::string, bool> &hash_table, std:
 {
     std::string line;
     std::ifstream infile(filePath);
-    while (getline(infile, line))
+    while (std::getline(infile, line))
     {
         auto integer = hex_to_64bit_integer(line);
 
