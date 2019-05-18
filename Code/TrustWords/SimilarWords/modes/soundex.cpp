@@ -63,3 +63,9 @@ string soundex(const string &s)
 
     return result;
 }
+
+bool soundex_similar(std::string word1_soundex, std::string word2)
+{
+    std::string word2_soundex = soundex(word2);
+    return  word1_soundex == word2_soundex;
+}

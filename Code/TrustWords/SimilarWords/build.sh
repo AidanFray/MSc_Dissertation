@@ -1,0 +1,1 @@
+g++ similar_words.cpp ./modes/*.cpp -o SimilarWords.out

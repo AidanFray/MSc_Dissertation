@@ -5,23 +5,25 @@
 #include <sstream>
 #include <fstream>
 
-#include "soundex.cpp"
-
-int DIFFERENCE_TOLERANCE = 1;
+#include "./modes/soundex.hpp"
+#include "./modes/levenshtien.hpp"
+#include "./modes/double_metaphone.hpp"
 
 std::string inputFileName = "";
 std::string outputFileName = "";
 
 static bool LEV_DISTANCE = false;
 static bool SOUNDEX = false;
+static bool METAPHONE = false;
 
 std::string SOUNDEX_CLI_TAG = "-s";
 std::string LEV_CLI_TAG = "-l";
+std::string METAPHONE_CLI_TAG = "-m";
 
 /*
     Saves the similar words to a specified file
 */
-void save_similar_words_to_file(ofstream &outFile, std::vector<std::string> sim_words)
+void save__CSV(ofstream &outFile, std::vector<std::string> sim_words)
 {
     for (std::string word : sim_words)
     {
@@ -51,46 +53,6 @@ std::vector<std::string> load_CSV(std::string filePath)
 }
 
 /*
-    Calculates the levistien distance of two words
-*/
-int lev_distance(std::string word1, std::string word2)
-{
-    int diff = 0;
-
-    int len_diff = word1.length() - word2.length();
-    len_diff = std::abs(len_diff);
-
-    //Deals with different length strings
-    int min_len = 0;
-    std::string min_word, max_word;
-    if (word1.length() > word2.length())
-    {
-        min_len = word2.length();
-        min_word = word1;
-        max_word = word2;
-    }
-    else
-    {
-        min_len = word1.length();
-        min_word = word2;
-        max_word = word1;
-    }
-        
-    for (size_t i = 0; i < min_len; i++)
-    {
-        if (min_word[i] != max_word[i])
-        {
-            diff += 1;
-        }
-    }
-
-    // Adds on the remaining letters
-    diff += len_diff;
-    return diff;
-        
-}
-
-/*
     Compares each word using it's levistien distance
 */
 void find_similar_words(std::vector<std::string> words)
@@ -103,15 +65,21 @@ void find_similar_words(std::vector<std::string> words)
     std::vector<std::string> sim_words;
     std::ofstream outFile (outputFileName);
 
+
     int loop = 0;
     for (std::string word_y : words)
     {
-        // Recreates the vector for this word_y
+        // Refreshes the vector for each word_y
         sim_words.clear();
         sim_words.push_back(word_y);
 
-        std::string wordY_soundex = soundex(word_y);
-        
+
+        // ########## PRE-COMP ########## //
+        std::string pre_word_y;
+        if      (METAPHONE)  pre_word_y = DoubleMetaphone(word_y);
+        else if (SOUNDEX)    pre_word_y = soundex(word_y);
+
+        // ############################## //
         for (std::string word_x : words)
         {
              // Makes sure the same words aren't checked
@@ -119,16 +87,11 @@ void find_similar_words(std::vector<std::string> words)
             {
                 bool add_word = false;
 
-                if (LEV_DISTANCE)
+                if      (LEV_DISTANCE)      add_word = levenshtein_similar(word_y, word_x);
+                else if (SOUNDEX)           add_word = soundex_similar(pre_word_y, word_x);
+                else if (METAPHONE)         add_word = metaphone_similar(pre_word_y, word_x);
                 {
-                    int diff = lev_distance(word_y, word_x);
-                    add_word = diff <= DIFFERENCE_TOLERANCE;
-                        
-                }
-                else if (SOUNDEX)
-                {
-                    std::string wordX_soundex = soundex(word_x);
-                    add_word = wordX_soundex == wordY_soundex;
+                    /* code */
                 }
 
                 // Adds the word to the dictionary  
@@ -144,7 +107,7 @@ void find_similar_words(std::vector<std::string> words)
         loop++;
 
         // Saves the word to file
-        save_similar_words_to_file(outFile, sim_words);
+        save__CSV(outFile, sim_words);
     }
     outFile.close();
 }
@@ -154,7 +117,7 @@ void find_similar_words(std::vector<std::string> words)
 */
 void usage()
 {
-    std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH> <MODE> [-s|-l]" << std::endl;
+    std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH> <MODE> [-s|-l|-m]" << std::endl;
     exit(0);
 }
 
@@ -163,14 +126,9 @@ void usage()
 */
 void parse_program_mode(std::string commandInput)
 {
-    if (commandInput == SOUNDEX_CLI_TAG)
-    {
-        SOUNDEX = true;
-    }
-    else if (commandInput == LEV_CLI_TAG)
-    {
-        LEV_DISTANCE = true;
-    }
+    if      (commandInput == SOUNDEX_CLI_TAG)       SOUNDEX = true;
+    else if (commandInput == LEV_CLI_TAG)           LEV_DISTANCE = true;
+    else if (commandInput == METAPHONE_CLI_TAG)     METAPHONE = true;
     else
     {
         std::cout << "[!] Error: Please select a mode!" << std::endl;
@@ -192,7 +150,6 @@ int main(int argc, char *argv[])
 
     parse_program_mode(mode);
 
-    int loop = 0;
     auto words = load_CSV(inputFileName);
 
     if (words.empty())
@@ -202,5 +159,5 @@ int main(int argc, char *argv[])
     }
 
     find_similar_words(words);
-    // save_similar_words_to_file();
+    // save__CSV();
 }

@@ -6,8 +6,7 @@ g++ hash.cpp \
     -lOpenCL \
     -lcrypto \
     -lssl \
-    -o \
-    GreenOnion.out \
+    -o GreenOnion.out \
 
 rc=$?; 
 if [[ $rc != 0 ]]; 
