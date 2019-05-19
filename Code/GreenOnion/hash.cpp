@@ -41,6 +41,8 @@
 //       number to create a predicted time
 //
 // TODO: Saving found keys to file
+//
+// TODO: Benchmark mode
 //########################################################//
 static std::queue<KernelWork> kernel_work;
 static std::mutex kernel_work_lock;
@@ -54,8 +56,8 @@ int KEY_LENGTH = 2048;
 int EXPONENT = 0x01000001;
 
 // Bloom filter params
-uint BLOOM_NUMBER_OF_HASHES = 2;
-long BLOOM_SIZE_STATIC = 17000000;  //Set to 0 for dynamic size
+uint BLOOM_NUMBER_OF_HASHES = 5;
+long BLOOM_SIZE_STATIC = 0;  //Set to 0 for dynamic size
 
 // Threading params
 bool running = true;

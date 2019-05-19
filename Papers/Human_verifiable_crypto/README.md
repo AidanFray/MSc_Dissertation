@@ -4,14 +4,12 @@
 
 Study used 661 participants to test.
 
-
 Paper talks about the optimal length of fingerprints and why they need to be a certain length:
 ```
 Fingerprints are by design long enough for it to be exceedingly
 unlikely that two different keys will have the same fingerprint,
 yet short enough for manual comparison to be feasible.
 ```
-
 Other possibilities to the conventional hexadecimal form:
 
 - ASCII art
@@ -35,7 +33,7 @@ During this time a pop-up appeared stating that a message was available from a p
 
 WhatsApp uses iterated hashing to improve its fingerprint?
 
-### RESULTS
+#### RESULTS
 
 The best was sentences where participants only missed 6% of the attacks. Unicorns was the worst where 54% of the attacks were missed.
 
@@ -72,3 +70,5 @@ Then, with security included:
 - Barcode scanning
 - Comparing and confirming
 - Comparing strings
+
+## An Empirical Study of Textual Key-Fingerprint Representations
