@@ -3,8 +3,8 @@
 #include "BloomFilter.hpp"
 
 // The odds of occurrence that a match will appear
-// static double p = 5.88e-10;
-static double p = 1e-5;
+// this is to keep to to about one FP per 100 loops
+static double p = 1e-10;
 
 BloomFilter::BloomFilter(unsigned long size, short numHashes): m_numHashes(numHashes) 
 {
@@ -36,5 +36,5 @@ uint calculate_number_of_hashes(long n, long m)
 {
     // Division by 2 dues to the split nature of
     // the way the hash is added to the bloom filter
-    return round((m / n) * log(2)) / 2;  
+    return round((m / n) * log(2));  
 }

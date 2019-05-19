@@ -9,10 +9,12 @@
 #include <fstream>                      // for ifstream
 #include <csignal>                      // for signal, SIGINT
 #include <cstdlib>                      // for exit, size_t
+#include <iomanip>                      // for setprecision
 #include <chrono>                       // for milliseconds
 #include <string>                       // for string, getline, operator<<, to_string
 #include <thread>                       // for thread, sleep_for
 #include <vector>                       // for vector
+#include <math.h>                       // for pow, round
 #include <ctime>                        // for time
 #include <mutex>                        // for mutex, lock_guard
 #include <queue>                        // for queue
@@ -31,21 +33,21 @@
 //########################################################//
 //                     ISSUES                             //
 //########################################################//
+// BUG: Program is having an error where when the first FP
+//       is introduced the number starts rapidly climbing??
+//
+//########################################################//
 // TODO: Dynamically sized bloom filter functionality
 //
 // TODO: pass in 'target_keys.txt' as a parameter to the
 //       script
 //
-// TODO: Create output that includes a dynamic time. This
-//       can use the speed, number of words and target_key
-//       number to create a predicted time
-//
 // TODO: Saving found keys to file
 //
 // TODO: Benchmark mode
 //
-// TODO: Program is having an error where when the first FP
-//       is introduced the number starts rapidly climbing??
+// TODO: Have the script only print when a key is pressed
+//       this is similar to the way HashCat works
 //########################################################//
 static std::queue<KernelWork> kernel_work;
 static std::mutex kernel_work_lock;
@@ -59,16 +61,16 @@ int KEY_LENGTH = 2048;
 int EXPONENT = 0x01000001;
 
 // Bloom filter params
-uint BLOOM_NUMBER_OF_HASHES_STATIC  = 0;  //Set to 0 for dynamic size
-long BLOOM_SIZE_STATIC              = 0;  //Set to 0 for dynamic size
+uint BLOOM_NUMBER_OF_HASHES_STATIC  = 5;    //Set to 0 for dynamic size
+long BLOOM_SIZE_STATIC              = 0;    //Set to 0 for dynamic size
 
 // Threading params
 bool running = true;
 size_t numberOfThreads = 1;
 std::vector<std::thread> workThreads;
 
-size_t NUM_OF_HASHES = 16777215;    // The amount of hashes per loop
-size_t MAX_WORK_SIZE = 1000;        //Set to 0 for no cap
+size_t NUM_OF_HASHES = 16777215;            // The amount of hashes per loop
+size_t MAX_WORK_SIZE = 1000;                //Set to 0 for no cap
 
 //DEBUG
 // std::string target_keys_file_path = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
@@ -165,6 +167,49 @@ uint get_and_check_target_key_length(std::string filePath)
     return number_of_lines;
 }
 
+/*
+    Calculates the potential run time required to find a match
+*/
+std::string calculate_run_time(double hashRate, long numberOfKeys)
+{
+    std::string units[5] = {"Seconds", "Minutes", "Hours", "Days", "Years"};
+    int lengthChars = 16; // 4 words
+
+    std::string current_unit = units[0];
+
+    long double top = (pow(2, (4 * lengthChars)));
+    double time_value = top / hashRate / numberOfKeys;
+
+    // Conversions to minutes
+    if(time_value > 60.0)
+    {
+        current_unit = units[1];
+        time_value /= 60;
+    }
+
+    // Conversions to hours
+    if(time_value > 60.0)
+    {
+        current_unit = units[2];
+        time_value /= 60;
+    }
+
+    // Conversions to days
+    if(time_value > 24.0)
+    {
+        current_unit = units[3];
+        time_value /= 24;
+    }
+
+    // Conversions to years
+    if(time_value > 365.0)
+    {
+        current_unit = units[4];
+        time_value /= 365;
+    }
+
+    return std::to_string((uint)time_value) + " " + current_unit;
+}
 
 /*
     Communicates with OpenCL and proccess results
@@ -285,12 +330,13 @@ void compute()
 
             double fp_percentage = ((double)false_positives / (double)loops) * 100;
 
-            std::cout 
+            std::cout << std::setprecision(2) << std::setiosflags(std::ios::fixed)
             << OUTPUT << "" 
             << " -- Current Rate:  "       << HPS << " MH/s" 
             << " -- Loops: "               << loops 
             << " -- FP: "                  << false_positives
             << " -- FP Percentage: "       << fp_percentage << "%"
+            << " -- Runtime: "             << calculate_run_time(hashPerSecond, number_of_target_keys)
             << "\r"
             << std::flush;
 

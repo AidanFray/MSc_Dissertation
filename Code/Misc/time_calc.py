@@ -15,8 +15,10 @@ length_in_chars = float(sys.argv[1])
 hashspeed = int(sys.argv[2]) * 1000000
 permutations = float(sys.argv[3])
 
-time_seconds = (2**(4 * length_in_chars)) / hashspeed / permutations
+top = (2**(4 * length_in_chars))
 
+print(top)
+time_seconds = top / hashspeed / permutations
 time_days = time_seconds / 3600 / 24
 
 print(f"[*] It will take:")
