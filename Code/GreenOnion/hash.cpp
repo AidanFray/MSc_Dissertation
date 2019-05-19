@@ -43,6 +43,9 @@
 // TODO: Saving found keys to file
 //
 // TODO: Benchmark mode
+//
+// TODO: Program is having an error where when the first FP
+//       is introduced the number starts rapidly climbing??
 //########################################################//
 static std::queue<KernelWork> kernel_work;
 static std::mutex kernel_work_lock;
@@ -56,8 +59,8 @@ int KEY_LENGTH = 2048;
 int EXPONENT = 0x01000001;
 
 // Bloom filter params
-uint BLOOM_NUMBER_OF_HASHES = 5;
-long BLOOM_SIZE_STATIC = 0;  //Set to 0 for dynamic size
+uint BLOOM_NUMBER_OF_HASHES = 4;
+long BLOOM_SIZE_STATIC = 500000;  //Set to 0 for dynamic size
 
 // Threading params
 bool running = true;
@@ -162,35 +165,6 @@ uint get_and_check_target_key_length(std::string filePath)
     return number_of_lines;
 }
 
-/*
-    TODO
-*/
-bool check_for_real_key(uint* outResult, KernelWork work, std::map<std::string, bool> target_keys_hash_table)
-{
-    //TODO: Encapsulate all here into a single method
-
-    std::string exponent = integer_to_hex(outResult[1]);
-    pad(exponent, 8, '0');
-
-    //Recreates the key
-    auto pgp_key = key_from_exponent_and_base_packet(work.m_fingerprintPacket, exponent);
-    
-    //Obtains the hash of the key
-    uint digest[5];
-    hash_string(pgp_key, digest);
-
-    // Only takes the 2 left most 32-bit blocks
-    auto hex_digest = sha_digest_to_string(digest, 2);
-
-    // If true an actual key is found
-    if(target_keys_hash_table.count(hex_digest))
-    {
-        print_found_key(work, exponent);
-        return true;
-    }
-
-    return false;
-}
 
 /*
     Communicates with OpenCL and proccess results
@@ -306,17 +280,31 @@ void compute()
 
             //Looks for the positive result value
             if (outResult[0] == (uint)0x12345678)
-            {   
-                if (check_for_real_key(outResult, work, target_keys_hash_table))
+            {
+                std::string exponent = integer_to_hex(outResult[1]);
+                pad(exponent, 8, '0');
+
+                //Recreates the key
+                auto pgp_key = key_from_exponent_and_base_packet(work.m_fingerprintPacket, exponent);
+                
+                //Obtains the hash of the key
+                uint digest[5];
+                hash_string(pgp_key, digest);
+
+                // Only takes the 2 left most 32-bit blocks
+                auto hex_digest = sha_digest_to_string(digest, 2);
+
+                // If true an actual key is found
+                if(target_keys_hash_table.count(hex_digest))
                 {
+                    print_found_key(work, exponent);
                     if (END_ON_KEY_FOUND) break;
                 }
                 else
                 {
                     false_positives++;
+                    outResult[0] = 0xffffffff;
                 }
-
-                outResult[0] = 0xffffffff;
             }
             loops++;
         }
