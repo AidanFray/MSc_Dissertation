@@ -139,7 +139,7 @@ std::string hex_string_to_mpi(std::string hexString)
 std::string sha_digest_to_string(uint *digest, int len)
 {
     std::string result;
-    for (size_t i = 0; i < len; i++)
+    for (int i = 0; i < len; i++)
     {
         result += unsigned_integer_to_hex(digest[i]);
     }

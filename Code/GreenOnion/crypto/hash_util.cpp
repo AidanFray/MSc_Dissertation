@@ -91,7 +91,7 @@ void hash_blocks(std::vector<std::string> hex_blocks, uint32_t* digest, int num_
     digest[3] = 0x10325476;
     digest[4] = 0xC3D2E1F0;
     // Full hash
-    for(size_t i = 0; i < num_of_blocks; ++i)
+    for(int i = 0; i < num_of_blocks; ++i)
     {
         uint32_t W[16];
         hex_block_to_words(W, hex_blocks[i]);

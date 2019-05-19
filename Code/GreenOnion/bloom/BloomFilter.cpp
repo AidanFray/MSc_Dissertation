@@ -27,7 +27,7 @@ long calculate_bloom_size(long num_of_elements)
 {
     //TODO : this can be altered
     // Currently: 1 in a trillion
-    double probability = 1e-6;
+    double probability = 1e-20;
 
     auto top = abs((num_of_elements * log(probability)));
     auto bottom = (log(2) * log(2));

@@ -1,12 +1,14 @@
-#include <CL/cl.h>    // for CL_DEVICE_NAME, CL_DEVICE_TYPE_ALL, CL_DEVICE_V...
-#include <stdlib.h>   // for exit
-#include <CL/cl.hpp>  // for Device, Platform, Program, Context, Program::So...
-#include <iostream>   // for operator<<, basic_ostream, endl, cout, ostream
-#include <iterator>   // for istreambuf_iterator, operator!=
-#include <string>     // for operator<<, string
-#include <utility>    // for make_pair
-#include <vector>     // for vector
-#include <fstream>    // for ifstream
+#include <CL/cl.h>              // for CL_DEVICE_NAME, CL_DEVICE_TYPE_ALL, CL_DEVICE_V...
+#include <stdlib.h>             // for exit
+#include <CL/cl.hpp>            // for Device, Platform, Program, Context, Program::So...
+#include <iostream>             // for operator<<, basic_ostream, endl, cout, ostream
+#include <iterator>             // for istreambuf_iterator, operator!=
+#include <string>               // for operator<<, string
+#include <utility>              // for make_pair
+#include <vector>               // for vector
+#include <fstream>              // for ifstream
+
+#include "terminal_colors.hpp"  // for INFO, WARNING, OUTPUT
 
 const char *getErrorString(int error)
 {
@@ -87,7 +89,7 @@ const char *getErrorString(int error)
 
 void opencl_handle_error(int error, std::string name="")
 {
-    std::cout << "[!] " << getErrorString(error) << ": " << name << std::endl;
+    std::cout << WARNING << " " << getErrorString(error) << ": " << name << std::endl;
     exit(error);
 }
 
@@ -98,7 +100,7 @@ std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)
 
     if (devices.size() == 0)
     {
-        std::cout << "[!] No avaliable devices!" << std::endl;
+        std::cout << WARNING << " No avaliable devices!" << std::endl;
         exit(0);
     }
 
@@ -107,8 +109,8 @@ std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)
 
     if (printInfo)
     {
-        std::cout << "[!] Device:  " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
-        std::cout << "[!] Version: " << device.getInfo<CL_DEVICE_VERSION>() << std::endl;
+        std::cout << INFO << " Device:  " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+        std::cout << INFO << " Version: " << device.getInfo<CL_DEVICE_VERSION>() << std::endl;
     }
 
     return devices;
@@ -122,7 +124,7 @@ cl::Platform GetPlatform()
 
     if (platforms.size() == 0)
     {
-        std::cout << "[!] No available OpenCL platforms!" << std::endl;
+        std::cout << WARNING << " No available OpenCL platforms!" << std::endl;
         exit(0);
     }
     auto platform = platforms.front();
@@ -142,7 +144,7 @@ cl::Program BuildProgram(const std::string& fileName, cl::Context context)
 
     if (err != 0)
     {
-        std::cout << "[!] Error building OpenCL program: " << getErrorString(err) << std::endl;
+        std::cout << WARNING << " Error building OpenCL program: " << getErrorString(err) << std::endl;
         exit(0);
     }
 

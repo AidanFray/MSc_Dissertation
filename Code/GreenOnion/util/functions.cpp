@@ -17,7 +17,7 @@ using hex = cppcodec::hex_upper;
 /*
     Pads a string to a certain length
 */
-void pad(std::string &inputString, int minimumLength, char paddingChar)
+void pad(std::string &inputString, size_t minimumLength, char paddingChar)
 {
     while (inputString.length() < minimumLength)
     {
