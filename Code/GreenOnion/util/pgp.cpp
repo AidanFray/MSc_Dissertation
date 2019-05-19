@@ -294,7 +294,7 @@ void print_found_key(KernelWork work, std::string exponent)
     std::string private_armor_key = get_private_key_pgp_armor(secret_key_packet);
 
     std::cout << "\n\n";
-    // std::cout << public_armour_key                                        << std::endl;
+    std::cout << public_armour_key                                        << std::endl;
     std::cout << private_armor_key                                        << std::endl;
     gpg_command_line(private_armor_key);
     std::cout                                                             << std::endl;

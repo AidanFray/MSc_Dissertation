@@ -61,8 +61,10 @@ int KEY_LENGTH = 2048;
 int EXPONENT = 0x01000001;
 
 // Bloom filter params
-uint BLOOM_NUMBER_OF_HASHES_STATIC  = 5;    //Set to 0 for dynamic size
+uint BLOOM_NUMBER_OF_HASHES_STATIC  = 2;    //Set to 0 for dynamic size
+// long BLOOM_SIZE_STATIC              = 1700000;    //Set to 0 for dynamic size
 long BLOOM_SIZE_STATIC              = 0;    //Set to 0 for dynamic size
+
 
 // Threading params
 bool running = true;
@@ -170,9 +172,9 @@ uint get_and_check_target_key_length(std::string filePath)
 /*
     Calculates the potential run time required to find a match
 */
-std::string calculate_run_time(double hashRate, long numberOfKeys)
+std::string calculate_run_time(long hashRate, long numberOfKeys)
 {
-    std::string units[5] = {"Seconds", "Minutes", "Hours", "Days", "Years"};
+    std::string units[5] = {"Seconds", "Minute(s)", "Hour(s)", "Day(s)", "Year(s)"};
     int lengthChars = 16; // 4 words
 
     std::string current_unit = units[0];
@@ -185,27 +187,27 @@ std::string calculate_run_time(double hashRate, long numberOfKeys)
     {
         current_unit = units[1];
         time_value /= 60;
-    }
-
-    // Conversions to hours
-    if(time_value > 60.0)
-    {
-        current_unit = units[2];
-        time_value /= 60;
-    }
-
-    // Conversions to days
-    if(time_value > 24.0)
-    {
-        current_unit = units[3];
-        time_value /= 24;
-    }
-
-    // Conversions to years
-    if(time_value > 365.0)
-    {
-        current_unit = units[4];
-        time_value /= 365;
+        
+        // Conversions to hours
+        if(time_value > 60.0)
+        {
+            current_unit = units[2];
+            time_value /= 60;
+            
+            // Conversions to days
+            if(time_value > 24.0)
+            {
+                current_unit = units[3];
+                time_value /= 24;
+                
+                // Conversions to years
+                if(time_value > 365.0)
+                {
+                    current_unit = units[4];
+                    time_value /= 365;
+                }
+            }
+        }
     }
 
     return std::to_string((uint)time_value) + " " + current_unit;
@@ -234,28 +236,25 @@ void compute()
     auto number_of_target_keys = get_and_check_target_key_length(target_keys_file_path);
 
     long BLOOM_SIZE = 0;
-    if (BLOOM_SIZE_STATIC != 0) 
-    {
-        BLOOM_SIZE = BLOOM_SIZE_STATIC;
-    }
-    else
-    {
-        BLOOM_SIZE = calculate_bloom_size(number_of_target_keys);
-    }
-
     uint BLOOM_NUMBER_OF_HASHES = 0;
-    if (BLOOM_NUMBER_OF_HASHES_STATIC != 0) 
-    {
-        BLOOM_NUMBER_OF_HASHES = BLOOM_NUMBER_OF_HASHES_STATIC;
-    }
-    else 
-    {
-        BLOOM_NUMBER_OF_HASHES = calculate_number_of_hashes(number_of_target_keys, BLOOM_SIZE);
-    }
+
+    if (BLOOM_SIZE_STATIC != 0)                 BLOOM_SIZE = BLOOM_SIZE_STATIC;
+    else                                        BLOOM_SIZE = calculate_bloom_size(number_of_target_keys);
+
+    if (BLOOM_NUMBER_OF_HASHES_STATIC != 0)     BLOOM_NUMBER_OF_HASHES = BLOOM_NUMBER_OF_HASHES_STATIC;
+    else                                        BLOOM_NUMBER_OF_HASHES = calculate_number_of_hashes(number_of_target_keys, BLOOM_SIZE);
+
+
+    //DEBUG
+    BLOOM_SIZE = 1800000;
+    BLOOM_NUMBER_OF_HASHES = 2;
 
     std::cout << INFO << " Bloom filter size: " << BLOOM_SIZE << std::endl;
     std::cout << INFO << " Number of bloom filter hash cycles: " << BLOOM_NUMBER_OF_HASHES << std::endl;
     std::cout << std::endl;
+
+    long bloom_bit_vector_size[1] = {BLOOM_SIZE};
+    uint bloom_number_of_hashes[1] = {BLOOM_NUMBER_OF_HASHES};
 
     // Filter objects    
     std::map<std::string, bool> target_keys_hash_table;
@@ -296,10 +295,10 @@ void compute()
             cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (sizeof(bool) * BLOOM_SIZE), bf.m_bits, &err);
             if (err != 0) opencl_handle_error(err, "bit_vector");
 
-            cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), new long[1] {BLOOM_SIZE}, &err);
+            cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), bloom_bit_vector_size, &err);
             if (err != 0) opencl_handle_error(err, "bit_vector_size");
 
-            cl::Buffer buf_numberOfHashes(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), new uint[1] {BLOOM_NUMBER_OF_HASHES}, &err);
+            cl::Buffer buf_numberOfHashes(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), bloom_number_of_hashes, &err);
             if (err != 0) opencl_handle_error(err, "number_of_hashes");
             
             cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
@@ -308,8 +307,7 @@ void compute()
             kernel.setArg(1, buf_currentHash);
             kernel.setArg(2, buf_bitVector);
             kernel.setArg(3, buf_bitVectorSize);
-            kernel.setArg(4, buf_numberOfHashes);
-            kernel.setArg(5, buf_out_result);
+            kernel.setArg(4, buf_out_result);
 
             queue.enqueueNDRangeKernel(
                 kernel, 
@@ -323,15 +321,13 @@ void compute()
             tmr.reset();
             auto hashPerSecond = (long)(NUM_OF_HASHES / totalTime);
 
-            // std::cout << OUTPUT << " Current Rate: " << (uint)(hashPerSecond / 1000000) << " MH/s\r" << std::flush;
-
             auto HPS = std::to_string(hashPerSecond / 1000000);
             pad(HPS, 4, '0');
 
             double fp_percentage = ((double)false_positives / (double)loops) * 100;
 
             std::cout << std::setprecision(2) << std::setiosflags(std::ios::fixed)
-            << OUTPUT << "" 
+            << "[*]" 
             << " -- Current Rate:  "       << HPS << " MH/s" 
             << " -- Loops: "               << loops 
             << " -- FP: "                  << false_positives
@@ -360,7 +356,7 @@ void compute()
                 if(target_keys_hash_table.count(hex_digest))
                 {
                     print_found_key(work, exponent);
-                    if (END_ON_KEY_FOUND) break;
+                    // if (END_ON_KEY_FOUND) break;
                 }
                 else
                 {
@@ -430,6 +426,7 @@ void signalHandler(int signum)
 
 int main()
 {
+
     signal(SIGINT, signalHandler);  
 
     if (PRINT_SHA1_TEST) sha1_test();
