@@ -19,3 +19,4 @@ public:
 #endif
 
 long calculate_bloom_size(long num_of_elements);
+uint calculate_number_of_hashes(long n, long m);

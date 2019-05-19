@@ -59,8 +59,8 @@ int KEY_LENGTH = 2048;
 int EXPONENT = 0x01000001;
 
 // Bloom filter params
-uint BLOOM_NUMBER_OF_HASHES = 4;
-long BLOOM_SIZE_STATIC = 500000;  //Set to 0 for dynamic size
+uint BLOOM_NUMBER_OF_HASHES_STATIC  = 0;  //Set to 0 for dynamic size
+long BLOOM_SIZE_STATIC              = 0;  //Set to 0 for dynamic size
 
 // Threading params
 bool running = true;
@@ -188,9 +188,25 @@ void compute()
     // ### FILTER INIT ###
     auto number_of_target_keys = get_and_check_target_key_length(target_keys_file_path);
 
-    long BLOOM_SIZE;
-    if (BLOOM_SIZE_STATIC != 0) BLOOM_SIZE = BLOOM_SIZE_STATIC;
-    else                        BLOOM_SIZE = calculate_bloom_size(number_of_target_keys);
+    long BLOOM_SIZE = 0;
+    if (BLOOM_SIZE_STATIC != 0) 
+    {
+        BLOOM_SIZE = BLOOM_SIZE_STATIC;
+    }
+    else
+    {
+        BLOOM_SIZE = calculate_bloom_size(number_of_target_keys);
+    }
+
+    uint BLOOM_NUMBER_OF_HASHES = 0;
+    if (BLOOM_NUMBER_OF_HASHES_STATIC != 0) 
+    {
+        BLOOM_NUMBER_OF_HASHES = BLOOM_NUMBER_OF_HASHES_STATIC;
+    }
+    else 
+    {
+        BLOOM_NUMBER_OF_HASHES = calculate_number_of_hashes(number_of_target_keys, BLOOM_SIZE);
+    }
 
     std::cout << INFO << " Bloom filter size: " << BLOOM_SIZE << std::endl;
     std::cout << INFO << " Number of bloom filter hash cycles: " << BLOOM_NUMBER_OF_HASHES << std::endl;
@@ -302,6 +318,7 @@ void compute()
                 }
                 else
                 {
+                    //Resets
                     false_positives++;
                     outResult[0] = 0xffffffff;
                 }

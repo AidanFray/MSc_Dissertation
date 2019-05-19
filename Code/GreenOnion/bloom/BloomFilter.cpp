@@ -1,6 +1,10 @@
-#include <math.h>         // for log, abs
-#include "MurmurHash3.h"  // for MurmurHash3_x86_32
+#include <math.h>           // for log, abs, round
+#include "MurmurHash3.h"    // for MurmurHash3_x86_32
 #include "BloomFilter.hpp"
+
+// The odds of occurrence that a match will appear
+// static double p = 5.88e-10;
+static double p = 1e-5;
 
 BloomFilter::BloomFilter(unsigned long size, short numHashes): m_numHashes(numHashes) 
 {
@@ -23,16 +27,14 @@ void BloomFilter::add(unsigned long value)
     }
 }
 
-long calculate_bloom_size(long num_of_elements)
+long calculate_bloom_size(long n)
 {
-    //TODO : this can be altered
-    // Currently: 1 in a trillion
-    double probability = 1e-20;
+    return ceil((n * log(p)) / log(1 / pow(2, log(2))));
+}
 
-    auto top = abs((num_of_elements * log(probability)));
-    auto bottom = (log(2) * log(2));
-
-    auto m =  (long)(top / bottom);
-
-    return m;
+uint calculate_number_of_hashes(long n, long m)
+{
+    // Division by 2 dues to the split nature of
+    // the way the hash is added to the bloom filter
+    return round((m / n) * log(2)) / 2;  
 }
