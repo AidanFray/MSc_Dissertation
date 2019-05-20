@@ -56,7 +56,7 @@ int EXPONENT = 0x01000001;
 // Bloom filter params
 uint BLOOM_NUMBER_OF_HASHES_STATIC  = 2;    //Set to 0 for dynamic size
 // long BLOOM_SIZE_STATIC              = 1700000;    //Set to 0 for dynamic size
-long BLOOM_SIZE_STATIC              = 0;    //Set to 0 for dynamic size
+long BLOOM_SIZE_STATIC              = 1500000;    //Set to 0 for dynamic size
 
 
 // Threading params
@@ -240,11 +240,6 @@ void compute()
 
     if (BLOOM_NUMBER_OF_HASHES_STATIC != 0)     BLOOM_NUMBER_OF_HASHES = BLOOM_NUMBER_OF_HASHES_STATIC;
     else                                        BLOOM_NUMBER_OF_HASHES = calculate_number_of_hashes(number_of_target_keys, BLOOM_SIZE);
-
-
-    //DEBUG
-    BLOOM_SIZE = 1800000;
-    BLOOM_NUMBER_OF_HASHES = 2;
 
     std::cout << INFO << " Bloom filter size: " << BLOOM_SIZE << std::endl;
     std::cout << INFO << " Number of bloom filter hash cycles: " << BLOOM_NUMBER_OF_HASHES << std::endl;
