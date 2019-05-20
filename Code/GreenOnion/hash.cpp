@@ -35,8 +35,6 @@
 //########################################################//
 // TODO: Dynamically sized bloom filter functionality
 //
-// TODO: Saving found keys to file
-//
 // TODO: Benchmark mode
 //
 // TODO: Have the script only print when a key is pressed
@@ -170,7 +168,7 @@ std::string calculate_run_time(long hashRate, long numberOfKeys)
 
     std::string current_unit = units[0];
 
-    long double top = (pow(2, (4 * lengthChars)));
+    long double top = (pow(2, (4 * lengthChars - 1)));
     double time_value = top / hashRate / numberOfKeys;
 
     // Conversions to minutes

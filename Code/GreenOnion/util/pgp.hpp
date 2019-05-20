@@ -25,4 +25,6 @@ std::string get_user_id_packet();
 
 void sha1_hash_all_but_final_block_of_pgp_packet(uint *finalBlock, uint *digest, std::string PGP_v4_packet);
 
+void save_found_key(std::string publickeyArmor, std::string privatekeyArmor);
+
 void print_found_key(KernelWork work, std::string exponent);

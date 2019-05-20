@@ -3,10 +3,12 @@
 #include <openssl/bn.h>                             // for BN_bn2hex, BN_CTX...
 #include <sys/types.h>                              // for uint
 #include <iostream>                                 // for endl, operator<<
+#include <fstream>                                  // for ofstream
 #include <cstdlib>                                  // for system, NULL
 #include <bitset>                                   // for bitset
 #include <string>                                   // for string, allocator
 #include <vector>                                   // for vector
+#include <ctime>                                    // for time
 
 #include "../cppcodec/cppcodec/base64_rfc4648.hpp"  // for base64_rfc4648
 #include "../cppcodec/cppcodec/hex_upper.hpp"       // for hex_upper
@@ -14,6 +16,7 @@
 #include "kernel_work.hpp"                          // for KernelWork
 #include "conversion.hpp"                           // for hex_string_to_mpi
 #include "functions.hpp"                            // for pad, split_string...
+#include "terminal_colors.hpp"                      // for WARNING, OUTPUT, INFO
 
 using base64 = cppcodec::base64_rfc4648;
 using hex = cppcodec::hex_upper;
@@ -277,11 +280,38 @@ void gpg_command_line(std::string publicArmorKey)
 }
 
 /*
+    Saves the found public and private key to file
+*/
+std::string save_found_key(std::string publickeyArmor, std::string privatekeyArmor)
+{
+    auto result = std::time(nullptr);
+    std::string fileNameBase = "keys_" + std::to_string(result);
+
+    auto directory = "similar_keys/" + fileNameBase;
+
+    // Makes key directory
+    auto cmd = "mkdir " + directory;
+    std::system(cmd.c_str());
+
+    std::ofstream outFilePub;
+    outFilePub.open(directory + "/public.key", std::ios_base::app);
+    outFilePub << publickeyArmor << "\n";
+    outFilePub.close();
+
+    std::ofstream outFilePriv;
+    outFilePriv.open(directory + "/private.key", std::ios_base::app);
+    outFilePriv << privatekeyArmor << "\n";
+    outFilePriv.close();
+
+    return directory;
+}
+
+/*
     Prints important parts of the key when a match is found
 */
 void print_found_key(KernelWork work, std::string exponent)
 {
-    std::cout << "\nWe've got one!!" << std::endl;
+    std::cout << "\n" << INFO << " Found a key!" << std::endl;
 
     // Public key
     std::string v4_fingerprint_packet = key_from_exponent_and_base_packet(work.m_fingerprintPacket, exponent);
@@ -293,9 +323,15 @@ void print_found_key(KernelWork work, std::string exponent)
     secret_key_packet += get_user_id_packet();
     std::string private_armor_key = get_private_key_pgp_armor(secret_key_packet);
 
-    std::cout << "\n\n";
-    std::cout << public_armour_key                                        << std::endl;
-    std::cout << private_armor_key                                        << std::endl;
-    gpg_command_line(private_armor_key);
-    std::cout                                                             << std::endl;
+    // std::cout << "\n\n";
+    // std::cout << public_armour_key                                        << std::endl;
+    // std::cout << private_armor_key                                        << std::endl;
+    // gpg_command_line(private_armor_key);
+
+    auto filePath = save_found_key(public_armour_key, private_armor_key);
+
+    //TEMP: Need to incorporate this functionality into the script
+    //      running from an external script can be fucky
+    auto command = "cd ../TrustWords ; python create_perms.py --keys ./ ../GreenOnion/" + filePath + "/public.key";
+    std::system(command.c_str());
 }
