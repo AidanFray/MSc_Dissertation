@@ -91,7 +91,7 @@ void sha1_test()
     // 160 bit digest
     uint openclHash[5];
 
-    cl::Buffer valueBuf(context, CL_MEM_READ_WRITE | CL_MEM_HOST_READ_ONLY, sizeof(openclHash));
+    cl::Buffer valueBuf(context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, sizeof(openclHash));
 
     cl::Kernel kernel(program, "shaTest");
     kernel.setArg(0, valueBuf);
@@ -203,7 +203,11 @@ std::string calculate_run_time(long hashRate, long numberOfKeys)
         }
     }
 
-    return std::to_string((uint)time_value) + " " + current_unit;
+    std::stringstream stream;
+
+    stream << std::fixed << std::setprecision(2) << time_value << " " << current_unit;
+
+    return stream.str();
 }
 
 /*
@@ -294,7 +298,7 @@ void compute()
             cl::Buffer buf_numberOfHashes(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), bloom_number_of_hashes, &err);
             if (err != 0) opencl_handle_error(err, "number_of_hashes");
             
-            cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
+            cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_ALLOC_HOST_PTR, resultSize);
 
             kernel.setArg(0, buf_finalBlock);
             kernel.setArg(1, buf_currentHash);
@@ -349,7 +353,7 @@ void compute()
                 if(target_keys_hash_table.count(hex_digest))
                 {
                     print_found_key(work, exponent);
-                    // if (END_ON_KEY_FOUND) break;
+                    if (END_ON_KEY_FOUND) break;
                 }
                 else
                 {
