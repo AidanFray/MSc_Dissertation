@@ -788,6 +788,7 @@ __kernel void key_hash(__global uint* finalBlock,
 	H[3] = d;
 	H[4] = e;
 
+
 	//Checks for a matach
 	bool match = true;
 
