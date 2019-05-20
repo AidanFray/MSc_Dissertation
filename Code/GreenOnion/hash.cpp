@@ -291,7 +291,7 @@ void compute()
             cl::Buffer buf_numberOfHashes(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), bloom_number_of_hashes, &err);
             if (err != 0) opencl_handle_error(err, "number_of_hashes");
             
-            cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_ALLOC_HOST_PTR, resultSize);
+            cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
 
             kernel.setArg(0, buf_finalBlock);
             kernel.setArg(1, buf_currentHash);
