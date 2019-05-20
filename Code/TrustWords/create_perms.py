@@ -342,28 +342,34 @@ def generate_words_for_PGP_keys(key_path_1, key_path_2):
     #     key_data_1 = key1.readlines()
     
     # TEMP
-    key_finger_print_2 = "7E6C 4BF0 5CE3 F379".replace(" ", "")
+    key_finger_print_1 = "7E6C 4BF0 5CE3 F379".replace(" ", "")
 
     key_data_2 = []
     with open(key_path_2) as key2:
         key_data_2 = key2.readlines()
 
-
-    key_base64_1= ""
+    key_base64_2 = ""
 
     # Skips headers and formatting lines
     for l in key_data_2[1:-2]:
-        key_base64_1 += l.strip()
+        key_base64_2 += l.strip()
 
-    key_bytes_1 = base64.b64decode(key_base64_1)
+    # All the bytes from the key
+    bytes_2 = base64.b64decode(key_base64_2)
+
+    # Takes the PGP packey length from the header
+    key_length = int.from_bytes(bytes_2[1:3], byteorder="big")
+
+    # Takes the header and length
+    key_bytes_2 = bytes_2[:key_length + 3]
 
     sha1 = SHA1.new()
-    sha1.update(key_bytes_1)
+    sha1.update(key_bytes_2)
 
-    key_finger_print_1 = sha1.hexdigest()[:16].upper()
+    # Takes the left 64-bit
+    key_finger_print_2 = sha1.hexdigest()[:16].upper()
 
     combined_key = XOR_fingerprints(key_finger_print_1, key_finger_print_2)
-
     finger_print_to_words(combined_key)
 
 def args():
