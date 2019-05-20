@@ -33,14 +33,7 @@
 //########################################################//
 //                     ISSUES                             //
 //########################################################//
-// BUG: Program is having an error where when the first FP
-//       is introduced the number starts rapidly climbing??
-//
-//########################################################//
 // TODO: Dynamically sized bloom filter functionality
-//
-// TODO: pass in 'target_keys.txt' as a parameter to the
-//       script
 //
 // TODO: Saving found keys to file
 //
@@ -78,7 +71,7 @@ size_t MAX_WORK_SIZE = 1000;                //Set to 0 for no cap
 // std::string target_keys_file_path = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
 // std::string kernel_file_path = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Code/GreenOnion/opencl/SHA1.cl";
 
-std::string target_keys_file_path = "./target_keys.txt";
+std::string target_keys_file_path = "";
 std::string kernel_file_path = "./opencl/SHA1.cl";
 
 /*
@@ -161,7 +154,7 @@ uint get_and_check_target_key_length(std::string filePath)
 
     if (number_of_lines == 0)
     {
-        std::cout << WARNING <<" Error: No target keys have been loaded. Please check the target_keys.txt file" << std::endl;
+        std::cout << WARNING <<" Error: No target keys have been loaded. Please check the target_keys file path" << std::endl;
         exit(0);
     }
     std::cout << INFO <<" Number of target keys loaded: " << number_of_lines << std::endl;
@@ -424,8 +417,17 @@ void signalHandler(int signum)
     exit(signum);
 }
 
-int main()
+void usage()
 {
+    std::cout << "./GreenOnion <TARGET_KEYS_FILE_PATH>" << std::endl;
+    exit(0);
+}
+
+int main(int argc, char* argv[])
+{
+    // Argument handling
+    if (argc != 2) usage();
+    target_keys_file_path = argv[1];
 
     signal(SIGINT, signalHandler);  
 
