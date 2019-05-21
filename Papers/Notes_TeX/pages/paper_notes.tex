@@ -53,7 +53,10 @@ Study involved 1047 participants evaluating 6 different textual representations 
 The study has an attacker power of around 80 of 112 bits.
 
 \begin{itemize}
-    \item X
+    \item Alphanumerical
+    \item Numerical
+    \item Words
+    \item Sentences
 \end{itemize}
 
 More mention to decentralised method finding it hard to find adoption such as Web of Trust and Namecoin ([7, 13, 30])
@@ -78,4 +81,34 @@ When generating partial-collision fixing the bits at the start and end has been 
 \begin{itemize}
     \item Overall recommendation is to replace \textbf{hexadecimal} with \textbf{sentence} based encoding
     \item Findings show that \textbf{hexadecimal} and \textbf{Base32} perform worse than the other alternatives in realistic threat models. With over \textbf{10\%} of users failing to detect attacks with these schemes.
+    \item According to their study, \textbf{words} and \textbf{sentences} we some of the best methods for avoiding attack
+    \item Words has the second highest usability ratings second to only sentences
+\end{itemize}
+
+\section{Usability and Security of Out-Of-Band Channels in Secure Device Pairing Protocols}
+
+Paper looks into the positives of secondary channels used to authenticate device pairing. Such as device fingerprint comparison.
+
+"People are the weakest link in the security chain" [26]
+
+Mentions a normal channel as a "Dolev-Yao" channel [5]. This is where an attacker can overhead, delete and modify messages.
+
+
+\subsection{Findings}
+\begin{itemize}
+    \item Showed for \textbf{usability} methods ranked:
+    \begin{itemize}
+        \item Comparing-confirm
+        \item Typing strings
+        \item Comparing-select
+        \item Barcode
+    \end{itemize}
+
+    \item Showed for \textbf{combined security} and \textbf{usability} methods ranked:
+    \begin{itemize}
+        \item Typing strings
+        \item Barcodes
+        \item Comparing-confirm
+        \item Comparing-select
+    \end{itemize}
 \end{itemize}
