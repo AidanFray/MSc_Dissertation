@@ -6,8 +6,6 @@
     \item Lots of study into overall representations of fingerprints
 \end{itemize}
 
-
-
 \section{Can Unicorns Help Users Compare Crypto Key Fingerprints}
 
 This paper tested 8 different fingerprint representations with 661 different participants. All of these representations are testing using compare-and-confirm (basic comparison process for fingerprints) and compare-and-select (select from a list)
@@ -87,11 +85,52 @@ When generating partial-collision fixing the bits at the start and end has been 
 
 \section{Usability and Security of Out-Of-Band Channels in Secure Device Pairing Protocols}
 
-Paper looks into the positives of secondary channels used to authenticate device pairing. Such as device fingerprint comparison.
+Paper looks into the positives of secondary channels used to authenticate device pairing. Such as device fingerprint comparison. It also aims to look into the fact that many studies performed do not take into consideration the aspect of human interaction.
+
+Total of 30 paid participants were recruited where the experiment simulated a P2P payment system.
+
+They collected:
+\begin{itemize}
+    \item Time to completed the associated process
+    \item Number of security or non-security related errors
+\end{itemize}
+
+And quantified using questionnaires:
+\begin{itemize}
+    \item Ease of use with the representation
+    \item Satisfaction with time spent with a method/representation
+    \item Participant's confidence with the scheme
+\end{itemize}
+
+The paper also tested methods:
+\begin{itemize}
+    \item Compare and Confirm
+    \item Compare and Select
+    \item Compare and Enter
+    \item Barcode scanning
+\end{itemize}
+
+Representations:
+\begin{itemize}
+    \item Numerical
+    \item Alphanumerical
+    \item Words
+    \begin{itemize}
+        \item Dictionary of 1024 words each mapped to 10-bits
+    \end{itemize}
+    \item Sentences
+    \item Images
+    \item Melodies
+    \item Sound (Numerical/Alphanumerical)
+\end{itemize}
 
 "People are the weakest link in the security chain" [26]
 
 Mentions a normal channel as a "Dolev-Yao" channel [5]. This is where an attacker can overhead, delete and modify messages.
+
+Talks about systems that were secure on paper that ended up in practice being miss-handled to reduce security. One example is with the Russian army in WWI [1]
+
+Bruce Schneier [27] also argues that systems and involves humans therefore often systems are broken due to improper use.
 
 
 \subsection{Findings}
@@ -111,4 +150,28 @@ Mentions a normal channel as a "Dolev-Yao" channel [5]. This is where an attacke
         \item Comparing-confirm
         \item Comparing-select
     \end{itemize}
+
+    Showed that the best methods in terms of the SUM score [24] ranked the top 3 as:
+    \begin{itemize}
+        \item Numeric(C\&C)          [73.7]
+        \item Alphanumerical(C\&C)   [72.5]
+        \item Words (C\&C)           [70.6]
+    \end{itemize}
+
+    Numerical had 0\% security failures, Word 3.3\% and Alphanumerical had a high 13.3\% 
+
+    NOTE: This is a very small sample size.
 \end{itemize}
+
+\newpage
+
+\section{SafeSlinger: An Easy-to-use and Secure Approach for
+Human Trust Establishment}
+
+The aim of SafeSlinger is to solve the issue of key exchange. They aim to leverage the initial personal contact of people to facilitate trust. To solve the issue of people that would never meet they implement a system of "shared acquaintance"
+
+Talks about issues with decentralised (PGP [42]) and centralised (SSL CA [27, 34]) key exchange.
+
+"Tim Berners-Lee has called upon security researchers and professionals to design a public key encryption system for the people [11]"
+
+Only uses \textbf{24-bits} of a SHA-1 hash of all the exchanged information, \textbf{could this be exploited?}

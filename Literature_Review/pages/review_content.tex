@@ -1,0 +1,28 @@
+\section{Research questions}
+
+Overall the research will aim to investigate the strength of pEp's Trustword fingerprint mappings, and the ease in which partial collisions can be obtained for keys and how this will ultimately affect the end user(s).
+
+Key areas that will be looked into:
+\begin{itemize}
+    \item Is the recommended minimum number of Trustwords enough to provide a basic level of security.
+    \item What attributes make a strong general wordlist for fingerprint mapping and does the Trustword implementation exhibit these features.
+    \item How easy is it to generate similar keys that attack a targeted key pair?
+    \item How can similarity be quantified in terms of words? Does this include pronunciation or visual aspects?
+    \item As usability is the main justification for the use of Trustwords are there alternatives that provide the same usability but with more security?
+\end{itemize}
+
+\section{Review}
+
+\subsection{Fingerprint representation and comparison}
+
+Current research in ways to represent and validate fingerprints has almost exclusively focused on the usability of such schemes. The following section will discuss available research findings alongside a overall comparison of the research recommendations.
+
+Work by Dechand Sergej, \textit{et al.}\cite{dechand2016empirical} empirically investigated the usability of 4 distinct textual representations evaluated with a experiments involving a total of 1047 participant. The textual representations were: Alphanumeric, Numeric, Words and Sentences. They assessed the number of attacks missed with each scheme alongside results from a questionnaire on the participants preferred scheme and perceived usability.
+
+The paper touches upon issues with decentralised methods of identification such a PGP's Web of Trust and the problems these solutions have with user adoption. These points are made in an attempt to validate the requirement for manual comparison of key based fingerprints. This is a common theme that appears in the majority of the reviewed papers.
+
+Other references made within the paper touch upon the vulnerabilities and usability issues present with the way humans interact with the security systems. Example of these are studies showing humans find it difficult to comprehend long and "meaningless" strings and the lack of actual comparison performed by actual users in live scenario's. These are, however, acknowledged as limitations in the later stages of the paper.
+
+The paper has defined the upper and lower bound costs of the attacker's resources and strength as \$610K to \$16B, with an ability to control 80-bits of the fingerprint. This in comparison to other papers is high and is almost encroaching into the realm of a highly sophisticated attacker. Therefore, the lack of consideration for the lower-end of the attack resource spectrum can be considered a limitation of this study.
+
+Overall, findings from the paper state that conventional encodings such as Hexadecimal and Base32 perform worse than all other alternatives in a realistic threat model with over 10\% of users failing to detect an attack on these encoding schemes. The recommendations of the authors is to to replace these encoding schemes with Words or Sentences due to their very high success rate and high usability scores.

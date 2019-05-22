@@ -1,0 +1,21 @@
+\documentclass[bibliography=totoc]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[numbers]{natbib} 		% Package for IEEE Referencing
+\usepackage{hyperref} 				% Package for URLS and Content links
+
+%Paragraph settings
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.75em}
+
+\title{Literature Review}
+\author{Aidan Fray}
+
+\begin{document}
+	\bibliographystyle{../TeX_Files/IEEEtranN.bst}
+
+	\maketitle
+	\input{pages/review_content}
+
+	\bibliography{references}
+\end{document}
