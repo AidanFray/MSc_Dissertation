@@ -15,8 +15,16 @@ Key areas that will be looked into:
 
 \subsection{Fingerprint representation and comparison}
 
-Current research in ways to represent and validate fingerprints has almost exclusively focused on the usability of such schemes. The following section will discuss available research findings alongside a overall comparison of the research recommendations.
+Current research in ways to represent and validate fingerprints has almost exclusively focused on the usability of such schemes. The following will individually discuss available research findings alongside a overall comparison of the research recommendations.
 
+The first work in this area was performed by Hsu-Chun Hsiao, \textit{et. al.} in their paper: \textit{A Study of User-Friendly Hash Comparison Schemes}\cite{hsiao2009study} around 2009.
+
+The aim of the study was to provide the first insight into the best encoding scheme used to represent a hash fingerprint. The schemes used were Base32, English words, Random Art\footnote{A scheme proposed by A. Perrig \textit{et al.}\cite{perrig1999hash}}, Flag\footnote{Encoding scheme proposed by C Ellison \textit{et al.}\cite{ellison2003public}}, T-Flag\footnote{Yue-Hsun Lin \textit{et al.}\cite{lin2010spate} improvement on Flag}, Flag Ext\footnote{The author's own improvment on Flag} and finally Chinese, Korean and Japanese symbol encoding.
+
+\textbf{TODO: Finish review of paper}
+
+% DEBUG
+\newpage
 Work by Dechand Sergej, \textit{et al.}\cite{dechand2016empirical} empirically investigated the usability of 4 distinct textual representations evaluated with a experiments involving a total of 1047 participant. The textual representations were: Alphanumeric, Numeric, Words and Sentences. They assessed the number of attacks missed with each scheme alongside results from a questionnaire on the participants preferred scheme and perceived usability.
 
 The paper touches upon issues with decentralised methods of identification such a PGP's Web of Trust and the problems these solutions have with user adoption. These points are made in an attempt to validate the requirement for manual comparison of key based fingerprints. This is a common theme that appears in the majority of the reviewed papers.

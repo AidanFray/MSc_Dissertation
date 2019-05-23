@@ -1,5 +1,16 @@
 \textbf{TODO:} Need to find papers on study of words are a comparative measure.
 
+Lots of research has been done into the secure pairing of devices with minimal human involvement:
+
+\begin{itemize}
+    \item Using Camera Phones for Human-Verifiable Authentication
+    \item Loud and Clear: Human-Verifiable Authentication Based on Audio
+    \item A human-verifiable authentication protocol using visible laser light
+    \item Secure Device Pairing based on a Visual Channel
+    \item NFC
+    \item Physical contact
+\end{itemize}
+
 \textbf{OVERVIEW} 
 \begin{itemize}
     \item Lots of research performed on E2E applications (Telegram, WhatsApp etc)
@@ -43,7 +54,7 @@ Paper states that MTurk users have been shown to be younger and better educated 
     \item \textbf{No method} really provided enough security for high risk situations, they recommend removing users from the loop by using smart phone cameras etc
 \end{itemize}
 
-
+\newpage
 \section{An Empirical Study of Textual Key-Fingerprint Representations}
 
 Study involved 1047 participants evaluating 6 different textual representations on MTurk. The study also includes an evaluation into usability.
@@ -83,6 +94,7 @@ When generating partial-collision fixing the bits at the start and end has been 
     \item Words has the second highest usability ratings second to only sentences
 \end{itemize}
 
+\newpage
 \section{Usability and Security of Out-Of-Band Channels in Secure Device Pairing Protocols}
 
 Paper looks into the positives of secondary channels used to authenticate device pairing. Such as device fingerprint comparison. It also aims to look into the fact that many studies performed do not take into consideration the aspect of human interaction.
@@ -164,7 +176,6 @@ Bruce Schneier [27] also argues that systems and involves humans therefore often
 \end{itemize}
 
 \newpage
-
 \section{SafeSlinger: An Easy-to-use and Secure Approach for
 Human Trust Establishment}
 
@@ -175,3 +186,92 @@ Talks about issues with decentralised (PGP [42]) and centralised (SSL CA [27, 34
 "Tim Berners-Lee has called upon security researchers and professionals to design a public key encryption system for the people [11]"
 
 Only uses \textbf{24-bits} of a SHA-1 hash of all the exchanged information, \textbf{could this be exploited?}
+
+\newpage
+\section{A Study of User-Friendly Hash Comparison Schemes}
+
+The aim of this study is to provide a study on what hash comparison scheme provides the best accuracy and shortest comparison time.
+
+The paper also proposes new schemes: An extension to Flag and three asian character representations. 
+
+An interesting aspect is the effort put into the study to link characteristics about the participants, i.e. gender or age to how well they perform or rate the usability of the scheme. In total they had 436 participants.
+
+Overall they compare:
+\begin{itemize}
+    \item Base32
+    \item English words
+    \item Random Art
+    \item Flag
+    \item T-Flag
+    \item Flag ext
+    \item Chinese, Korean, Japanese characters
+\end{itemize}
+
+Key phrase: "We did not use hexadecimal digits because they're similar to Base32 and known to be error prone" [NO REFERENCE]. This is shown in \textit{``An Empirical Study of Textual Key-Fingerprint Representations''} that this isn't true - ``However, our work shows that numeric representations actually perform significantly better than Base32 and is less error prone.''
+
+They study also considers the comparison of "easy" and "hard" pairs of hashes. Hard is where the hashes are designed to be very similar. This is designed to provide a base-line (easy) and a worst-case (hard).
+
+The paper deals with ranges of entropy of 22-28bits.
+
+Another system that uses word is the Unmanaged Internet Architecture [4]
+
+States that users make errors when comparing long strings [11]
+
+Dicussions are also made into the pre-requirements needed for some of these schemes. Random-Art needs a colour display and requires a relativly high computational cost to generate a representation. Asian characters require unicode or codec support.
+
+Paper also touches on ``Additional Benefits'' - the paper talks about the ability to verbally describe the scheme, this is so the encoding scheme can be verified using a channel that does not involve a visual feed such as a telephone conversation
+
+Overall the paper provides a table of requirements for the schemes with the graphical representations requiring a large number of pre-requirements.
+
+\subsection{Findings}
+\begin{itemize}
+    \item Source, age and gender have no significant impact on the accuracy across the schemes. But younger participants were significantly faster
+    \item In general, Base32, Random Art, T-Flag and Flag Ext provide fast and accurate comparisons
+    \item Comprehension of a language when used as a encoding scheme affects the ability to distinguish hard pairs by a significant amount
+\end{itemize}
+
+\newpage
+\section{Usability Analysis of Secure Pairing Methods}
+
+Paper is aiming to perform a comparative usability evaluation of \textbf{selection methods} of hash comparisons
+
+This paper is doing this study in the context of secure device pairing in a diffie-hellman type key exchange. However, the results of the study could directly apply to that of hash comparison, however, it must be considered that the comparisons here are for \textbf{very} short strings. Around 4-digits 
+
+Comparison methods compared:
+\begin{itemize}
+    \item Compare-and-Confirm
+    \item Select-and-Confirm
+    \item Copy-and-Confirm
+\end{itemize}
+
+The paper also compared to methods of passphrase comparison that weren't relevant.
+
+Paper also included demographical information in the study, with two round of 40 participants in the usability studies.
+
+
+Findings:
+
+Round 1:
+\begin{itemize}
+    \item Copy-and-confirm was percieved as hard to use
+    \item Copy-and-confirm has the lowest fatal error rate but the longest comparison time and lowest percieved usability
+    \item The schemes reduced fatal error rate as their comparison times rose
+    \item Copy-and-confirm had issues with user confusion in terms of use
+\end{itemize}
+
+In the second round they only decided to continue with
+
+\begin{itemize}
+    \item Compare-and-Confirm
+    \item Select-and-Confirm
+\end{itemize}
+
+They dropped Copy-and-confirm due to its high similarity to the other scheme "Copy" that was being used for passphrase sharing
+
+The second round included some UI changes that were backed up by external research.
+
+This round the changes performed on the schemes resulted in much lower fatal error rates. However, Select-and-confirm had an unacceptable 5\% error rate. Compare-and-confirm had 0\% fatal error rate. The was an improvment from 20\% to 0\%.
+
+Both schemes were again percieved as easy to use
+
+Overall it was shown that compare-and-confirm was the superior choice.
