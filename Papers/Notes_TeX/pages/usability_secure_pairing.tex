@@ -1,0 +1,44 @@
+\section{Usability Analysis of Secure Pairing Methods}
+
+Paper is aiming to perform a comparative usability evaluation of \textbf{selection methods} of hash comparisons
+
+This paper is doing this study in the context of secure device pairing in a diffie-hellman type key exchange. However, the results of the study could directly apply to that of hash comparison, however, it must be considered that the comparisons here are for \textbf{very} short strings. Around 4-digits 
+
+Comparison methods compared:
+\begin{itemize}
+    \item Compare-and-Confirm
+    \item Select-and-Confirm
+    \item Copy-and-Confirm
+\end{itemize}
+
+The paper also compared to methods of passphrase comparison that weren't relevant.
+
+Paper also included demographical information in the study, with two round of 40 participants in the usability studies.
+
+
+Findings:
+
+Round 1:
+\begin{itemize}
+    \item Copy-and-confirm was percieved as hard to use
+    \item Copy-and-confirm has the lowest fatal error rate but the longest comparison time and lowest percieved usability
+    \item The schemes reduced fatal error rate as their comparison times rose
+    \item Copy-and-confirm had issues with user confusion in terms of use
+\end{itemize}
+
+In the second round they only decided to continue with
+
+\begin{itemize}
+    \item Compare-and-Confirm
+    \item Select-and-Confirm
+\end{itemize}
+
+They dropped Copy-and-confirm due to its high similarity to the other scheme "Copy" that was being used for passphrase sharing
+
+The second round included some UI changes that were backed up by external research.
+
+This round the changes performed on the schemes resulted in much lower fatal error rates. However, Select-and-confirm had an unacceptable 5\% error rate. Compare-and-confirm had 0\% fatal error rate. The was an improvment from 20\% to 0\%.
+
+Both schemes were again percieved as easy to use
+
+Overall it was shown that compare-and-confirm was the superior choice.

@@ -257,7 +257,9 @@
         "**/*.binlog": true,
         "**/*.nvuser": true,
         "**/.mfractor/": true,
-        "**/.localhistory/": true
+        "**/.localhistory/": true,
+        "**/.~lock*": true,
+        "**/target_keys.txt": true
     },
     "cSpell.words": [
         "Trustword",
