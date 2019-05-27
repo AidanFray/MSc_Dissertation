@@ -1,4 +1,4 @@
-\section{Research questions}
+\section{Possible research questions}
 
 Overall the research will aim to investigate the strength of pEp's Trustword fingerprint mappings, and the ease in which partial collisions can be obtained for keys and how this will ultimately affect the end user(s).
 
@@ -73,12 +73,12 @@ The target security level chosen was an entropy of 160-bits. This is a very high
 
 Overall, results from the experiments emulated previously discussed literature. Textual representations faired effectively well with Words and Sentences again being some of the best options overall. Performance of graphical representation was mixed with OpenSSH having performance matching that of a strong textual mapping while Unicorns having the worst performance overall. This performance with graphical representations is consistent with the available literature apart from the positive performance of OpenSSH. The results of different modes of comparison were highly consistent with other studies where again the recommendation was to not use Compare-and-Select as its performance across the board was below even basic levels of security.
 
-\subsection{Topic conclusion}
+\subsubsection{Topic conclusion}
 
 In conclusion for this section, there has been extensive work in the investigation of the usability of textual and visual encoding schemes alongside methods of comparison. There are mixed opinions about visual representations, however, the majority defines them as easy to use but severely lacking in security. Research on textual representations, however, is in agreement; natural language based encodings such as words or sentences provide some of the highest usability and security over the baseline performance of alphanumerical encodings. The literature also concurs on the use of Compare-and-Confirm as the best method of comparing fingerprints overall, with Compare-and-Select being highlighted for its poor security and usability.\\
 The starkest limitations of the literature are the range of participant and encoding entropy, where at its worst only 22-bits of entropy were tested. Another limitation is the scant amount of research solely investigating modes of comparison, where the literature only contains two papers with this research exclusive research aim. Even these limitations, as a whole the literature on this topic has provided a relatively comprehensive and coherent view on the usability of textual and visual hash encoding schemes.
 
-\section{Fingerprint representation schemes}
+\subsection{Fingerprint representation schemes}
 Another area of research is investigations into the actual physical encodings of the hash digest. This section will briefly discuss the current research available on the creation and security of actual encoding schemes. The actual details of the operation of the schemes are outside the scope of this literature review, therefore, minimal attention will be allocated to these details.
 
 Some of the oldest preliminary work into visual encoding schemes was performed by Adrian Perrig \textit{et al}\cite{perrig1999hash}. in the creation of their scheme ``Random Art" in 1999. The motivation for creating such a scheme was the perceived flaws in the ways humans verify and compare written information. As mentioned in previous sections visual encoding schemes have been shown to have mixed success, with low security being one of their most alarming flaws. This research laid the foundation for further work in analysing the security of visual encoding schemes (as discussed in the previous section).
@@ -103,7 +103,73 @@ Aside from this research, there have been further implementations. The first bei
 \\
 A very recent implementation of a word list can be found in Pretty Easy Privacy (pEp) implementation of TrustWords\footnote{https://tools.ietf.org/html/draft-birk-pep-trustwords-03}. The unique aspect of TrustWords is its mapping of words to 16-bits. In comparison to other literature, this is the highest number of bits-per-word seen. Full mappings (no duplication of words) would, therefore, require $2^{16}$ words. This is arguably higher than most users vocabulary. This deviation from the norm has not been currently backed up by research. This, therefore, highlights a gap in the current literature.
 
-\section{Topic conclusion}
+\subsubsection{Topic conclusion}
 
 In conclusion to this topic, the current research has primarily focused on the research and creation of visual representations. Research for textual fingerprints is fragmented and incomplete with work Juola and Zimmermann 
 \cite{juola1996whole} and M. Goodrich \textit{et al.}\cite{goodrich2006loud} providing meaningful research to build upon in terms of word a sentence based encodings. The fragmentation of this research leaves room for further work into this topic area. Alongside this, findings from the previous sections research shows that human language based encodings provided the best usability and, therefore, should be a target for further research looking to improve upon security and usability.
+
+\section{Attacks on fingerprint verification}
+This area of research studies ways to physically execute attacks on fingerprint encoding schemes. This differs from previously examined work due to papers discussing the performance and fallibility of encoding schemes simulated the attack without consideration for how the attack would be performed.
+
+Research in this area is scant, with lots of research attention being directed towards the security of Man-in-the-Middle (MITM) attacks and not the encoding schemes themselves.
+
+Research in 2002 by Konrad Rieck\cite{rieck2002fuzzy} is the first formalisation of attacks on fingerprint representations. The paper titled \textit{``Fuzzy Fingerprints Attacking Vulnerabilities in the Human Brain''}
+aimed to look into ways users check hexadecimal encoded OpenSSH fingerprint representations. The author created an elegant way to `weight' more important chunks of the digest. The bytes furthest to the right and left of the digests provided the highest weight. The weight was the smallest in the centre of the digest. This provides a way to score digests and determine the best partial collisions found. For example with the target fingerprint: \verb|9F23| a partial match \verb|9313| is given a score of 45\% even though only two characters were matching. This is due to the weightings.
+
+The paper contains an implementation with a ``1.2GHz CPU'' being able to obtain 130,000 H/s (With MD5). In comparison to this, a mid-range Intel i5-3320M CPU can today obtain 111,700,000 MD5 H/s shows that the results obtained from the paper are not applicable today. However, even with the low hash rate, the author was able to obtain some promising results. Figure~\ref{ref:fuzz} contains the best example used.
+
+\begin{figure}[!h]
+    \begin{center}
+        \verb|TARGET: d6:b7:df:31:aa:55:d2:56:9b:32:71:61:24:08:44:87|
+        \verb|MATCH:  d6:b7:8f:a6:fa:21:0c:0d:7d:0a:fb:9d:30:90:4a:87|
+    \end{center}
+    \caption{Best match obtained after a few minutes of hashing}
+    \label{ref:fuzz}
+\end{figure}
+
+Overall the paper shows an interesting way to create partial fingerprint matches but is not quantified by any empirical evidence gathered on real world users. This, therefore, leaves gaps in the coverage of this literature.
+
+The only other relevant research on this topic is the work by M 
+Shirvanian \textit{et al.}\cite{shirvanian2014wiretapping} 
+and their paper \textit{``Wiretapping via Mimicry: Short 
+Voice Imitation Man-in-the-Middle Attacks on Crypto 
+Phones''}. In this paper, the authors develop a way to 
+impersonate users when authenticating 
+Short-authentication-Strings (SAS) in pairing of 
+Crypto-phones. To achieve this impersonating they propose 
+two methods: ``Short voice reordering attack'' where an 
+arbitrary SAS string is recreated by re-ordering snipped 
+obtains from eavesdropping a previous connection
+and ``Short voice morphing attacks'' whereby the use of 
+previously eavesdropped audio snippets the attacker can
+morph their own voice to match that of the victim. With 
+these methods, they aimed to attack encodings of Numbers, 
+PGP word list (previously discussed work by Juola and 
+Zimmermann \cite{juola1996whole}) and MadLib (M. Goodrich 
+\textit{et al.}\cite{goodrich2006loud} work also 
+previously discussed). The effectiveness of these attacks 
+were evaluated with a study involving 30 participants.
+
+Results from the paper show the effectiveness of these 
+methods. Compared to the baseline of the attacker's voice 
+replacing the victim where this performed with a 
+\textasciitilde18\% success rate. Morphing gained an 
+overall success rate of 50.58\% and Reordering a very 
+impressive 78.23\% success rate. Showing that these 
+attacks provide an improvement on top of the naive implementation.
+
+One of the biggest limitations addressed by the authors 
+was the reduction in success rates as the size of the 
+authentication string grew. The morphing and reordering 
+attacks become increasingly ineffective as the user has 
+longer to detect imperfections. This is not quantified by 
+the author and the extent of this degradation is never 
+empirically discussed. Therefore, the results from this 
+study are only effective and applicable in a SAS context.
+
+\subsubsection{Topic Conclusion}
+Overall the literature for this subtopic remains sparse and incomplete. Further suggested work could look into the feasibility of generating partial collisions for all textual representations alongside quantified effectiveness on users. With the possibility to concentrate on a few selected implementations. The work would aim to focus on the various physical methods used and their feasibility. This is one area the previous literature has failed to cover and has only theoretically quantified attacker strength without consideration for the actual real-world cost of these attacks.
+
+\section{Overall Summary}
+
+\textbf{TODO: } Create an overall summary of all the gaps identified
