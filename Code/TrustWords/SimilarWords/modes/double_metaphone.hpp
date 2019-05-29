@@ -11,7 +11,7 @@ char GetAt(std::string &s, unsigned int pos);
 void SetAt(std::string &s, unsigned int pos, char c);
 int StringAt(std::string &s, unsigned int start, unsigned int length, ...);
 
-std::string DoubleMetaphone(const std::string &str);
+std::string metaphone(const std::string &str);
 
 bool metaphone_similar(std::string word1, std::string word2);
 

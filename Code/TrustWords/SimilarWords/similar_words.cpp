@@ -8,6 +8,7 @@
 #include "./modes/soundex.hpp"
 #include "./modes/levenshtien.hpp"
 #include "./modes/double_metaphone.hpp"
+#include "./modes/nysiis.hpp"
 
 std::string inputFileName = "";
 std::string outputFileName = "";
@@ -15,10 +16,14 @@ std::string outputFileName = "";
 static bool LEV_DISTANCE = false;
 static bool SOUNDEX = false;
 static bool METAPHONE = false;
+static bool COMBINED_MODE = false;
+
+static float COMBINED_TOLERANCE = 1;
 
 std::string SOUNDEX_CLI_TAG = "-s";
 std::string LEV_CLI_TAG = "-l";
 std::string METAPHONE_CLI_TAG = "-m";
+std::string COMBINED_MODE_TAG = "-c";
 
 /*
     Saves the similar words to a specified file
@@ -53,9 +58,33 @@ std::vector<std::string> load_CSV(std::string filePath)
 }
 
 /*
+    TODO
+*/
+function<std::string(std::string)> algorithms[] = {soundex, metaphone, nysiis}; 
+bool combined_mode(std::string word1, std::string word2)
+{
+    float total = 0.0;
+    for(auto al : algorithms)
+    {
+        auto code1 = al(word1);
+        auto code2 = al(word2);
+        auto lev = lev_distance(code1, code2);
+        
+        //TODO: add weights
+        auto subtotal = lev;
+        total += subtotal;
+    }
+
+    //DEBUG
+    // if (total <= COMBINED_TOLERANCE) std::cout << "[D] " << word1 << " -- " << word2 << std::endl;
+
+    return total <= COMBINED_TOLERANCE;
+}
+
+/*
     Compares each word using it's levistien distance
 */
-void find_similar_words(std::vector<std::string> words)
+void find_similar_words(std::vector<std::string> words, bool combined=false)
 {
     // ## Note ##
     // The format of saving to file after every word alongside a refresh of the vector is 
@@ -76,10 +105,10 @@ void find_similar_words(std::vector<std::string> words)
 
         // ########## PRE-COMP ########## //
         std::string pre_word_y;
-        if      (METAPHONE)  pre_word_y = DoubleMetaphone(word_y);
+        if      (METAPHONE)  pre_word_y = metaphone(word_y);
         else if (SOUNDEX)    pre_word_y = soundex(word_y);
-
         // ############################## //
+
         for (std::string word_x : words)
         {
              // Makes sure the same words aren't checked
@@ -87,12 +116,14 @@ void find_similar_words(std::vector<std::string> words)
             {
                 bool add_word = false;
 
-                if      (LEV_DISTANCE)      add_word = levenshtein_similar(word_y, word_x);
-                else if (SOUNDEX)           add_word = soundex_similar(pre_word_y, word_x);
-                else if (METAPHONE)         add_word = metaphone_similar(pre_word_y, word_x);
+                if (combined) add_word = combined_mode(word_y, word_x);
+                else
                 {
-                    /* code */
+                    if      (LEV_DISTANCE)      add_word = levenshtein_similar(word_y, word_x);
+                    else if (SOUNDEX)           add_word = soundex_similar(pre_word_y, word_x);
+                    else if (METAPHONE)         add_word = metaphone_similar(pre_word_y, word_x);
                 }
+                
 
                 // Adds the word to the dictionary  
                 if (add_word)
@@ -117,7 +148,7 @@ void find_similar_words(std::vector<std::string> words)
 */
 void usage()
 {
-    std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH> <MODE> [-s|-l|-m]" << std::endl;
+    std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH> <MODE> [-s|-l|-m|-c]" << std::endl;
     exit(0);
 }
 
@@ -129,6 +160,7 @@ void parse_program_mode(std::string commandInput)
     if      (commandInput == SOUNDEX_CLI_TAG)       SOUNDEX = true;
     else if (commandInput == LEV_CLI_TAG)           LEV_DISTANCE = true;
     else if (commandInput == METAPHONE_CLI_TAG)     METAPHONE = true;
+    else if (commandInput == COMBINED_MODE_TAG)     COMBINED_MODE = true;
     else
     {
         std::cout << "[!] Error: Please select a mode!" << std::endl;
@@ -158,6 +190,6 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
-    find_similar_words(words);
+    find_similar_words(words, COMBINED_MODE);
     // save__CSV();
 }

@@ -101,7 +101,7 @@ int StringAt(std::string &s, unsigned int start, unsigned int length, ...)
   return 0;
 }
 
-std::string DoubleMetaphone(const std::string &str)
+std::string metaphone(const std::string &str)
 {
   int length;
   std::string original;
@@ -1100,6 +1100,6 @@ std::string DoubleMetaphone(const std::string &str)
 
 bool metaphone_similar(std::string word1_code, std::string word2)
 {
-  std::string word2_code = DoubleMetaphone(word2);
+  std::string word2_code = metaphone(word2);
   return word1_code == word2_code;
 }

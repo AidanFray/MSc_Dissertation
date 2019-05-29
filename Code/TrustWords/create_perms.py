@@ -393,8 +393,6 @@ def args():
     if args.num_words:
         number_of_words = args.num_words[0]
 
-    
-
     # Loads the file paths
     if args.similar:
         similar_mappings_file_name = args.similar[0]
