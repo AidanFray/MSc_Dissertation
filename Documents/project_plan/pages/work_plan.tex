@@ -10,13 +10,13 @@
 
     \item Other word lists result in a higher number of words to compare. Trustwords mapping of a word to 2 bytes results in a lower number of words. Meaning the possibility of increased usability
 
-    \item However, the mapping of words to 16-bits is yet to be proved as secure as this is the highest number of bits per word seen in the literature.
+    \item However, the mapping of words to 16-bits is yet to be proved as secure as this is the \textbf{highest number of bits per word}s seen in the literature. This results in the number of words required being higher than that of the users' vocabulary and even the number of total words in the respective language.
     
 \end{itemize}
 
 \section{Goals}
 
-Overall the research will aim to investigate the strength of pEp's Trustword fingerprint mappings, and the ease in which partial collisions can be obtained for keys and how this will ultimately affect the end user(s). This will be accompanied by recommendations into how the TrustWord system can be altered to provide maximum security alongside research into what makes an effective wordlist.
+Overall the research will aim to investigate the strength of pEp's Trustword fingerprint mappings, and the ease in which partial collisions can be obtained for keys and how this will ultimately affect the end user(s). This will be accompanied by recommendations into how the TrustWord system can be altered to provide increased security alongside research into what makes an effective wordlist.
 
 \newpage
 \section{Possible research questions}
@@ -33,38 +33,25 @@ Overall the research will aim to investigate the strength of pEp's Trustword fin
 
     \item How can similarity be quantified in terms of words? Does this include pronunciation or visual aspects?
     
-    \item As usability is the main justification for the use of Trustwords are there alternatives that provide the same usability but with more security?
+    \item As usability is the main justification for the use of Trustwords does the increase in usability justify the hypothesised reduction in security?
 \end{itemize}
-
-% \section{RFC drafts}
-% \subsection{draft-marques-pep-handshake-02}
-% ``Short Trustword Mapping (S-TWM) requires a number of Trustwords that MUST retain \textbf{at least 64 bits} of entropy.  Thus, S-TWM results into at least \textbf{four Trustwords} to be compared by the user."
-
-% Showing that 4 words is too low in certain cases could be very useful?
-
-% \subsection{draft-birk-pep-trustwords-00}
-% In another draft document it also states:
-
-% ``It is for further study, what minimal number of words (or entropy) should be required."
-
-% This shows there is some sort of research gap.
 
 \newpage
 \section{High Level View}
 
 \subsection*{\hyperref[ref:wordlist]{Wordlist characteristic analysis}}
-This area will look into characteristics that are attractive when designing a wordlist. These will be used later to possibility improve the trustword implementation.
+This area will look into characteristics that are attractive when designing a wordlist. These will be used later to possibility improve the trustword implementation. Past research could provide guidance on this aspect.
 
 \subsection*{Analysis into effective ``similarity'' metrics}
-\textit{TODO}
+This section will involve research into how similarities in words can be quantified. Which options provide us the best balance of number of matches and accuracy of matches?
 
 \subsection*{Development of a tool used to find partial collisions for wordlist mappings}
-This tool would be fed two keys, one static and one the ``target''. The tool would then generate keys for the ``target'' that create a similar overall wordlist mapping. Here metrics for linguistic distance will be used to define ``similarity''.
-The similarity metric will generate a list of keys that provide similar matches, the tool will then hash large number of PGP keys to generate partial matches.
+This tool would be fed two keys, one ``static'' and one the ``target''. The tool would then generate keys for the ``target'' that create a similar overall wordlist mapping. Here metrics for linguistic distance will be used to define ``similarity''.
+The similarity metric will generate a list of keys that provide similar matches, the tool will then hash large number of PGP keys to generate partial matches. This is useful to define an actual measure of the real-world feasibility. This is one aspect missing from the literature as other papers have simulated attacks on encoding schemes.
 
 
 \subsection*{\hyperref[ref:trustwords]{Security of Trustwords}}
-This section will evaluate Trustwords using the previously defined metrics. Alongside this, the feasibility of generating partial collisions will be assessed. The security could be quantified by testing the current implementation out on real users and determining the False acceptance rate of near attacks. This could be used as a baseline.  
+This section will evaluate Trustwords using the previously defined metrics. Alongside this, the feasibility of generating partial collisions will be assessed. The security could be quantified by testing the current implementation out on real users and determining the False Acceptance Rate of near attacks. This could be used as a baseline for improvements to be compared later.
 
 \subsection*{\hyperref[ref:alternatives]{Security of alternative wordlists:}}
 In the same way as Trustwords were assessed, the same will be performed on already available wordlists. Such as the PGP wordlist and the wordlist generated by SafeSlinger.
@@ -72,52 +59,52 @@ In the same way as Trustwords were assessed, the same will be performed on alrea
 \subsection*{\hyperref[ref:rec]{Security of implemented recommendations}}
 This section will then amalgamate all the research performed prior and use it to improve and update the implementation of Trustwords. This would then be assessed by experimentation and the improvements could be quantified with the same experimentation.
 
-\section{In-depth breakdown}
+% \section{In-depth breakdown}
 
-\subsection{Wordlist characteristic analysis}
-\label{ref:wordlist}
-\begin{itemize}
-    \item Investigation into characteristics of a strong wordlist
-    \begin{itemize}
-        \item Distinctiveness
-        \item Homonyms (Visual)
-        \item Homophones (Pronunciation)
-        \item Length
-        \item Current ways to define linguistic distance:
-        \begin{itemize}
-            \item \textbf{Visual:}
-            \begin{itemize}
-                \item Levenshtein (Edit distance)
-            \end{itemize}
+% \subsection{Wordlist characteristic analysis}
+% \label{ref:wordlist}
+% \begin{itemize}
+%     \item Investigation into characteristics of a strong wordlist
+%     \begin{itemize}
+%         \item Distinctiveness
+%         \item Homonyms (Visual)
+%         \item Homophones (Pronunciation)
+%         \item Length
+%         \item Current ways to define linguistic distance:
+%         \begin{itemize}
+%             \item \textbf{Visual:}
+%             \begin{itemize}
+%                 \item Levenshtein (Edit distance)
+%             \end{itemize}
 
-            \item \textbf{Auditory}:
-            \begin{itemize}
-                \item Soundex
-                \item Metaphone
-                \item NYSIIS
-                \item Match Rating
-            \end{itemize}
-        \end{itemize}
+%             \item \textbf{Auditory}:
+%             \begin{itemize}
+%                 \item Soundex
+%                 \item Metaphone
+%                 \item NYSIIS
+%                 \item Match Rating
+%             \end{itemize}
+%         \end{itemize}
         
-    \end{itemize}
+%     \end{itemize}
 
 
-    \item Analysis into the strength of the TrustWords using previously obtained metrics.
+%     \item Analysis into the strength of the TrustWords using previously obtained metrics.
 
-    \item Investigation into the strength of other wordlists using defined metrics.
-    \begin{itemize}
-        \item PGP word list
-        \item SafeSlinger
-    \end{itemize}
+%     \item Investigation into the strength of other wordlists using defined metrics.
+%     \begin{itemize}
+%         \item PGP word list
+%         \item SafeSlinger
+%     \end{itemize}
 
-\end{itemize}
+% \end{itemize}
 
-\subsection{Security of Trustwords}
-\label{ref:trustwords}
-Here we'd look at the words used in the dictionary and attempt to generate lists of keys that would generate partial collisions these would then be fed into the created tool
+% \subsection{Security of Trustwords}
+% \label{ref:trustwords}
+% Here we'd look at the words used in the dictionary and attempt to generate lists of keys that would generate partial collisions these would then be fed into the created tool
 
-\subsection{Security of alternative wordlists}
-\label{ref:alternatives}
+% \subsection{Security of alternative wordlists}
+% \label{ref:alternatives}
 
-\subsection{Security of implemented recommendations}
-\label{ref:rec}
+% \subsection{Security of implemented recommendations}
+% \label{ref:rec}
