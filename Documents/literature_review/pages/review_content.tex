@@ -2,10 +2,9 @@
 
 \subsection{Fingerprint representation comparison}
 
-\textbf{TODO: } - Create written introduction setting the scene.
-\\\textbf{TODO: } - Summarise research questions after lit' review. Back them up using my discussion.
-\\\textbf{TODO: } - Add participant size to M. Shirvanian (25)
-\\\textbf{TODO: } - Finish summary of paper results
+\textbf{TODO: } - Create written introduction setting the scene. \\
+\textbf{TODO: } - Add participant size to M. Shirvanian (25) \\
+\textbf{TODO: } - Create a background section for Compare-and-X
 
 % \textbf{TODO: } - Check evaluation with each paper in regards to:
 % \begin{itemize}
@@ -52,7 +51,7 @@ Overall, the paper provides a sizeable insight into suitable methods of comparis
 
 \textbf{Dechand \textit{et al.}}\cite{dechand2016empirical} empirically investigated the usability of 4 distinct textual representations evaluated with an experiment involving a total of 1047 participants. The textual representations were: Alphanumeric, Numeric, Words and Sentences. They assessed the number of attacks missed with each scheme alongside results from a questionnaire on the participants preferred scheme and perceived usability.
 
-The paper touches upon issues with decentralised methods of identification such a PGP's Web of Trust and the problems these solutions have with user adoption. These points are made in an attempt to validate the requirement for manual comparison of key based fingerprints. This is a common theme that appears in the majority of the reviewed papers. Other references made within the paper touch upon the vulnerabilities and usability issues present with the way humans interact with the security systems. Examples of these are studies showing humans find it difficult to comprehend long and ``meaningless" strings and the lack of actual comparison performed by users in live scenarios. These are, however, acknowledged as limitations in the later stages of the paper. The paper has defined the upper and lower bound costs of the attacker's resources and strength as \$610K to \$16B, with an ability to control 80-bits of the fingerprint. This in comparison to other papers is high and is almost encroaching into the realm of a highly sophisticated attacker. Therefore, the lack of consideration for the lower-end of the attack resource spectrum can be considered another limitation.
+The paper touches upon issues with decentralised methods of identification such a PGP's Web of Trust and the problems these solutions have with user adoption. These points are made in an attempt to validate the requirement for manual comparison of key based fingerprints. This is a common theme that appears in the majority of the reviewed papers. The paper has defined the upper and lower bound costs of the attacker's resources and strength as \$610K to \$16B, with an ability to control 80-bits of the fingerprint. This in comparison to other papers is high and is almost encroaching into the realm of a highly sophisticated attacker. Therefore, the lack of consideration for the lower-end of the attack resource spectrum can be considered a limitation.
 
 Summarised findings from the paper state that conventional encodings such as Hexadecimal and Base32 perform worse than all other alternatives in a realistic threat model with over 10\% of users failing to detect an attack on these encoding schemes. The recommendations of the authors are to replace these encoding schemes with Words or Sentences due to their very high success rate and high usability scores. The performance of the Alphanumerical encoding schemes is relatively consistent with the literature, however, it is hard to say conclusively due to the small number of total schemes assessed making it hard to place alphanumerical encodings in an overall rating.
 
@@ -69,8 +68,29 @@ The paper measured the number of successful attacks in the False Accept Rate (FA
 
 \subsubsection{Topic conclusion}
 
+To provide a visual comparison the accuracy results of the papers have been provided in Table~\ref{tab:results}. Each paper used a unique, and, therefore, have been translated into overall accuracy. Due to some of the differing characteristics of the papers ultimatly affecting results, Table \ref{tab:attacker} has also be provided. This table is useful to compare the health of the study and chosen sizes that may affect the accuracy and reliability of the results.
+
+\textbf{TODO:} Usability table
+
+\begin{table}
+    \makebox[\textwidth][c]{
+        \input{tables/fingerprint_comparison.tex}
+    }%
+    \caption{Accuracy comparison of textual and graphical encoding schemes}
+    \label{tab:results}
+\end{table}
+
+\begin{table}
+    \makebox[\textwidth][c]{
+        \input{tables/fingerprint_attacker_stren.tex}
+    }%
+    \caption{Paper attribute comparison}
+    \label{tab:attacker}
+\end{table}
+
 In conclusion for this section, there has been extensive work in the investigation of the usability of textual and visual encoding schemes alongside methods of comparison. There are mixed opinions about visual representations, however, the majority defines them as easy to use but severely lacking in security. Research on textual representations, however, is in agreement; natural language based encodings such as words or sentences provide some of the highest usability and security over the baseline performance of alphanumerical encodings. The literature also concurs on the use of Compare-and-Confirm as the best method of comparing fingerprints overall, with Compare-and-Select being highlighted for its poor security and usability.\\
 The starkest limitations of the literature are the range of participant and encoding entropy, where at its worst only 22-bits of entropy were tested. Another limitation is the scant amount of research solely investigating modes of comparison, where the literature only contains two papers with this aim. This is, therefore, an area that requires further research. A potential research avenue could be the analysis of comparison methods in unique scenarios, one example of this could be the idea of ``remote-vs-proximity'' proposed by M. Shirvanian \textit{et al.}\cite{shirvanian2017pitfalls}. Even with these limitations, as a whole the literature on this topic has provided a relatively comprehensive and coherent view on the usability of textual and visual hash encoding schemes with relatively clear recommendations on methods of comparison and suitable encoding schemes.
+
 
 \subsection{Fingerprint representation schemes}
 Another area of research is investigations into the actual physical encodings of the hash digest. This section will briefly discuss the current research available on the creation and security of actual encoding schemes. The actual details of the operation of the schemes are outside the scope of this literature review, therefore, minimal attention will be allocated to these details.
@@ -166,3 +186,6 @@ Overall the literature for this subtopic remains sparse and incomplete. Further 
 
 \section{Overall Summary}
 \textbf{TODO: } Create an overall summary of all the gaps identified
+
+\section{Research Questions}
+\textbf{TODO: } - Backup choice of questions up using my previous discussion.
