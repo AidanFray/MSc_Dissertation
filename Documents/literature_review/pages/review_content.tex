@@ -3,6 +3,7 @@
 \subsection{Fingerprint representation comparison}
 
 \textbf{TODO: } - Create written introduction setting the scene.
+\textbf{TODO: } - Summarise research questions after lit' review. Back them up using my discussion.
 % \textbf{TODO: } - Check evaluation with each paper in regards to:
 % \begin{itemize}
 %     \item Participant size [P]
@@ -15,7 +16,7 @@
 Current research into human-based validation of fingerprints has almost exclusively focused on the usability of such schemes. The following section will individually discuss available research findings alongside an overall comparison of the research recommendations.
 
 % [A]
-\textbf{Hsu-Chun Hsiao, \textit{et. al.}} produced the first work in this area in their paper: \textit{A Study of User-Friendly Hash Comparison Schemes}\cite{hsiao2009study}. The main aim of the study was to provide the first insight into the best encoding schemes used to represent a hash fingerprint. The schemes used were Base32, English words, Random Art\cite{perrig1999hash}, Flag\cite{ellison2003public}, T-Flag\cite{lin2010spate}, Flag Ext\footnote{The authors' own improvement on Flag} and finally Chinese, Korean and Japanese symbolic encodings. A total of 436 participants were assessed in the study.
+Some of the first work in this area was performed by \textbf{Hsu-Chun Hsiao, \textit{et al.}}\cite{hsiao2009study}. The main aim of the study was to provide the first insight into the best encoding schemes used to represent a hash fingerprint. The schemes used were Base32, English words, Random Art\cite{perrig1999hash}, Flag\cite{ellison2003public}, T-Flag\cite{lin2010spate}, Flag Ext\footnote{The authors' own improvement on Flag} and finally Chinese, Korean and Japanese symbolic encodings. A total of 436 participants were assessed in the study.
 
 In addition to the central aims of the paper, the authors intended to provide empirical links between participant attributes (such as age or gender) and performance with the encoding scheme. This is something rarely seen in the related research. Hsu-Chun Hsiao \textit{et al.} also provided two categories of similarities; ``hard'' and ``easy''. ``Hard'' pair only have a very small difference, therefore, difficult to distinguish. These were designed to be the worst and best case respectively. The reasoning behind inclusion of Chinese, Korean and Japanese characters was to investigate the links between language ability and distinguishing subtle differences between encodings in the respective language. The entropy of encodings ranged from 22-bits to 28-bits. This is the lowest level of entropy used in the assessed literature. To quantify this a hash rate of 10 MH/s SHA-1 compressions would be able to find a match for 28-bits in 26.8 seconds. This is addressed by the author at a stage in the paper where they state \textit{``However, increasing entropy is not a solution because it sacrifices usability and accuracy. With more entropy, representations will contain longer sequences of characters or more minute details which will lead to increased time and errors during comparisons.''}. This claim is entirely unsubstantiated with any empirical evidence alongside no discussion into why the level of entropy was chosen. This, however, was followed by in interesting recommendation into the use of commitments\cite{blum1982coin}. This provides an attacker with a single chance to find a collision, thus, providing a valid use case for low levels of entropy.\\
 Another limitation is the authors' decision to exclude hexadecimal and numerical encodings (some of the most widespread encoding schemes). This was based on their own claims on similarities to Base32 and ``well-known deficiencies" in the excluded schemes. This point was provided with no further justification or quantified in any way. It is also not consistent with available research, for example, in \textit{``Empirical Study of Textual Key-Fingerprint Representations''}\cite{dechand2016empirical} it was shown numerical representations performed significantly better than that of Base32.
@@ -141,7 +142,7 @@ were evaluated with a study involving 30 participants.
 Results from the paper show the effectiveness of these 
 methods. Compared to the baseline of the attacker's voice 
 replacing the victim where this performed with a 
-\textasciitilde18\% success rate. Morphing gained an 
+$\sim$18\% success rate. Morphing gained an 
 overall success rate of 50.58\% and Reordering a very 
 impressive 78.23\% success rate. Showing that these 
 attacks provide an improvement on top of the naive implementation.
