@@ -1,16 +1,11 @@
 import re
-import itertools
-import argparse
-from Crypto.Hash import SHA1
 import os
 import base64
-import gnupg
+import argparse
+import itertools
+from pretty_bad_protocol import gnupg
 
-##################################################
-# TODO: Fingerprints found via brute force 
-#       `--find-key` option don't have the correct
-#       number of perms?
-##################################################
+from Crypto.Hash import SHA1
 
 # DEBUG - For VSCode
 # file_path = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Code/TrustWords" 
@@ -20,7 +15,7 @@ file_path = "."
 gpg = gnupg.GPG(options=["--debug-quick-random"])
 
 # Stops the program from generating permutations that fill the RAM
-MAX_PEM_SIZE = 200000000000
+MAX_PEM_SIZE = 2000000000
 
 # Around a RX480
 HASHSPEED = 2000
@@ -104,7 +99,7 @@ def save_permutations(perms, outFileName):
             file.write(p.lower())
             file.write("\n")
 
-def finger_print_to_words(fingerprint, PRINT=True):
+def fingerprint_to_words(fingerprint, PRINT=True):
     """
     Maps the hex value of the key to a word defined in
     the dictionary loaded
@@ -135,7 +130,6 @@ def XOR_fingerprints(fingerprint1, fingerprint2):
     creates a joint fingerprint from the two parties
     by XORing each parties key
     """
-
 
     fingerprint1 = fingerprint1.replace(" ", "")
     fingerprint2 = fingerprint2.replace(" ", "")
@@ -320,10 +314,12 @@ def create_random_fingerprint(number_of_words):
     digest = sha.hexdigest()
 
     return digest[:number_of_words *  4]
-def create_actual_fingerprint_and_key(number_of_words):
+def create_actual_fingerprint_and_key(number_of_words, uncontrolledFingerprint):
     
     biggest_perm_size = 0
     biggest_key = None
+
+    DEBUG_FINGERPRINT = None
 
     # TODO: Determine number of keys to test
     total_keys = 1
@@ -336,28 +332,32 @@ def create_actual_fingerprint_and_key(number_of_words):
         fp = key.fingerprint
 
         number_finger_chars = int(number_of_words * 4)
-        reduced_fingerprint = key.fingerprint[:number_finger_chars]
+        reduced_fingerprint = fp[-number_finger_chars:]
 
-        words = finger_print_to_words(reduced_fingerprint, PRINT=False)
-        combinations = gen_all_similar_combinations(words)
+        combined_fingerprint = XOR_fingerprints(reduced_fingerprint, uncontrolledFingerprint)
+        trustWords = fingerprint_to_words(combined_fingerprint, PRINT=False)
+
+        combinations = gen_all_similar_combinations(trustWords)
         perm_size = get_perm_size(combinations)
 
         if perm_size > biggest_perm_size:
             biggest_key = key
             biggest_perm_size = perm_size
+            DEBUG_FINGERPRINT = fp
 
         loop += 1
 
         print(f"{loop}/{total_keys} Keys complete", end="\r")
 
-
-
     print()
     print(biggest_perm_size)
-    print(gpg.export_keys(key))
+    print(gpg.export_keys(biggest_key))
+    print(DEBUG_FINGERPRINT)
 
     # TODO: Fix private key export
-    # print(gpg.export_keys(key, secret=True))
+    print(gpg.export_keys(biggest_key, secret=True))
+    
+
 def load_key_from_file_and_return_fingerprint(filePath, number_of_words):
 
     data = None
@@ -373,7 +373,7 @@ def load_key_from_file_and_return_fingerprint(filePath, number_of_words):
     for x in range(0, len(fingerprint), 4):
         formatted_fingerprint.append(fingerprint[x:x+4])
 
-    return " ".join(formatted_fingerprint[:number_of_words])
+    return " ".join(formatted_fingerprint[-number_of_words:])
 
 def determine_average_perms(number_of_words, all_perms=True):
 
@@ -384,7 +384,7 @@ def determine_average_perms(number_of_words, all_perms=True):
 
     for x in range(loops):
         fingerprint = create_random_fingerprint(number_of_words)
-        trustwords = finger_print_to_words(fingerprint, PRINT=False)
+        trustwords = fingerprint_to_words(fingerprint, PRINT=False)
 
         if all_perms:
             combinations = gen_all_similar_combinations(trustwords)
@@ -459,7 +459,7 @@ def generate_words_for_PGP_keys(key_path_1, key_path_2):
     key_finger_print_2 = sha1.hexdigest()[:16].upper()
 
     combined_key = XOR_fingerprints(key_finger_print_1, key_finger_print_2)
-    finger_print_to_words(combined_key)
+    fingerprint_to_words(combined_key)
 
 def args():
     # The fingerprint of the target
@@ -529,11 +529,11 @@ def args():
         exit()
 
     if args.find_keys:
-        create_actual_fingerprint_and_key(number_of_words)
+        create_actual_fingerprint_and_key(number_of_words, UNCONTROLLED_FINGERPRINT)
         exit()
 
     combined_fingerprint = XOR_fingerprints(CONTROLLABLE_FINGERPRINT, UNCONTROLLED_FINGERPRINT)
-    trustwords = finger_print_to_words(combined_fingerprint)
+    trustwords = fingerprint_to_words(combined_fingerprint)
 
     # Creates list of multiple mapping
     # i.e. the word "Tree" maps to 0xff43 and 0xf3ee
