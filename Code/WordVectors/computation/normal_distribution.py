@@ -3,17 +3,21 @@ import seaborn as sns
 import scipy.stats as stats
 import numpy as np
 import math
+import sys
 
 
 def load_data(fileName):
     
     data = []
-    with open(fileName) as file:
+    with open(fileName + "/values.dat") as file:
         data = file.read()
 
     data = data.strip()
 
-    values = data.split(", ")
+    # For legacy data that was split with a ", "
+    data = data.replace(" ", "")
+    
+    values = data.split(",")
     values = list(map(str.strip, values))
     values = list(map(float, values))
 
@@ -24,15 +28,15 @@ def plot_distribution(data):
 
 
 if __name__ == "__main__":
-    # fileNames = ["pgp_odd_data/values.dat", "pgp_even_data/values.dat", "peerio/values.dat"]
-    fileNames = ["pgp_odd_data/values.dat", "pgp_even_data/values.dat"]
+    fileNames = ["pgp_odd_data", "pgp_even_data"]
 
+    print("[*] Loading data....", end="")
+    sys.stdout.flush()
     data_points = []
     for f in fileNames:
         data_points.append(load_data(f))
+    print("[OK]")
 
-
-    print(len(data_points))
     for d in data_points:
         plot_distribution(d)
 

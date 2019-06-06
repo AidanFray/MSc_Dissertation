@@ -6,8 +6,7 @@ import sys
 import os
 
 PRINT_MISSING_WORDS = False
-
-DECIMAL_PRECISION = 1
+DECIMAL_PRECISION = 3
 
 def load_words():
     words = {}
@@ -67,6 +66,7 @@ def calculate_average(wordlistPath):
                 word_str = e.args[0]
                 if not word_str in non_represented_words:
                     non_represented_words[word_str] = ""
+                continue
 
             try:
                 word_vec2 = word_vec[word2]
@@ -74,10 +74,11 @@ def calculate_average(wordlistPath):
                 word_str = e.args[0]
                 if not word_str in non_represented_words:
                     non_represented_words[word_str] = ""
+                continue
 
             distance = calc_distance(word_vec1, word_vec2)
             total += distance
-            data_points.append(float("{0:.1f}".format(distance)))
+            data_points.append(round(distance, DECIMAL_PRECISION))
 
             loops += 1
 
@@ -117,8 +118,11 @@ if __name__ == "__main__":
     dir_str = int(time.time())
 
     os.system(f"mkdir {dir_str}")
-    plt.hist(values, 1000)
+    plt.hist(values, 100)
     plt.savefig(f"{dir_str}/distance.png")
     with open(f"{dir_str}/values.dat", "w") as file:
-        file.write(str(values)[1:-1])
+        
+        save_string = str(values)[1:-1]
+        save_string = save_string.replace(" ", "")
+        file.write(save_string)
         
