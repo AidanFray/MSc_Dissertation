@@ -2,7 +2,7 @@ import numpy as np
 from scipy.spatial import distance
 import sys
 
-PRINT_MISSING_WORDS = True
+PRINT_MISSING_WORDS = False
 
 def load_words():
     words = {}

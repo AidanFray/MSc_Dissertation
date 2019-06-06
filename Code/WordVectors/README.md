@@ -17,3 +17,11 @@ Origin: https://github.com/aparrish/phonetic-similarity-vectors/
 Even - 9.885415067548001
 
 Odd  - 8.95218976401543
+
+### Trustwords
+
+en_unique.csv - TODO
+
+### Peerio
+
+en.txt - TODO
