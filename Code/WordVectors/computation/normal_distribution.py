@@ -5,6 +5,9 @@ import numpy as np
 import math
 import sys
 
+"""
+Scripts that plots the normal distribution of a set of files from numpy arrays
+"""
 
 def load_data(fileName):
     
@@ -28,7 +31,7 @@ def plot_distribution(data):
 
 
 if __name__ == "__main__":
-    fileNames = ["pgp_odd_data", "pgp_even_data"]
+    fileNames = ["pgp_odd_data", "pgp_even_data", "peerio"]
 
     print("[*] Loading data....", end="")
     sys.stdout.flush()
