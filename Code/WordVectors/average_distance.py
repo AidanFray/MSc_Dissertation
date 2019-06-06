@@ -1,6 +1,9 @@
-import numpy as np
 from scipy.spatial import distance
+import matplotlib.pyplot as plt
+import numpy as np
+import time
 import sys
+import os
 
 PRINT_MISSING_WORDS = False
 
@@ -36,6 +39,7 @@ def calc_distance(a, b):
 
 def calculate_average(wordlistPath):
 
+    data_points = []
     non_represented_words = {}
 
     print("[!] Loading data.....", end="")
@@ -44,14 +48,16 @@ def calculate_average(wordlistPath):
     wordlist = load_wordlist(wordlistPath)
     print("[OK]")
 
-
     total = 0
     loops = 0
 
     num_of_words = len(wordlist)
     for index, word1 in enumerate(wordlist):
 
-        for word2 in wordlist[index:]:
+        start_time = time.time()
+
+        # index + 1 to avoid itself
+        for word2 in wordlist[index + 1:]:
             
             try:
                 word_vec1 = word_vec[word1]
@@ -67,7 +73,9 @@ def calculate_average(wordlistPath):
                 if not word_str in non_represented_words:
                     non_represented_words[word_str] = ""
 
-            total += calc_distance(word_vec1, word_vec2)
+            distance = calc_distance(word_vec1, word_vec2)
+            total += distance
+            data_points.append(distance)
 
             loops += 1
 
@@ -79,13 +87,19 @@ def calculate_average(wordlistPath):
                     print(w)
                 exit(0)
 
-        print(f"{index}/{num_of_words} -- Non represented words {len(non_represented_words)}", end="\r")
+
+        end_time = time.time() - start_time;
+        total_time_hours = end_time * num_of_words / 3600
+
+        sys.stderr.write(f"{index}/{num_of_words} -- Missing words {len(non_represented_words)} -- Execution time: {total_time_hours} hours\r")
+        sys.stdout.flush()
 
     print()
     print("#" * 40)
     print(f"AVERAGE: {total/loops}")
     print("#" * 40)
 
+    return data_points
 
 if __name__ == "__main__":
 
@@ -95,4 +109,15 @@ if __name__ == "__main__":
 
     wordlistPath = sys.argv[1]
 
-    calculate_average(wordlistPath)
+    values =calculate_average(wordlistPath)
+
+    # Saves data to file
+    dir_str = int(time.time())
+
+    os.system(f"mkdir {dir_str}")
+    plt.hist(values, 1000)
+    plt.savefig(f"{dir_str}/distance.png")
+    with open(f"{dir_str}/values.dat", "w") as file:
+
+        file.write(str(values)[1:-1])
+        
