@@ -7,6 +7,8 @@ import os
 
 PRINT_MISSING_WORDS = False
 
+DECIMAL_PRECISION = 1
+
 def load_words():
     words = {}
 
@@ -75,7 +77,7 @@ def calculate_average(wordlistPath):
 
             distance = calc_distance(word_vec1, word_vec2)
             total += distance
-            data_points.append(distance)
+            data_points.append(float("{0:.1f}".format(distance)))
 
             loops += 1
 
@@ -109,7 +111,7 @@ if __name__ == "__main__":
 
     wordlistPath = sys.argv[1]
 
-    values =calculate_average(wordlistPath)
+    values = calculate_average(wordlistPath)
 
     # Saves data to file
     dir_str = int(time.time())
@@ -118,6 +120,5 @@ if __name__ == "__main__":
     plt.hist(values, 1000)
     plt.savefig(f"{dir_str}/distance.png")
     with open(f"{dir_str}/values.dat", "w") as file:
-
         file.write(str(values)[1:-1])
         

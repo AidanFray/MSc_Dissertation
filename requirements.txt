@@ -2,3 +2,4 @@ scipy
 numpy
 pretty-bad-protocol
 matplotlib
+seaborn
