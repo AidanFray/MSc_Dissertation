@@ -1,8 +1,14 @@
+import matplotlib
+matplotlib.use('GTK3Agg') 
+
 import matplotlib.pyplot as plt
+
 import seaborn as sns
 import scipy.stats as stats
 import numpy as np
+import pickle
 import math
+import time
 import sys
 
 """
@@ -22,28 +28,40 @@ def load_data(fileName):
     
     values = data.split(",")
     values = list(map(str.strip, values))
-    values = list(map(float, values))
+    
+    for index, value in enumerate(values):
+
+        float_val = None
+        try:
+            float_val = float(value)
+
+            values[index] = float_val
+        except ValueError:
+
+            # Deletes erroneous value
+            del values[index]
 
     return values
 
 def plot_distribution(data):
     sns.distplot(data, hist = False, kde = True, kde_kws = {'linewidth': 2, 'shade': True})
 
+def pickle_plot():
+    ax = plt.subplot()
+    pickle.dump(ax, open(f"mplfigure_{int(time.time())}.pkl", "wb"))
 
 if __name__ == "__main__":
-    fileNames = ["pgp_odd_data", "pgp_even_data", "peerio"]
+    # fileNames = ["pgp_odd_data", "pgp_even_data", "peerio"]
+    fileNames = ["dictionary_popular"]
 
-    print("[*] Loading data....", end="")
+
+    print("[*] Loading data.....", end="")
     sys.stdout.flush()
-    data_points = []
-    for f in fileNames:
-        data_points.append(load_data(f))
+    data = np.get  (fileNames[0] + "/memmap.dat", dtype="float32", mode="r", shape=(1, ))
     print("[OK]")
 
-    for d in data_points:
-        plot_distribution(d)
+    x = data[0:100]
+    print(x)
 
-    plt.legend(fileNames)
-    plt.xlabel("Phonetic Distance")
-    plt.ylabel("Proportion of words")
-    plt.show()
+    plot_distribution(x)
+    pickle_plot()

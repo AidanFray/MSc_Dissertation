@@ -4,7 +4,7 @@ import time
 import sys
 import os
 
-PRINT_MISSING_WORDS = True
+PRINT_MISSING_WORDS = False
 DECIMAL_PRECISION = 3
 
 # How many data points to compute before data is saved
@@ -71,6 +71,13 @@ def calc_missing_words(wordlist, word_vec):
 
 def calculate_average(wordlist, word_vec):
 
+    num_of_words = len(wordlist)
+
+    TIME_CALCULATED = False
+
+    # Takes an average of the loops to get a better time calc
+    NUM_OF_LOOPS_BEFORE_CHECK = int(num_of_words * 0.1)
+
     data_points = []
 
     total = 0
@@ -79,14 +86,13 @@ def calculate_average(wordlist, word_vec):
     # Creates a directory for periodical saving
     dir_str = init_save()
 
-    num_of_words = len(wordlist)
-    for index, word1 in enumerate(wordlist):
+    if not TIME_CALCULATED: start_time = time.time()
 
-        start_time = time.time()
+    for index, word1 in enumerate(wordlist):
 
         # index + 1 to avoid itself
         for word2 in wordlist[index + 1:]:
-            
+
             if word1 in word_vec:
                 word_vec1 = word_vec[word1]
             else:
@@ -109,10 +115,16 @@ def calculate_average(wordlist, word_vec):
                 save_values(dir_str, data_points)
                 data_points.clear()
 
-        end_time = time.time() - start_time;
-        total_time_hours = end_time * num_of_words / 3600
+            if not TIME_CALCULATED and loops == NUM_OF_LOOPS_BEFORE_CHECK:
+                total_loops = (pow(num_of_words, 2) / 2) + (num_of_words / 2)
 
-        sys.stderr.write(f"{index}/{num_of_words} -- Execution time: {total_time_hours} hours\r")
+                end_time = (time.time() - start_time) / NUM_OF_LOOPS_BEFORE_CHECK
+                total_time_hours = end_time * total_loops / 3600
+                print(f"[!] Estimated execution time: {round(total_time_hours, 2)} hours")
+                TIME_CALCULATED = True
+
+
+        sys.stderr.write(f"[*] {index}/{num_of_words}\r")
         sys.stdout.flush()
 
     # Final save to clean up any leftover values
@@ -136,6 +148,7 @@ if __name__ == "__main__":
     word_vec = load_words()
     wordlist = load_wordlist(wordlistPath)
     print("[OK]")
+
 
     # # Prints out non-represented words
     missing_words = calc_missing_words(wordlist, word_vec)
