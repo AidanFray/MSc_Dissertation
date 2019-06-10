@@ -13,7 +13,7 @@ SAVE_PERIOD = 5000000
 def load_words():
     words = {}
 
-    for line in open("word_vectors.dat", encoding="latin-1"):
+    for line in open("../word_vectors.dat", encoding="latin-1"):
 
         line = line.strip()
         word, vector_raw = line.split("  ")
@@ -48,13 +48,9 @@ def init_save():
 def save_values(dir_str, values):
     with open(f"{dir_str}/values.dat", "a") as file:
         
-        # Converts array to string and removes "[" and "]"
-        save_string = str(values)[1:-1]
-
-        # Removes spaces to save storage space
-        save_string = save_string.replace(" ", "")
-        
-        file.write(save_string)
+        for v in values:
+            save_string = f"{v}: {values[v]}\n"
+            file.write(save_string)
 
 def calc_distance(a, b):
     return distance.euclidean(a, b)
@@ -71,14 +67,15 @@ def calc_missing_words(wordlist, word_vec):
 
 def calculate_average(wordlist, word_vec):
 
+    # Holds a tally of the number of values
+    data_points_count = {}
+
     num_of_words = len(wordlist)
 
     TIME_CALCULATED = False
 
     # Takes an average of the loops to get a better time calc
     NUM_OF_LOOPS_BEFORE_CHECK = int(num_of_words * 0.1)
-
-    data_points = []
 
     total = 0
     loops = 0
@@ -105,15 +102,14 @@ def calculate_average(wordlist, word_vec):
 
             distance = calc_distance(word_vec1, word_vec2)
             total += distance
-            data_points.append(round(distance, DECIMAL_PRECISION))
 
-            loops += 1
+            # Adds values to the dictionary
+            distance = round(distance, DECIMAL_PRECISION)
+            if not distance in data_points_count:
+                data_points_count[distance] = 1
+            else:
+                data_points_count[distance] += 1
 
-            # Saves the data points.
-            # This is to prevent large files from filling up all the RAM
-            if loops % SAVE_PERIOD == 0:
-                save_values(dir_str, data_points)
-                data_points.clear()
 
             if not TIME_CALCULATED and loops == NUM_OF_LOOPS_BEFORE_CHECK:
                 total_loops = (pow(num_of_words, 2) / 2) + (num_of_words / 2)
@@ -123,17 +119,12 @@ def calculate_average(wordlist, word_vec):
                 print(f"[!] Estimated execution time: {round(total_time_hours, 2)} hours")
                 TIME_CALCULATED = True
 
+            loops += 1
 
         sys.stderr.write(f"[*] {index}/{num_of_words}\r")
         sys.stdout.flush()
 
-    # Final save to clean up any leftover values
-    save_values(dir_str, data_points)
-
-    print()
-    print("#" * 40)
-    print(f"AVERAGE: {total/loops}")
-    print("#" * 40)
+    save_values(dir_str, data_points_count)
 
 if __name__ == "__main__":
 

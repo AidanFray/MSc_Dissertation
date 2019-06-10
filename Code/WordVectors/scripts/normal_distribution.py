@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('Agg') 
+# matplotlib.use('Agg') 
 matplotlib.interactive(False)
 
 import matplotlib.pyplot as plt
@@ -26,7 +26,13 @@ def load_data(fileName):
     return data
 
 def plot_distribution(data):
-    sns.distplot(data, hist = False, kde = True, kde_kws = {'linewidth': 1, 'shade': True})
+    sns.distplot(data, hist = False, kde = True, kde_kws = \
+        {
+            'linewidth': 1,
+            # 'linestyle': "--",
+            'shade': False
+        }
+    )
 
 def pickle_plot():
     ax = plt.subplot()
@@ -43,5 +49,6 @@ if __name__ == "__main__":
         plot_distribution(load_data(f))
 
     plt.legend(fileNames)
-    plt.show()
     pickle_plot()
+
+    plt.show()
