@@ -140,6 +140,7 @@ if __name__ == "__main__":
     wordlist = load_wordlist(wordlistPath)
     print("[OK]")
 
+    print(f"[*] Words loaded: {len(wordlist)}")
 
     # # Prints out non-represented words
     missing_words = calc_missing_words(wordlist, word_vec)
