@@ -267,5 +267,6 @@
         "armor",
         "chrono",
         "smartphone"
-    ]
+    ],
+    "python.pythonPath": "/bin/python"
 }
