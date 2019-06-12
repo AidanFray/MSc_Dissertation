@@ -8,8 +8,6 @@ import dbm
 # DEBUG
 WORDVECTOR = "../../word_vectors.dat"
 
-NEW_WORDLIST_SIZE = 256
-
 def load_wordvectors():
     words = {}
 
@@ -63,6 +61,7 @@ def compute_distances(vec_database, wordlist):
             # Grabs vectors for words
             if word1 in word_vec:
                 word_vec1 = word_vec[word1]
+
             else:
                 continue
 
@@ -88,7 +87,8 @@ def compute_distances(vec_database, wordlist):
                 if pre_existing_distance != distance:
                     print(f"[!] Error in distance calculation with words: {word1} and {word2}")
 
-        print(f"[*] {index}/{len(word_list)}", end="\r", flush=True)
+        sys.stderr.write(f"[*] {index}/{len(word_list)}\r")
+        sys.stderr.flush()
 
 def usage():
     print(f"[!] Usage: python {__file__} <WORDLIST>")
