@@ -25,6 +25,8 @@ if __name__ == "__main__":
     print("###### STATS ######")
     print(f"[!] Mean:   {round(np.average(data), 3)}")
     print(f"[!] Median: {round(np.median(data), 3)}")
+    print(f"[!] Max:    {np.max(data)}")
+    print(f"[!] Min:    {np.min(data)}")
     print("###################")
 
 

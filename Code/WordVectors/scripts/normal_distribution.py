@@ -26,7 +26,7 @@ def load_data(fileName):
     return data
 
 def plot_distribution(data):
-    sns.distplot(data, bins=500, hist = True, kde = True, kde_kws = \
+    sns.distplot(data, hist = False, kde = True, kde_kws = \
         {
             'linewidth': 1,
             # 'linestyle': "--",
