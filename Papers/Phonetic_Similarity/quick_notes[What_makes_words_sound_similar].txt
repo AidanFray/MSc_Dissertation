@@ -1,0 +1,23 @@
+- Others have adopted a priori measuresof similarity such as rhyme (e.g.Prasada & Pinker, 1993)
+
+- or the number of matching and mismatching  phonemes  (e.g.Greenberg  &  Jenkins,  1964).
+
+- One direct study of word similarity is that  of Vitz  and  Winkler  (1973).  Vitz  and  Winkler  compared  participants’  similarity judgments of word pairs to a measure of phonological distance based on the proportion of mismatching  phonemes  between  the  two  words.
+Their  measure  of  dissimilarity  was essentially a metric of edit distance, normalized by length
+
+(or  see Luce,  1986 for  an  alternative  approach  based  on  empirical  phoneme confusability rather than theoretical features).
+
+Empirically, the shortcomings of phoneme edit distance are demonstrated by the results of Bailey and Hahn (2001) who found that a measure of wordsimilarity  which  included  phoneme  similarities  doubled  the  predictive  accuracy  of  a simple  phoneme  edit  distance  measure  in  explaining  wordlikeness  judgments.
+
+Findings from paper:
+	(a) similarity typically increases with the number of shared features in corresponding components
+
+	(b) similarityis less influenced by unaligned components than aligned components
+
+	(c) similarity increases  more  when  matching  features  are  clustered  together  than  when  they  are distributed  across  components.
+
+"There is a broad consensus in phonological theory that speech sounds are represented interms of articulatory features."
+
+"Featural representations of speech sounds were developedoriginally  to explain  so-called  natural  classes,  that  is,  sets of  phonemes that  languagesoften  treat  as  members  of  a  single  category  in  phonological  patterns  (seeKenstowicz,1994, for an introduction)."
+
+Greenberg and Jenkins (1964) found that participants judged syllables whose initial consonants agreed in either place of articulation or voicing to be more similar than those whose initial consonants agreed in neither place of articulation, nor voicing
