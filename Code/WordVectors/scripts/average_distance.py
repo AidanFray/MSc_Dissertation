@@ -46,7 +46,7 @@ def init_save():
     return dir_str
 
 def save_values(dir_str, values):
-    with open(f"{dir_str}/values.dat", "a") as file:
+    with open(f"{dir_str}/reduction_plan.txt", "a") as file:
         
         for v in values:
             save_string = f"{v}: {values[v]}\n"
@@ -100,15 +100,15 @@ def calculate_average(wordlist, word_vec):
             else:
                 continue
 
-            distance = calc_distance(word_vec1, word_vec2)
-            total += distance
+            dist = calc_distance(word_vec1, word_vec2)
+            total += dist
 
             # Adds values to the dictionary
-            distance = round(distance, DECIMAL_PRECISION)
-            if not distance in data_points_count:
-                data_points_count[distance] = 1
+            dist = round(dist, DECIMAL_PRECISION)
+            if not dist in data_points_count:
+                data_points_count[dist] = 1
             else:
-                data_points_count[distance] += 1
+                data_points_count[dist] += 1
 
 
             if not TIME_CALCULATED and loops == NUM_OF_LOOPS_BEFORE_CHECK:
