@@ -1,4 +1,5 @@
 from scipy.spatial import distance
+from multiprocessing import Process, Lock
 import numpy as np
 import pickle
 import psutil
@@ -15,8 +16,13 @@ Due to the distance being symmetrical only one value is recorded for a pair.
 
 """
 
-MAX_RAM_USAGE = 0.10
-DECIMAL_PRECISION = 100
+DATABASE_LOCK = Lock()
+PROCCESSES = []
+
+RUNNING_DATABASE_THREAD = None
+
+MAX_RAM_USAGE = 0.60
+DECIMAL_PRECISION = 3
 
 WORDVECTOR = "../../word_vectors.dat"
 
@@ -79,16 +85,40 @@ def memory_full_check(mem):
     
     return False
 
-def database_sync(database, data_dict, memory_cap=True):
+def spawn_database_sync_thread(database_filepath, data_dict):
+    
+    p = Process(target=database_sync, args=(database_filepath, data_dict,))
+    p.start()
+    PROCCESSES.append(p)
+    
+def database_sync(database_filepath, data_dict):
     """
     Syncs the data held in memory to the persistent data object    
     """
 
-    if memory_cap: print("[!] Memory cap reached. Syncing local data to database")
+    DATABASE_LOCK.acquire()
+    database = dbm.open(database_filepath, "c")
+
     for d in data_dict:
         database[d] = data_dict[d]
 
-def compute_distances(vec_database, wordlist):
+    database.close()
+    DATABASE_LOCK.release()
+
+def wait_for_processes_to_finish():
+    for proc in PROCCESSES:
+        proc.join()
+
+def count_active_procs():
+
+    for index, p in enumerate(PROCCESSES):
+
+        if not p.is_alive():
+            del PROCCESSES[index]
+
+    return len(PROCCESSES)
+
+def compute_distances(database_filename, wordlist):
     """
     Computes all the permutations of distances for each combination of words
 
@@ -104,7 +134,6 @@ def compute_distances(vec_database, wordlist):
     
     # This database will hold values localally before being written to the dbm database
     temp_database = {}
-    TEMP_SIZE = 10000
 
     for index1, word1 in enumerate(word_list):
 
@@ -127,7 +156,6 @@ def compute_distances(vec_database, wordlist):
             # Values are saved as their index in the wordlist
             # the second words index is worked out from the 
             # offset of itself from the index1
-
             word1index = index1
             word2index = index1 + index2 + 1
 
@@ -140,17 +168,24 @@ def compute_distances(vec_database, wordlist):
             # this is because the loop is designed to never overlap
             temp_database[dictionary_index_str] = str(round(dist, DECIMAL_PRECISION))
 
+        number_of_processes = count_active_procs()
+
         mem = psutil.virtual_memory()
-        sys.stderr.write(f"[*] {index1}/{len(word_list)} - Memory Available: {round(mem.available / mem.total, 2)}\r")
+        sys.stderr.write(f"[*] {index1}/{len(word_list)} - Memory Available: {round(mem.available / mem.total, 2)} -- Active Procs: {number_of_processes}\r")
         sys.stderr.flush()
 
-        if memory_full_check(mem):
-            database_sync(vec_database, temp_database)
-            temp_database.clear()
+        if number_of_processes == 0:
+            if memory_full_check(mem):
+                spawn_database_sync_thread(database_filename, temp_database)
+                temp_database.clear()
 
     # One final sync
-    database_sync(vec_database, temp_database, memory_cap=False)
+    print("[*] Syncing finial values...", end="", flush=True)
+    spawn_database_sync_thread(database_filename, temp_database)
     temp_database.clear()
+    print("[OK]")
+
+    wait_for_processes_to_finish()
 
 def usage():
     print(f"[!] Usage: python {__file__} <WORDLIST>")
@@ -168,11 +203,9 @@ if __name__ == "__main__":
 
     fileName = f"database_{int(time.time())}.dbm"
 
-    vec_database = dbm.open(fileName, "c")
+    # Creates the database object
+    dbm.open(fileName, "c").close()
 
-    compute_distances(vec_database, word_list)
-    vec_database.close()
+    compute_distances(fileName, word_list)
 
     print(f"\n[!] Execution time: {time.time() - start_time}")
-
-    
