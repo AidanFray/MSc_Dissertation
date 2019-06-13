@@ -176,7 +176,10 @@ def compute_distances(database_filepath, wordlist):
 
 
         mem = psutil.virtual_memory()
-        sys.stderr.write(f"[*] {index1}/{len(word_list)} - Memory Available: {round(mem.available / mem.total, 2)} -- Active Procs: {number_of_processes}\r")
+
+        #TODO - Find way to manage the toggling of printing the processes
+        # sys.stderr.write(f"[*] {index1}/{len(word_list)} - Memory Available: {round(mem.available / mem.total, 2)} -- Active Procs: {number_of_processes}\r")
+        sys.stderr.write(f"[*] {index1}/{len(word_list)} - Memory Available: {round(mem.available / mem.total, 2)}\r")
         sys.stderr.flush()
 
         if MULTI_THREADED_MODE:
