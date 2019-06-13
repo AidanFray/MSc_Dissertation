@@ -1,13 +1,15 @@
 import sys
 import dbm
 
-def usage():
-    print(f"[!] Usage: ./{__file__} <WORDLIST> <DATABASE> <OUTFILE> <WORDLIST_SIZE>")
-    exit()
+"""
+This script uses the database generated from "generate_database.py" to construct the best
+wordlist based of the distances of the word vectors
+"""
+
 
 def load_wordlist(fileName):
     """
-    Loads a wordlist to file
+    Loads a wordlist to memory
     """
 
     data = []
@@ -32,8 +34,74 @@ def save_wordlist(fileName, new_wordlist):
         for n in new_wordlist:
             file.write(n + "\n")
 
+def best_wordlist_search(word_list, vec_database):
+    new_wordlist = []
+    new_wordlist_indices = []
+    
+    print("[*] Searching for the best pair....", end="", flush=True)
+    biggest_pair      = None
+    biggest_pair_dist = None
+    for pair in vec_database.keys():
+
+        dist = float(vec_database[pair])
+        if biggest_pair_dist is None or dist > biggest_pair_dist:
+            biggest_pair_dist = dist
+            biggest_pair = pair
+
+    # Grabs and splits both indices and converts them to integers
+    index1, index2 = list(map(int, biggest_pair.decode("utf-8").split("-")))
+    new_wordlist_indices =  [index1, index2]
+    new_wordlist         =  [word_list[index1], word_list[index2]]
+    print("[OK]")
+
+    print("[*] Begining construction of the new wordlist")
+    while len(new_wordlist_indices) < new_wordlist_size:
+
+        best_word_index = None
+        best_avg_distance = None
+        for word_index, candidate_word in enumerate(word_list):
+                
+            total_distance = 0
+            for new_word_index in new_wordlist_indices:
+
+                # Checks for the presence of the value
+                if not word_index in new_wordlist_indices:
+
+                    # Words out the alphabetic order
+                    word_pair = [
+                                    candidate_word, 
+                                    word_list[new_word_index]
+                                ]
+                    word_pair.sort()
+
+                    if word_pair[0] == candidate_word:
+                        query = f"{word_index}-{new_word_index}"
+                    else:
+                        query = f"{new_word_index}-{word_index}"
+
+                    total_distance += float(vec_database[query])
+
+            avg_distance = total_distance / len(new_wordlist_indices)
+
+            # Checks for the best value
+            if best_avg_distance == None or avg_distance > best_avg_distance:
+                best_word_index = word_index
+                best_avg_distance = avg_distance
+                best_word = word_list[best_word_index]
+
+        print(f"\tBest word: {best_word}", end=f"{' ' * 20}\r", flush=True)
+        new_wordlist_indices.append(best_word_index)
+        new_wordlist.append(best_word)
+
+    return new_wordlist
+
+def usage():
+    print(f"[!] Usage: ./{__file__} <WORDLIST> <DATABASE> <OUTFILE> <WORDLIST_SIZE>")
+    exit()
+
 if __name__ == "__main__":
 
+    # Argument handing
     if len(sys.argv) != 5:
         usage()
 
@@ -43,50 +111,9 @@ if __name__ == "__main__":
     new_wordlist_size = int(sys.argv[4])
 
     print("[*] Initalisaing data sources....", end="", flush=True)
-    word_list = load_wordlist(wordlist_path)
+    wordlist = load_wordlist(wordlist_path)
     vec_database = dbm.open(database_path, "r")
     print("[OK]")
 
-    print("[*] Searching for the best pair....", end="", flush=True)
-    biggest_pair      = None
-    biggest_pair_dist = None
-    for pair in vec_database.keys():
-
-        dist = vec_database[pair]
-        if biggest_pair_dist is None or dist > biggest_pair_dist:
-            biggest_pair_dist = dist
-            biggest_pair = pair
-
-    new_wordlist = []
-    new_wordlist += biggest_pair.decode("utf-8").split("-")
-    print("[OK]")
-
-    print("[*] Begining construction of the new wordlist")
-    while len(new_wordlist) < new_wordlist_size:
-
-        best_word = None
-        best_avg_distance = None
-        for word in word_list:
-                
-            total_distance = 0
-            for w in new_wordlist:
-
-                if not word in new_wordlist:
-
-                    # Creates the ordered pair ID string
-                    word_pair = [word, w]
-                    word_pair.sort()
-
-                    total_distance += float(vec_database[f"{word_pair[0]}-{word_pair[1]}"])
-
-            avg_distance = total_distance / len(new_wordlist)
-
-            # Checks for the best value
-            if best_avg_distance == None or avg_distance > best_avg_distance:
-                best_word = word
-                best_avg_distance = avg_distance
-
-        print(f"\tBest word: {best_word}", end=f"{' ' * 20}\r", flush=True)
-        new_wordlist.append(best_word)
-
+    new_wordlist = best_wordlist_search(wordlist, vec_database)
     save_wordlist(outfile_path, new_wordlist)

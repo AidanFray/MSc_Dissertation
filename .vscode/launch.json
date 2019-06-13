@@ -11,7 +11,7 @@
             "request":"launch",
             "program":"${fileDirname}/${fileBasename}",
             "console":"integratedTerminal",
-            "args": ["${fileDirname}/pgp_all_euclid.pkl"]
+            "args": ["${fileDirname}/../../../../Wordlists/PGP_word_list/all/words.txt"]
         },
         {
             "name": "g++ build hash.cpp",
