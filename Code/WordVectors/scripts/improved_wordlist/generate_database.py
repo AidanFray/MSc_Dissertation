@@ -16,7 +16,6 @@ Due to the distance being symmetrical only one value is recorded for a pair.
 
 """
 
-DATABASE_LOCK = Lock()
 PROCCESSES = []
 
 RUNNING_DATABASE_THREAD = None
@@ -96,14 +95,13 @@ def database_sync(database_filepath, data_dict):
     Syncs the data held in memory to the persistent data object    
     """
 
-    DATABASE_LOCK.acquire()
     database = dbm.open(database_filepath, "c")
 
+    print(f"\n[D] Saving {len(data_dict)} datapoints")
     for d in data_dict:
         database[d] = data_dict[d]
 
     database.close()
-    DATABASE_LOCK.release()
 
 def wait_for_processes_to_finish():
     for proc in PROCCESSES:
