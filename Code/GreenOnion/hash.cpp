@@ -70,6 +70,8 @@ size_t MAX_WORK_SIZE = 1000;                //Set to 0 for no cap
 std::string target_keys_file_path = "";
 std::string kernel_file_path = "./opencl/SHA1.cl";
 
+int opencl_device_number = 0;
+
 /*
     Used to test that OpenCL is producing the correct result
 */
@@ -77,8 +79,8 @@ void sha1_test()
 {
     //OpenGL Hash
     auto platform = GetPlatform();
-    auto devices = GetAllDevices(platform, true);
-    auto device = devices.front();
+    auto devices = GetAllDevices(platform, opencl_device_number, true);
+    auto device = devices[opencl_device_number];
 
     cl::Context context(devices);
 
@@ -216,9 +218,11 @@ void compute()
 
     // ### OpenCL INIT ###
     auto platform = GetPlatform();
-    auto devices = GetAllDevices(platform, false);
-    auto device = devices.front();
+    auto devices = GetAllDevices(platform, opencl_device_number, false);
+    auto device = devices[opencl_device_number];
+
     cl::Context context(devices);
+    
     auto program = BuildProgram(kernel_file_path, context);
     // int workGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
     //std::cout << OUTPUT << " Work Group size set to: " << workGroupSize << std::endl;
@@ -414,15 +418,16 @@ void signalHandler(int signum)
 
 void usage()
 {
-    std::cout << "./GreenOnion <TARGET_KEYS_FILE_PATH>" << std::endl;
+    std::cout << "./GreenOnion <TARGET_KEYS_FILE_PATH> <OPENCL_DEVICE_NUMBER>" << std::endl;
     exit(0);
 }
 
 int main(int argc, char* argv[])
 {
     // Argument handling
-    if (argc != 2) usage();
+    if (argc != 3) usage();
     target_keys_file_path = argv[1];
+    opencl_device_number = std::atoi(argv[2]);
 
     signal(SIGINT, signalHandler);  
 

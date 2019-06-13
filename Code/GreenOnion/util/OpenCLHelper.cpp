@@ -93,7 +93,7 @@ void opencl_handle_error(int error, std::string name="")
     exit(error);
 }
 
-std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)
+std::vector<cl::Device> GetAllDevices(cl::Platform platform, int device_number, bool printInfo)
 {
     std::vector<cl::Device> devices;
     platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
@@ -104,8 +104,14 @@ std::vector<cl::Device> GetAllDevices(cl::Platform platform, bool printInfo)
         exit(0);
     }
 
-    //Prints out first device
-    auto device = devices.front();
+
+    if (device_number >= devices.size() || device_number < 0)
+    {
+        std::cout << WARNING << " Invalid OpenCL device number!" << std::endl;
+        exit(0);
+    }
+
+    auto device = devices[device_number];
 
     if (printInfo)
     {
