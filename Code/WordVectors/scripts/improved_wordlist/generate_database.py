@@ -16,11 +16,19 @@ Due to the distance being symmetrical only one value is recorded for a pair.
 
 """
 
+################################################################
+# TODO: Issue with saving script losing traction with the main 
+#       functionality. Need to have a check to make sure that
+#       there is some kind of hard memory cap.
+################################################################
+
+MULTI_THREADED_MODE = False
+
 PROCCESSES = []
 
 RUNNING_DATABASE_THREAD = None
 
-MAX_RAM_USAGE = 0.60
+MAX_RAM_USAGE = 0.90
 DECIMAL_PRECISION = 3
 
 WORDVECTOR = "../../word_vectors.dat"
@@ -95,9 +103,9 @@ def database_sync(database_filepath, data_dict):
     Syncs the data held in memory to the persistent data object    
     """
 
-    database = dbm.open(database_filepath, "c")
+    database = dbm.open(database_filepath, "w")
 
-    print(f"\n[D] Saving {len(data_dict)} datapoints")
+    # print(f"\n[D] Saving {len(data_dict)} datapoints")
     for d in data_dict:
         database[d] = data_dict[d]
 
@@ -116,7 +124,7 @@ def count_active_procs():
 
     return len(PROCCESSES)
 
-def compute_distances(database_filename, wordlist):
+def compute_distances(database_filepath, wordlist):
     """
     Computes all the permutations of distances for each combination of words
 
@@ -166,24 +174,32 @@ def compute_distances(database_filename, wordlist):
             # this is because the loop is designed to never overlap
             temp_database[dictionary_index_str] = str(round(dist, DECIMAL_PRECISION))
 
-        number_of_processes = count_active_procs()
 
         mem = psutil.virtual_memory()
         sys.stderr.write(f"[*] {index1}/{len(word_list)} - Memory Available: {round(mem.available / mem.total, 2)} -- Active Procs: {number_of_processes}\r")
         sys.stderr.flush()
 
-        if number_of_processes == 0:
+        if MULTI_THREADED_MODE:
+            number_of_processes = count_active_procs()
+            if number_of_processes == 0:
+                if memory_full_check(mem):
+                    spawn_database_sync_thread(database_filepath, temp_database)
+                    temp_database.clear()
+        else:
             if memory_full_check(mem):
-                spawn_database_sync_thread(database_filename, temp_database)
-                temp_database.clear()
+                database_sync(database_filepath, temp_database)
 
     # One final sync
-    print("[*] Syncing finial values...", end="", flush=True)
-    spawn_database_sync_thread(database_filename, temp_database)
-    temp_database.clear()
-    print("[OK]")
+    print("\n[*] Syncing finial values...", end="", flush=True)
 
-    wait_for_processes_to_finish()
+    if MULTI_THREADED_MODE:
+        wait_for_processes_to_finish()
+        spawn_database_sync_thread(database_filepath, temp_database)
+        wait_for_processes_to_finish()
+    else:
+        database_sync(database_filepath, temp_database)
+
+    print("[OK]")
 
 def usage():
     print(f"[!] Usage: python {__file__} <WORDLIST>")
