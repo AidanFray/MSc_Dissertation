@@ -35,7 +35,7 @@ std::vector<std::string> split(std::string strToSplit, char delimeter)
 std::map<std::string, std::vector<float>> WordVectors::load_word_vectors()
 {
     //TODO: Sort out file path
-    auto path = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Code/SimilarWords/data/word_vectors.dat";
+    auto path = "data/word_vectors.dat";
 
     std::string line;
     std::ifstream myfile(path);
@@ -59,6 +59,12 @@ std::map<std::string, std::vector<float>> WordVectors::load_word_vectors()
 
     }
     myfile.close();
+
+    if(wordVectors.size() == 0)
+    {
+        std::cout << "[!] No wordvectors loaded!" << std::endl;
+        exit(0);
+    }
 }
 
 /*

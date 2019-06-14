@@ -14,22 +14,25 @@
 std::string inputFileName = "";
 std::string outputFileName = "";
 
-static bool LEV_DISTANCE = false;
-static bool SOUNDEX = false;
-static bool METAPHONE = false;
-static bool NYSIIS = false;
-static bool WORD_VEC = false;
-static bool COMBINED_MODE = false;
-
+// Values for quantifying tolerance or the measurement of "difference"
 static float COMBINED_TOLERANCE = 1;
-static float WORDVEC_TOLERANCE = 3;
+static float WORDVEC_TOLERANCE = 3.0;
 
+// Command line tags
 std::string SOUNDEX_CLI_TAG     = "-s";
 std::string LEV_CLI_TAG         = "-l";
 std::string METAPHONE_CLI_TAG   = "-m";
 std::string NYSIIS_CLI_TAG      = "-n";
 std::string COMBINED_MODE_TAG   = "-c";
 std::string WORD_VEC_CLI_TAG    = "-v";
+
+// Mode booleans
+static bool LEV_DISTANCE    = false;
+static bool SOUNDEX         = false;
+static bool METAPHONE       = false;
+static bool NYSIIS          = false;
+static bool WORD_VEC        = false;
+static bool COMBINED_MODE   = false;
 
 /*
     Saves the similar words to a specified file
@@ -184,20 +187,20 @@ void parse_program_mode(std::string commandInput)
 
 int main(int argc, char *argv[])
 {
-    // if ( argc != 4)
-    // {
-    //     usage();
-    // }
+    if ( argc != 4)
+    {
+        usage();
+    }
 
-    // // Sets the args
-    // inputFileName = argv[1];
-    // outputFileName = argv[2];
-    // std::string mode = argv[3];
+    // Sets the args
+    inputFileName = argv[1];
+    outputFileName = argv[2];
+    std::string mode = argv[3];
 
-    //##### DEBUG #####
-    inputFileName = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Wordlists/Dictionary/words_popular.txt";
-    outputFileName = "./test.txt";
-    std::string mode = "-v";
+    // //##### DEBUG #####
+    // inputFileName = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Wordlists/Dictionary/words_popular.txt";
+    // outputFileName = "./test.txt";
+    // std::string mode = "-v";
 
     parse_program_mode(mode);
 
