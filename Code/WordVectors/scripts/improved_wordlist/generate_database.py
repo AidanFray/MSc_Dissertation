@@ -1,8 +1,6 @@
 from scipy.spatial import distance
-from multiprocessing import Process, Lock
 import numpy as np
-import pickle
-import psutil
+# import pickle
 import time
 import sys
 import dbm
@@ -16,22 +14,9 @@ Due to the distance being symmetrical only one value is recorded for a pair.
 
 """
 
-################################################################
-# TODO: Issue with saving script losing traction with the main 
-#       functionality. Need to have a check to make sure that
-#       there is some kind of hard memory cap.
-################################################################
-
-MULTI_THREADED_MODE = False
-
-PROCCESSES = []
-
-RUNNING_DATABASE_THREAD = None
-
-MAX_RAM_USAGE = 0.90
+# Precision for the saved float values
 DECIMAL_PRECISION = 3
-
-WORDVECTOR = "../../word_vectors.dat"
+WORDVECTOR_PATH = "../../word_vectors.dat"
 
 def load_wordvectors():
     """
@@ -40,7 +25,7 @@ def load_wordvectors():
 
     words = {}
 
-    for line in open(WORDVECTOR, encoding="latin-1"):
+    for line in open(WORDVECTOR_PATH, encoding="latin-1"):
 
         line = line.strip()
         word, vector_raw = line.split("  ")
@@ -79,51 +64,7 @@ def calc_distance(a, b):
 
     return distance.euclidean(a, b)
     # return distance.cosine(a, b)
-
-def memory_full_check(mem):
-    """
-    Method to check for the proportion of free RAM
-    """
-
-    p = mem.available / mem.total
-
-    if p < MAX_RAM_USAGE:
-        return True
-    
-    return False
-
-def spawn_database_sync_thread(database_filepath, data_dict):
-    
-    p = Process(target=database_sync, args=(database_filepath, data_dict,))
-    p.start()
-    PROCCESSES.append(p)
-    
-def database_sync(database_filepath, data_dict):
-    """
-    Syncs the data held in memory to the persistent data object    
-    """
-
-    database = dbm.open(database_filepath, "w")
-
-    # print(f"\n[D] Saving {len(data_dict)} datapoints")
-    for d in data_dict:
-        database[d] = data_dict[d]
-
-    database.close()
-
-def wait_for_processes_to_finish():
-    for proc in PROCCESSES:
-        proc.join()
-
-def count_active_procs():
-
-    for index, p in enumerate(PROCCESSES):
-
-        if not p.is_alive():
-            del PROCCESSES[index]
-
-    return len(PROCCESSES)
-
+        
 def compute_distances(database_filepath, wordlist):
     """
     Computes all the permutations of distances for each combination of words
@@ -133,20 +74,29 @@ def compute_distances(database_filepath, wordlist):
          (N^2 / 2)
     """
 
+    TIME_CALCULATED = False
+    NUM_OF_LOOPS_BEFORE_CHECK = 50000
+
+    loops = 0
+
     print("[*] Loading data....", end="", flush=True)
     word_vec = load_wordvectors()
     print("[OK]")
-    print(f"[*] Words loaded: {len(word_list)}")
+    num_of_words = len(wordlist)
+    print(f"[*] Words loaded: {num_of_words}")
     
     # This database will hold values localally before being written to the dbm database
-    temp_database = {}
+    database = dbm.open(database_filepath, "c")
+
+    start_time = time.time()
 
     for index1, word1 in enumerate(word_list):
 
         # index + 1 to avoid itself
         for index2, word2 in enumerate(word_list[index1 + 1:]):
 
-            # Grabs vectors for words
+            # Grabs vectors for words. The loop is ignored if the
+            # word isn't present
             if word1 in word_vec: word_vec1 = word_vec[word1]
             else: continue
 
@@ -172,37 +122,24 @@ def compute_distances(database_filepath, wordlist):
 
             # No checks are made for pre-existing values
             # this is because the loop is designed to never overlap
-            temp_database[dictionary_index_str] = str(round(dist, DECIMAL_PRECISION))
+            database[dictionary_index_str] = str(round(dist, DECIMAL_PRECISION))
 
+            if not TIME_CALCULATED and loops == NUM_OF_LOOPS_BEFORE_CHECK:
+                run_time_calc(start_time, num_of_words, loops)
+                TIME_CALCULATED = True
+            
+            loops += 1
 
-        mem = psutil.virtual_memory()
-
-        #TODO - Find way to manage the toggling of printing the processes
-        # sys.stderr.write(f"[*] {index1}/{len(word_list)} - Memory Available: {round(mem.available / mem.total, 2)} -- Active Procs: {number_of_processes}\r")
-        sys.stderr.write(f"[*] {index1}/{len(word_list)} - Memory Available: {round(mem.available / mem.total, 2)}\r")
+        sys.stderr.write(f"[*] {index1}/{len(word_list)}\r")
         sys.stderr.flush()
 
-        if MULTI_THREADED_MODE:
-            number_of_processes = count_active_procs()
-            if number_of_processes == 0:
-                if memory_full_check(mem):
-                    spawn_database_sync_thread(database_filepath, temp_database)
-                    temp_database.clear()
-        else:
-            if memory_full_check(mem):
-                database_sync(database_filepath, temp_database)
+def run_time_calc(start_time, num_of_words, completed_loops):
 
-    # One final sync
-    print("\n[*] Syncing finial values...", end="", flush=True)
+    total_loops = (pow(num_of_words, 2) / 2) + (num_of_words / 2)
 
-    if MULTI_THREADED_MODE:
-        wait_for_processes_to_finish()
-        spawn_database_sync_thread(database_filepath, temp_database)
-        wait_for_processes_to_finish()
-    else:
-        database_sync(database_filepath, temp_database)
-
-    print("[OK]")
+    end_time = (time.time() - start_time) / completed_loops
+    total_time_hours = end_time * total_loops / 3600
+    print(f"[!] Estimated execution time: {round(total_time_hours, 2)} hours")
 
 def usage():
     print(f"[!] Usage: python {__file__} <WORDLIST>")
