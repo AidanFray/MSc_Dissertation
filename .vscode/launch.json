@@ -4,14 +4,14 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
+
         {
             "name":"Python: Current File",
             "type":"python",
             "request":"launch",
             "program":"${fileDirname}/${fileBasename}",
             "console":"integratedTerminal",
-            "args": ["${fileDirname}/../../../../Wordlists/PGP_word_list/all/words.txt"]
+            "args": ["${fileDirname}/../../../Wordlists/PGP_word_list/all/words.txt"]
         },
         {
             "name": "g++ build hash.cpp",
@@ -53,6 +53,27 @@
                 }
             ],
             "preLaunchTask": "g++ build general cpp",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "g++ build similar_words cpp",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "g++ build similar_words cpp",
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ]

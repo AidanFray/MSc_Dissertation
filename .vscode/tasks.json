@@ -34,6 +34,21 @@
       "options": {
         "cwd": "/usr/bin"
       }
+    },
+    {
+      "type": "shell",
+      "label": "g++ build similar_words cpp",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-g",
+        "${file}",
+        "${fileDirname}/modes/*.cpp",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}"
+      ],
+      "options": {
+        "cwd": "/usr/bin"
+      }
     }
   ],
   "version": "2.0.0"
