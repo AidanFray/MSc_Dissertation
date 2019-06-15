@@ -54,6 +54,9 @@ if __name__ == "__main__":
     similar_list = remove_matchless_words(similar_list)
     similar_list = spread_out_matches(similar_list)
 
+    if num_of_pairs == 0:
+        num_of_pairs = len(similar_list)
+
     # Prints out the random pairs
     for n in range(num_of_pairs):
         index = random.randint(0, len(similar_list))
