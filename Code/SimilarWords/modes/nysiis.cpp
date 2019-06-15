@@ -90,3 +90,9 @@ std::string nysiis( std::string const& str )
  
     return out;
 }
+
+bool nysiis_similar(std::string word1_nysiis, std::string word2)
+{
+    std::string word2_nysiis = nysiis(word2);
+    return  word1_nysiis == word2_nysiis;
+}

@@ -7,9 +7,10 @@
 
 #include "./modes/soundex.hpp"
 #include "./modes/levenshtien.hpp"
-#include "./modes/double_metaphone.hpp"
+#include "./modes/metaphone.hpp"
 #include "./modes/nysiis.hpp"
 #include "./modes/word_vectors.hpp"
+#include "./modes/match_rating.hpp"
 
 std::string inputFileName = "";
 std::string outputFileName = "";
@@ -23,16 +24,18 @@ std::string SOUNDEX_CLI_TAG     = "-s";
 std::string LEV_CLI_TAG         = "-l";
 std::string METAPHONE_CLI_TAG   = "-m";
 std::string NYSIIS_CLI_TAG      = "-n";
-std::string COMBINED_MODE_TAG   = "-c";
 std::string WORD_VEC_CLI_TAG    = "-v";
+std::string MAR_CLI_TAG         = "-a";
+std::string COMBINED_MODE_TAG   = "-c";
 
 // Mode booleans
-static bool LEV_DISTANCE    = false;
-static bool SOUNDEX         = false;
-static bool METAPHONE       = false;
-static bool NYSIIS          = false;
-static bool WORD_VEC        = false;
-static bool COMBINED_MODE   = false;
+static bool LEV_DISTANCE        = false;
+static bool SOUNDEX             = false;
+static bool METAPHONE           = false;
+static bool NYSIIS              = false;
+static bool WORD_VEC            = false;
+static bool MAR                 = false;
+static bool COMBINED_MODE       = false;
 
 /*
     Saves the similar words to a specified file
@@ -122,6 +125,7 @@ void find_similar_words(std::vector<std::string> words, bool combined=false)
         std::string pre_word_y;
         if      (METAPHONE)  pre_word_y = metaphone(word_y);
         else if (SOUNDEX)    pre_word_y = soundex(word_y);
+        else if (NYSIIS)     pre_word_y = nysiis(word_y);
         // ############################## //
 
         for (std::string word_x : words)
@@ -138,6 +142,8 @@ void find_similar_words(std::vector<std::string> words, bool combined=false)
                     else if (SOUNDEX)           add_word = soundex_similar(pre_word_y, word_x);
                     else if (METAPHONE)         add_word = metaphone_similar(pre_word_y, word_x);
                     else if (WORD_VEC)          add_word = wordvec.similar(word_y, word_x, WORDVEC_TOLERANCE);
+                    else if (NYSIIS)            add_word = nysiis_similar(pre_word_y, word_x);
+                    else if (MAR)               add_word = match_rating_similar(word_y, word_x);
                 }
                 
                 // Adds the word to the dictionary  
@@ -163,7 +169,7 @@ void find_similar_words(std::vector<std::string> words, bool combined=false)
 */
 void usage()
 {
-    std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH> <MODE> [-s|-l|-m|-c|-v|-n]" << std::endl;
+    std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH> <MODE> [-s|-l|-m|-c|-v|-n|-a]" << std::endl;
     exit(0);
 }
 
@@ -172,12 +178,15 @@ void usage()
 */
 void parse_program_mode(std::string commandInput)
 {
-    if      (commandInput == SOUNDEX_CLI_TAG)       SOUNDEX = true;
-    else if (commandInput == LEV_CLI_TAG)           LEV_DISTANCE = true;
-    else if (commandInput == METAPHONE_CLI_TAG)     METAPHONE = true;
-    else if (commandInput == COMBINED_MODE_TAG)     COMBINED_MODE = true;
-    else if (commandInput == NYSIIS_CLI_TAG)        NYSIIS = true;
-    else if (commandInput == WORD_VEC_CLI_TAG)      WORD_VEC = true;
+
+    //TODO: Dynamic way to parse these
+    if      (commandInput == SOUNDEX_CLI_TAG)       SOUNDEX         = true;
+    else if (commandInput == LEV_CLI_TAG)           LEV_DISTANCE    = true;
+    else if (commandInput == METAPHONE_CLI_TAG)     METAPHONE       = true;
+    else if (commandInput == COMBINED_MODE_TAG)     COMBINED_MODE   = true;
+    else if (commandInput == NYSIIS_CLI_TAG)        NYSIIS          = true;
+    else if (commandInput == WORD_VEC_CLI_TAG)      WORD_VEC        = true;
+    else if (commandInput == MAR_CLI_TAG)           MAR             = true;
     else
     {
         std::cout << "[!] Error: Please select a mode!" << std::endl;
