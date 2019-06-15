@@ -5,6 +5,21 @@
 
 auto VOWELS = {'A', 'E', 'I', 'O', 'U'};
 
+/* 
+  Reverses a string parameter
+*/
+void reverseStr(std::string& str) 
+{ 
+    int n = str.length(); 
+  
+    // Swap character starting from two 
+    // corners 
+    for (int i = 0; i < n / 2; i++) 
+    {
+        std::swap(str[i], str[n - i - 1]); 
+    }
+} 
+
 /*
     TODO
  */
@@ -51,6 +66,50 @@ bool replace(std::string& str, const std::string& from, const std::string& to)
     str.replace(start_pos, from.length(), to);
     return true;
 }
+
+/*
+    Remove any occuring chars from a string regardless of position
+ */
+void remove_matching_chars(std::string &large, std::string &small)
+{
+    int i = 0;
+    while (i < large.length())
+    {
+        bool found = false;
+
+        auto pos = indexOfChar(small, large[i]);
+
+        if (pos != -1)
+        {
+            small = removeCharAtIndex(small, pos);
+            large = removeCharAtIndex(large, i);
+            found = true;
+        }
+
+        if(!found) i++;
+    }
+}
+
+/*
+    Remove chars that line up with each other in positions in the string
+ */
+void remove_exactly_matching_chars(std::string &large, std::string &small)
+{
+    int i = 0;
+    while (i < small.length())
+    {
+        bool found = false;
+        if (small[i] == large[i])
+        {
+            large = removeCharAtIndex(large, i);
+            small = removeCharAtIndex(small, i);
+            found = true;
+        }
+
+        if (!found) i++;
+    }
+}
+
 
 /*
     Reduces double consanants down to a single char
@@ -144,10 +203,6 @@ bool match_rating_similar(std::string word1, std::string word2)
     auto code1 = match_rating_encode(word1);
     auto code2 = match_rating_encode(word2);
 
-    // DEBUG
-    std::cout << "CODE 1 :" << code1 << std::endl;
-    std::cout << "CODE 2 :" << code2 << std::endl;
-
     // 1. If the length difference between the encoded strings is 3 or 
     // greater, then no similarity comparison is done.
     auto length_diff = abs(code1.length() - code2.length());
@@ -158,67 +213,32 @@ bool match_rating_similar(std::string word1, std::string word2)
     auto length_sum = code1.length() + code2.length();
     auto min_rating = calculate_minimum_rating(length_sum);
 
-
     // 3. Process the encoded strings from left to right and remove any identical 
     // characters found from both strings respectively.
-    int unmatches = 0;
-    
-    std::string longest_string = code1;
-    std::string smallest_string = code2;
+    std::string large = code1;
+    std::string small = code2;
     if (code1.length() < code2.length()) 
     {
-        longest_string = code2;
-        smallest_string = code1;
+        large = code2;
+        small = code1;
     }
-    
-    int i = 0;
-    while (i < longest_string.length())
-    {
-        bool found = false;
-
-        auto pos = indexOfChar(smallest_string, longest_string[i]);
-
-        if (pos != -1)
-        {
-            smallest_string = removeCharAtIndex(smallest_string, pos);
-            longest_string = removeCharAtIndex(longest_string, i);
-            found = true;
-        }
-
-        if(!found) i++;
-        
-    }
-
-    //DEBUG
-    std::cout << "REMOVED: " << std::endl;
-    std::cout << longest_string << std::endl;
-    std::cout << smallest_string << std::endl;
-
+    // remove_matching_chars(large, small);
+    remove_exactly_matching_chars(large, small);
     
     // 4. Process the unmatched characters from right to left and remove 
     // any identical characters found from both names respectively.
-    // [TODO]
+    reverseStr(large);
+    reverseStr(small);
+    // remove_matching_chars(large, small);
+    remove_exactly_matching_chars(large, small);
 
     // 5. Subtract the number of unmatched characters from 6 in the longer string. 
     // This is the similarity rating.
-
-    
-    auto similarity = 6 - unmatches;
-
-    // ### DEBUG  ####
-    std::cout << "SIMILAR:" << similarity << std::endl;
-    std::cout << "MIN:   :" << min_rating << std::endl;
-    std::cout << "SUM LEN:" << length_sum << std::endl;
-    std::cout << "UNMATCH:" << unmatches << std::endl;
-    std::cout << "LONG   :" << longest_string << std::endl;
-    // #########
+    int similarity;
+    if(large.length() > small.length()) similarity = 6 - large.length();
+    else                                similarity = 6 - small.length();
 
     // 6. If the similarity rating equal to or greater than the minimum rating 
     // then the match is considered good.
     return similarity >= min_rating;
-}
-
-int main()
-{
-    std::cout << match_rating_similar("ACCUSER", "ACERBICALLY") << std::endl;
 }
