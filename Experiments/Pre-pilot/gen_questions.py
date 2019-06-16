@@ -60,4 +60,4 @@ if __name__ == "__main__":
     # Prints out the random pairs
     for n in range(num_of_pairs):
         index = random.randint(0, len(similar_list))
-        print(similar_list[index])
+        print(similar_list[index].replace(",", "-") + ",")
