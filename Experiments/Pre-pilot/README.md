@@ -10,8 +10,5 @@ Metrics to asses:
     - [ ] Match Rating Approach (MRA)
     - [X] Word Vectors (3 Difference)
 
-[TODO] - Need to add functionality to generate random matches
 
-[TODO] - Add into the experiment the odd "attention check"
-
-https://alicekeeler.com/2014/12/12/google-forms-create-a-quiz-from-a-question-bank/
+[TODO] - Need to regenerate the `match` files as they've been incorrectly generated. This then need to be uploaded again to Google Sheets

@@ -1,5 +1,5 @@
 function doGet(e) {
-  var form = FormApp.openById('')
+  var form = FormApp.openById('14h2xS2iWBYhWsj41x9rW-pbxYPtl3sYHnQxjRB5-YpQ')
   var ss = SpreadsheetApp.getActive();
   
   //ScriptApp.newTrigger('onFormSubmit').forForm(form).onFormSubmit().create();
@@ -12,7 +12,8 @@ function setUpForm_(ss, form) {
   // Create the form and add a multiple-choice question for each timeslot.  
   
   var min_num_per_section = 5;
-  var algos = ["Soundex", "Metaphone"];
+  var algos = ["Soundex", "Metaphone", "Leven", "NYSIIS", "WordVec", "Random"];
+  var algos_sizes = [763777, 412916, 97730, 188474, 14550, 10000];
   
   //init_form(form, algos, min_num_per_section);
   
@@ -25,13 +26,14 @@ function setUpForm_(ss, form) {
   {
     if (formItems[i].getType() == "SCALE")
     {
+      var rnd_index = Math.floor(Math.random() * algos_sizes[algo_index]) + 1;    
+      
       var sheetname = algos[algo_index];
       var sheet = ss.getSheetByName(sheetname);
-      var range = sheet.getDataRange();
+      var range = sheet.getRange(rnd_index, 1)
       var values = range.getValues();
-      
-      var rnd_index = Math.floor(Math.random() * values.length - 1) + 1;
-      _updateScaleTitle(formItems[i], values[rnd_index]);
+           
+      _updateScaleTitle(formItems[i], values[0]);
       
       scale_index++;
       
@@ -44,18 +46,13 @@ function setUpForm_(ss, form) {
   }
 }
 
-function init_form(form, algos, min_num_per_section) {
- 
-  // Description  
-  form.addSectionHeaderItem().setTitle("For each question below, please rate how similar each pair SOUNDS to one another on a scale of 1 to 5. When comparing the words please sound out each word.");
-  form.addSectionHeaderItem().setTitle("If you're not sure on the correct pronunciation please leave the question unanswered.");
-  
-  form.addPageBreakItem().setTitle("Demographic");
-  //TODO: Add demographical question
+function init_form(form, algos, min_num_per_section) 
+{ 
+  form.addPageBreakItem();
   
   for(var i = 0; i < algos.length; i++)
   {
-    form.addPageBreakItem().setTitle(algos[i]);
+    //form.addPageBreakItem().setTitle(algos[i]);
     
     for(var x = 0; x < min_num_per_section; x++)
     {

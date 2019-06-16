@@ -57,7 +57,11 @@ if __name__ == "__main__":
     if num_of_pairs == 0:
         num_of_pairs = len(similar_list)
 
-    # Prints out the random pairs
-    for n in range(num_of_pairs):
-        index = random.randint(0, len(similar_list))
-        print(similar_list[index].replace(",", "-") + ",")
+        for s in similar_list:
+            print(s.replace(",", "-") + ",")
+    else:
+
+        # Prints out the random pairs
+        for n in range(num_of_pairs):
+            index = random.randint(0, len(similar_list) - 1)
+            print(similar_list[index].replace(",", "-") + ",")
