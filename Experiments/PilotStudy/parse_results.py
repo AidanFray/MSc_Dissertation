@@ -4,6 +4,16 @@ import sys
 Parses the results from the Google Forms pilot study
 """
 
+NUM_OF_DEMOGRAPHIC_QUESTIONS = 4
+
+# This is questions added after the first launch of the survery
+# Google Sheets does not try to maintain the order so new questions
+# are added to the end
+#       
+#   1. English proficiency
+NEWLY_ADDED_QUESTIONS = 1
+
+
 SECTIONS = ["Soundex", "Metaphone", "Leven", "NYSIIS", "WordVec", "Random"]
 
 RESULTS = {
@@ -31,10 +41,12 @@ def order_results(filepath):
 
         parts = r.split(",")
 
+        # HACK: Removes the english ability question added later 
+        parts = parts[:-(NEWLY_ADDED_QUESTIONS + 1)]
+
         # Prints out each section
-        
         response_sections = []
-        for x in range(4, len(parts), 5):
+        for x in range(NUM_OF_DEMOGRAPHIC_QUESTIONS, len(parts), 5):
 
             section = parts[x:x + 5]
             section = list(map(str.strip, section))
