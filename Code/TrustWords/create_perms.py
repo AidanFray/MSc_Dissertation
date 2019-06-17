@@ -508,8 +508,8 @@ def args():
             exit()
 
     # Sets the dictionary mapping file - Default is english
-    dictionary_file_name = f"Wordlists/{args.lang[0].upper()}/{args.lang[0].lower()}.csv" \
-        if args.lang else f"Wordlists/EN/en.csv"
+    dictionary_file_name = f"../../Wordlists/Trustwords/{args.lang[0].upper()}/{args.lang[0].lower()}.csv" \
+        if args.lang else f"../../Wordlists/Trustwords/EN/en.csv"
     load_mappings(dictionary_file_name)
 
     ### MODES ###
