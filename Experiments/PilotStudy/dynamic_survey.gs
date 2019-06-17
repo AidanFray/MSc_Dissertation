@@ -1,5 +1,4 @@
-//var FORM_ID = "14h2xS2iWBYhWsj41x9rW-pbxYPtl3sYHnQxjRB5-YpQ";
-var FORM_ID = "1VvQ8Y-Wz8WZBtyV479sYmQROhl2q0iAS0O4YAwnHAqs";
+var FORM_ID = "14h2xS2iWBYhWsj41x9rW-pbxYPtl3sYHnQxjRB5-YpQ";
 
 var ALGOS =       ["Soundex", "Metaphone", "Leven", "NYSIIS", "WordVec", "Random"];
 var ALGO_SIZES =  [763777,     412916,      97730,   188474,   14550,     10000];
@@ -46,6 +45,13 @@ function updateForm(ss, form) {
   {
     if (formItems[i].getType() == "SCALE")
     {
+      // Ignores the scale for Engligh comprehension
+      if (formItems[i].getTitle() == "English comprehension") continue;
+      
+      // Ignores the atension questions
+      if (formItems[i].getTitle() == "UNIVERSITY-UNIVERSITY") continue;
+      if (formItems[i].getTitle() == "DYNAMIC-DYNAMIC") continue;
+      
       var rnd_index = Math.floor(Math.random() * ALGO_SIZES[algo_index]) + 1;    
       
       var sheetname = ALGOS[algo_index];
