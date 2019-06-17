@@ -6,7 +6,6 @@ Script that is used to generate a number of random pairs from
 a "similar word" list
 """
 
-
 def usage():
     print(f"[!] Usage: ./{__file__} <SIMILAR_LIST> <NUM_OF_PAIRS>")
     exit()
