@@ -54,6 +54,7 @@ if __name__ == "__main__":
     similar_list = remove_matchless_words(similar_list)
     similar_list = spread_out_matches(similar_list)
 
+    # Print all matches mode
     if num_of_pairs == 0:
         num_of_pairs = len(similar_list)
 

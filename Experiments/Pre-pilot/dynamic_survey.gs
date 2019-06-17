@@ -1,22 +1,42 @@
+//var FORM_ID = "14h2xS2iWBYhWsj41x9rW-pbxYPtl3sYHnQxjRB5-YpQ";
+var FORM_ID = "1VvQ8Y-Wz8WZBtyV479sYmQROhl2q0iAS0O4YAwnHAqs";
+
+var ALGOS =       ["Soundex", "Metaphone", "Leven", "NYSIIS", "WordVec", "Random"];
+var ALGO_SIZES =  [763777,     412916,      97730,   188474,   14550,     10000];
+
+var QUESTION_PER_ALGO = 5;
+
 function doGet(e) {
-  var form = FormApp.openById('14h2xS2iWBYhWsj41x9rW-pbxYPtl3sYHnQxjRB5-YpQ')
+  var form = FormApp.openById(FORM_ID);
   var ss = SpreadsheetApp.getActive();
   
-  //ScriptApp.newTrigger('onFormSubmit').forForm(form).onFormSubmit().create();
-  
-  setUpForm_(ss, form);
+  updateForm(ss, form);
   return ContentService.createTextOutput("OK").setMimeType(ContentService.MimeType.TEXT);
 }
 
-function setUpForm_(ss, form) {
-  // Create the form and add a multiple-choice question for each timeslot.  
+function addSubmitTrigger() {
+  var form = FormApp.openById(FORM_ID);
+  ScriptApp.newTrigger('onFormSubmit').forForm(form).onFormSubmit().create();
+}
+
+function initForm() {
+  var form = FormApp.openById(FORM_ID);
+  var ss = SpreadsheetApp.getActive();
   
-  var min_num_per_section = 5;
-  var algos = ["Soundex", "Metaphone", "Leven", "NYSIIS", "WordVec", "Random"];
-  var algos_sizes = [763777, 412916, 97730, 188474, 14550, 10000];
+  form.addPageBreakItem();
   
-  //init_form(form, algos, min_num_per_section);
+  for(var i = 0; i < ALGOS.length; i++)
+  {    
+    for(var x = 0; x < QUESTION_PER_ALGO; x++)
+    {
+      _addScale(form, 'X');
+    }
+  }
   
+  updateForm(ss, form);
+}
+
+function updateForm(ss, form) {
   formItems = form.getItems();
   
   // Updates the new values
@@ -26,9 +46,9 @@ function setUpForm_(ss, form) {
   {
     if (formItems[i].getType() == "SCALE")
     {
-      var rnd_index = Math.floor(Math.random() * algos_sizes[algo_index]) + 1;    
+      var rnd_index = Math.floor(Math.random() * ALGO_SIZES[algo_index]) + 1;    
       
-      var sheetname = algos[algo_index];
+      var sheetname = ALGOS[algo_index];
       var sheet = ss.getSheetByName(sheetname);
       var range = sheet.getRange(rnd_index, 1)
       var values = range.getValues();
@@ -40,23 +60,8 @@ function setUpForm_(ss, form) {
       // Dynamically groups
       if (scale_index != 0)
       {
-        if (scale_index % min_num_per_section == 0) algo_index++;
+        if (scale_index % QUESTION_PER_ALGO == 0) algo_index++;
       }
-    }
-  }
-}
-
-function init_form(form, algos, min_num_per_section) 
-{ 
-  form.addPageBreakItem();
-  
-  for(var i = 0; i < algos.length; i++)
-  {
-    //form.addPageBreakItem().setTitle(algos[i]);
-    
-    for(var x = 0; x < min_num_per_section; x++)
-    {
-      _addScale(form, 'X');
     }
   }
 }
