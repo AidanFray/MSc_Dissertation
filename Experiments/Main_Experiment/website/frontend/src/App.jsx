@@ -5,8 +5,6 @@ import TrustwordsSimulation from './components/TrustwordsSimulation'
 import LandingPage from './components/LandingPage.jsx' 
 
 import './stylesheets/App.css';
-import './stylesheets/iPhone.css';
-
 
 function App() {
   return (
