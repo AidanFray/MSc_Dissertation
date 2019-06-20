@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { View, Image, StyleSheet, Text} from 'react-native';
+import {IoMdVolumeHigh} from "react-icons/io";
+
 
 var BASE_URL = 'http://localhost:5000'
-
 var trustword_top = require("../images/trustwords_top.jpg");
 var trustword_filler = require("../images/trustwords_filler.jpg");
 
@@ -17,8 +18,11 @@ let styles = StyleSheet.create({
     resizeMode: 'stretch'
   },
   filler: {
-    height: "45vh",
+    height: "25vh",
     resizeMode: "stretch"
+  },
+  soundButton: {
+
   }
 });
 
@@ -32,50 +36,43 @@ export default class TrustwordSimulation extends Component {
         expr_id: [] 
     }
 
-    this.refresh_words();
+    this.setup_experiment();
   }
 
   onClick_accept() {
-    fetch(BASE_URL + '/debug?debug=accept')
-    .then(function(response) {
-      return response.text();
-    })
-    .then(function(text) {
-      console.log(text);
-      alert(text);
-    })
+    fetch(BASE_URL + '/submit_result?id=' + this.expr_id + '&result=True')
+    .then((response) => {response.text()})
+    .then((text) => {this.refresh_words(this.expr_id)})
     this.refresh_words();
   }
   
   onClick_decline() {
-    fetch(BASE_URL + '/debug?debug=decline')
-    .then(function(response) {
-      return response.text();
-    })
-    .then(function(text) {
-      console.log(text);
-      alert(text);
-    })
+    fetch(BASE_URL + '/submit_result?id=' + this.expr_id + '&result=False')
+    .then((response) => {response.text()})
+    .then((text) => {this.refresh_words(this.expr_id)})
     this.refresh_words();
   }
 
   play_audio() {
-    var audio = new Audio(BASE_URL + "/get_audio?id=" + this.state.expr_id);
+    var audio = new Audio(BASE_URL + "/get_audio?id=" + this.expr_id);
     audio.play()
   }
 
-  refresh_words() {
+
+  setup_experiment() {
     fetch(BASE_URL +'/new_experiment?similar=TODO')
     .then(response => response.text()) 
-    .then(t => 
-      {
-        this.setState({expr_id: t})
-        console.log(t)
+    .then(t => {
+      console.log(t)
+      this.expr_id = t
+      this.refresh_words(t)
+    })
+  }
 
-        fetch(BASE_URL +'/get_words?id=' + t)
-        .then(response => response.text()) 
-        .then(t => this.setState({words: t}))
-      });
+  refresh_words(id) {
+    fetch(BASE_URL +'/get_words?id=' + id)
+    .then(response => response.text()) 
+    .then(t => this.setState({words: t}))
   }
 
   render() {
@@ -101,9 +98,17 @@ export default class TrustwordSimulation extends Component {
           <Image
             source={trustword_filler}
             style={styles.filler}
-          />         
-          <button onClick={() => this.play_audio()}>
-            AUTHENTICATE OVER CALL
+          />        
+          <button 
+            style={{
+              alignItems: "center",
+              margin: "50px",
+              height: "75px",
+              color: "#ffffff",
+              backgroundColor: "#000099"
+            }} 
+            onClick={() => this.play_audio()}>
+            <IoMdVolumeHigh size={50}/>
           </button>
       </View> 
       );

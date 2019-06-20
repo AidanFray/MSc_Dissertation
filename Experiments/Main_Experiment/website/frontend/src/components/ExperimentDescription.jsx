@@ -3,8 +3,9 @@ import {Text, View, StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
     baseText: {
-      fontFamily: 'Cochin',
+      fontFamily: 'Verdana',
       textAlign: 'left'
+
     },
     titleText: {
       fontSize: 20,
