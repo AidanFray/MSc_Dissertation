@@ -1,10 +1,11 @@
 import React from 'react';
-import './stylesheets/App.css';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import TrustwordsSimulation from './components/TrustwordsSimulation' 
-
 import LandingPage from './components/LandingPage.jsx' 
+
+import './stylesheets/App.css';
+import './stylesheets/iPhone.css';
 
 
 function App() {
