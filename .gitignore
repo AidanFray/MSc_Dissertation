@@ -17,6 +17,8 @@ peda-session-*
 hash
 target_keys.txt
 env
+build
+website.zip
 
 Code/WordVectors/computation/dictionary_popular/values.dat
 Code/WordVectors/computation/trustwords/values.dat

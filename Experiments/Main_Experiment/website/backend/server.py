@@ -13,7 +13,7 @@ from experiment import Experiment
 #       the experiments is needed
 ######################################
 
-app = Flask(__name__, static_folder="../frontend/build/static", template_folder="../frontend/build/")
+app = Flask(__name__, static_folder="./build/static", template_folder="./build/")
 
 # Format:
 #   Similarity   : [None,   'Soundex',  ...]

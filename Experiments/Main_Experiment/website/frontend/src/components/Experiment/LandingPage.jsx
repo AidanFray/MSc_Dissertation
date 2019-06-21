@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Device from "react-device-frame";
 import SplitterLayout from 'react-splitter-layout';
-import ExperimentDescription from './ExperimentDescription';
+import ExperimentDescription from './Description.jsx';
 
 import 'react-splitter-layout/lib/index.css';
 
@@ -52,6 +52,10 @@ export default class LandingPage extends Component {
             device_scale: deviceScale,
             device_margin: deviceMargin
         });
+    }
+
+    routeChange(path) {
+      this.props.history.push(path);
     }
 
     render() {

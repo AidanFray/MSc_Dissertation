@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import { View, Image, StyleSheet, Text} from 'react-native';
 import {IoMdVolumeHigh} from "react-icons/io";
 
-
-var trustword_top = require("../images/trustwords_top.jpg");
-var trustword_filler = require("../images/trustwords_filler.jpg");
-
+var trustword_top = require("../../images/trustwords_top.jpg");
+var trustword_filler = require("../../images/trustwords_filler.jpg");
 
 let styles = StyleSheet.create({
   top: {
@@ -16,9 +14,6 @@ let styles = StyleSheet.create({
     height: "25vh",
     resizeMode: "stretch"
   },
-  soundButton: {
-
-  }
 });
 
 export default class TrustwordSimulation extends Component {
@@ -41,7 +36,8 @@ export default class TrustwordSimulation extends Component {
     if (response_text === "DONE") {
       alert("The experiment is finished. \n\n" + this.expr_id)
 
-      console.log(this)
+      // TODO: Need to navigate to the post experiment stage
+
       this.setState({
         controls_disabled: true,
         audio_button_visibility: "hidden"
