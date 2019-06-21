@@ -6,12 +6,10 @@ import ExperimentDescription from './ExperimentDescription';
 
 import 'react-splitter-layout/lib/index.css';
 
-
 export default class LandingPage extends Component {
 
     constructor(props) {
         super(props);
-
 
         this.state = 
         {
@@ -72,7 +70,7 @@ export default class LandingPage extends Component {
                         }
                     `}
                     </style>
-                    <Device name="iphone-8" color='black' url="http://localhost:3000/bd65600d-8669-4903-8a14-af88203add38" />
+                    <Device name="iphone-8" color='black' url="/bd65600d-8669-4903-8a14-af88203add38" />
                 </div>
                 
                 <div>

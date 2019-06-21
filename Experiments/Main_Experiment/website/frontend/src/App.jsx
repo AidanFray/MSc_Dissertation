@@ -9,8 +9,8 @@ import './stylesheets/App.css';
 function App() {
   return (
     <Router>
-      <Route path="/" exact component={LandingPage} />
-      <Route path="/bd65600d-8669-4903-8a14-af88203add38/" component={TrustwordsSimulation} />
+      <Route exact path="/" exact component={LandingPage} />
+      <Route exact path="/bd65600d-8669-4903-8a14-af88203add38/" exact component={TrustwordsSimulation} />
     </Router>
   );
 }

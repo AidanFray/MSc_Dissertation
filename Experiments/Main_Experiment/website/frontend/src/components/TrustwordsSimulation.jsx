@@ -3,14 +3,9 @@ import { View, Image, StyleSheet, Text} from 'react-native';
 import {IoMdVolumeHigh} from "react-icons/io";
 
 
-var BASE_URL = 'http://localhost:5000'
 var trustword_top = require("../images/trustwords_top.jpg");
 var trustword_filler = require("../images/trustwords_filler.jpg");
 
-// ###################################################
-// TODO: Error handling for situations where
-//       the flask server is down
-// ###################################################
 
 let styles = StyleSheet.create({
   top: {
@@ -33,34 +28,55 @@ export default class TrustwordSimulation extends Component {
     this.state = {
         words: [],
         audio_url: [],
-        expr_id: [] 
+        controls_disabled: false,
+        audio_button_visibility: "visible"
     }
 
+    this.expr_id = []
     this.setup_experiment();
   }
 
+  experiment_finished(response_text) {
+    console.log(response_text)  
+    if (response_text === "DONE") {
+      alert("The experiment is finished. \n\n" + this.expr_id)
+
+      console.log(this)
+      this.setState({
+        controls_disabled: true,
+        audio_button_visibility: "hidden"
+      })
+
+      return true
+    }
+
+    return false
+  }
+
   onClick_accept() {
-    fetch(BASE_URL + '/submit_result?id=' + this.expr_id + '&result=True')
-    .then((response) => {response.text()})
-    .then((text) => {this.refresh_words(this.expr_id)})
-    this.refresh_words();
+    fetch('/submit_result?id=' + this.expr_id + '&result=True')
+    .then((response) => {return response.text()})
+    .then((text) => {
+      this.refresh_words(this.expr_id)
+    })
   }
   
   onClick_decline() {
-    fetch(BASE_URL + '/submit_result?id=' + this.expr_id + '&result=False')
-    .then((response) => {response.text()})
-    .then((text) => {this.refresh_words(this.expr_id)})
-    this.refresh_words();
+    fetch('/submit_result?id=' + this.expr_id + '&result=False')
+    .then((response) => {return response.text()})
+    .then((text) => {
+      this.refresh_words(this.expr_id)
+    })
   }
 
   play_audio() {
-    var audio = new Audio(BASE_URL + "/get_audio?id=" + this.expr_id);
+    var audio = new Audio("/get_audio?id=" + this.expr_id);
     audio.play()
   }
 
 
   setup_experiment() {
-    fetch(BASE_URL +'/new_experiment?similar=TODO')
+    fetch('/new_experiment?similar=TODO')
     .then(response => response.text()) 
     .then(t => {
       console.log(t)
@@ -70,9 +86,14 @@ export default class TrustwordSimulation extends Component {
   }
 
   refresh_words(id) {
-    fetch(BASE_URL +'/get_words?id=' + id)
+    fetch('/get_words?id=' + id)
     .then(response => response.text()) 
-    .then(t => this.setState({words: t}))
+    .then(t => {
+      
+      if(!this.experiment_finished(t)) {
+        this.setState({words: t})
+      }
+    })
   }
 
   render() {
@@ -86,11 +107,13 @@ export default class TrustwordSimulation extends Component {
             {this.state.words}
           </Text>
           <button 
+            disabled={this.state.controls_disabled}
             style={{'margin': '10px', "backgroundColor": '#5cdd5c'}} 
             onClick={() => this.onClick_accept()}>
             ACCEPT
           </button>
           <button 
+            disabled={this.state.controls_disabled}
             style={{'margin': '10px', "backgroundColor": '#ff5c5c'}} 
             onClick={() => this.onClick_decline()}>
             DECLINE
@@ -100,12 +123,14 @@ export default class TrustwordSimulation extends Component {
             style={styles.filler}
           />        
           <button 
+            disabled={this.state.controls_disabled}
             style={{
               alignItems: "center",
               margin: "50px",
               height: "75px",
               color: "#ffffff",
-              backgroundColor: "#000099"
+              backgroundColor: "#0000cc",
+              visibility: this.state.audio_button_visibility
             }} 
             onClick={() => this.play_audio()}>
             <IoMdVolumeHigh size={50}/>
