@@ -27,10 +27,12 @@ SIMILARITY_METRICS = "SOUNDEX"
 
 NUMBER_OF_ROUNDS = 1
 
+# This needs changing on the PythonAnywhere site
+AUDIO_FILE_LOCATIONS = ""
+
 def get_random_words():
     random.shuffle(WORDS)
     return WORDS[:4]
-
 
 # This is used to fix Flask's compatability with the react-routing 
 @app.route('/', defaults={'path': ''})
@@ -59,19 +61,19 @@ def get_audio():
                 else:
                     words = experiments[exp_id].get_current_wordlist()
                 
-                filePath = f"./audio/generated/{'_'.join(words)}.mp3"
+                filePath = f"{AUDIO_FILE_LOCATIONS}/audio/generated/{'_'.join(words)}.mp3"
 
                 if not os.path.isfile(filePath):
 
-                    combined = AudioSegment.from_mp3(f"audio/{words[0].upper()}.mp3")
+                    combined = AudioSegment.from_mp3(f"{AUDIO_FILE_LOCATIONS}/audio/{words[0].upper()}.mp3")
 
                     for w in words[1:]:
-                        a = AudioSegment.from_mp3(f"audio/{w.upper()}.mp3")
+                        a = AudioSegment.from_mp3(f"{AUDIO_FILE_LOCATIONS}/audio/{w.upper()}.mp3")
                         combined += a
 
                     combined.export(filePath, format="mp3")
 
-                return send_from_directory('audio/generated', filePath.split("/")[-1])
+                return send_from_directory(f'{AUDIO_FILE_LOCATIONS}/audio/generated', filePath.split("/")[-1])
             else:
                 return "Error: No experiment found!"
 

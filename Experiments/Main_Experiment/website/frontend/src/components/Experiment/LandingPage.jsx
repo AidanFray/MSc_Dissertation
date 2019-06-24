@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import Device from "react-device-frame";
 import SplitterLayout from 'react-splitter-layout';
-import ExperimentDescription from './Description.jsx';
 
 import Instructions from '../InfoPages/Instructions.jsx'
 
@@ -35,7 +34,7 @@ export default class LandingPage extends Component {
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
     }
-      
+    
     updateWindowDimensions() {
 
         var deviceMargin = 0
@@ -62,8 +61,6 @@ export default class LandingPage extends Component {
 
     render() {
 
-        const greeting = 'Welcome to React';
-
         return (
 
             <SplitterLayout percentage={true} primaryMinSize={70}>
@@ -82,7 +79,6 @@ export default class LandingPage extends Component {
                 </div>
                 
                 <div>
-                    {/* <ExperimentDescription/> */}
                     <Instructions showNextButton={'none'}/>
                 </div>
             </SplitterLayout>

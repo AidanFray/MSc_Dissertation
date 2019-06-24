@@ -11,6 +11,13 @@ var audio_button_image = require("../../images/audio_button.png")
 
 class Instruction extends Component {
 
+    constructor(props) {
+        super(props);
+        if (window.performance) {
+            console.log(performance.navigation.type)
+        }
+    }
+
     routeChange() {
         let path = '/experiment';
         this.props.history.push(path);
@@ -18,11 +25,14 @@ class Instruction extends Component {
 
     render() {
 
+        // Adds a dialog box checking if refresh is the desired action
+        window.onbeforeunload = function() {return "X";}
+
         return (
             <div>
                 
                 <Typography variant="h4">
-                    Instructions
+                    INSTRUCTIONS
                 </Typography>
 
                 <div>
@@ -33,15 +43,17 @@ class Instruction extends Component {
                         </Typography>
                         <br/>
                         <Typography style={text}>
-                        You'll initially be provided with a device that will allow you to interact with the experiment
+                        You'll initially be provided with a virtual device like the one bellow that will allow you to interact with the experiment.
                         </Typography>
                         <br/>
                         <img 
-                            style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}
                             height="300px" 
                             src={phone_image}
                         />
                         <br/>
+                    </Paper>
+                    <br/><br/>
+                    <Paper style={paper}>
                         <Typography  style={text} variant="h6"> Step 1 </Typography>
                         <Typography style={text}>
                             Read the words displayed on the device. An example of the words are shown below:
@@ -51,9 +63,11 @@ class Instruction extends Component {
                         <br/>
                         <br/>
                         <Typography style={text}>
-                            These will be the elements you will need to verify to successfully authenticate.                        
+                            These will be the elements you will need to verify in order to successfully authenticate.                        
                         </Typography>
-                        <hr/>
+                    </Paper>
+                    <br/><br/>
+                    <Paper style={paper}>
                         <Typography style={text} variant="h6"> Step 2 </Typography>
                         <Typography style={text}>
                             After familiarization with the words you will need to initiate the authentication process. The image below shows this button. Clicking this will produce spoken audio of the words (This can be pressed multiple times to repeat the audio).
@@ -73,12 +87,19 @@ class Instruction extends Component {
                         <Typography style={{color: "#ff0000"}}>
                             DECLINE - If they do not match
                         </Typography>
-                        <br/><hr/>
+                        <br/>
+                    </Paper>
+                    <br/><br/>
+                    <Paper style={paper}>
                         <Typography style={text} variant="h6"> Step 3</Typography>
                         <Typography style={text}>
-                            After submitting your choice, the experiment will move on and present some new words and recordings. This will need repeating for a number of sections
+                            After submitting your choice, the experiment will continue and present some new words and recordings.
+                            This process will require repeating a number of times.
                         </Typography>
-                        <br/><hr/>
+                        <br/>
+                    </Paper>
+                    <br/><br/>
+                    <Paper style={paper}>
                         <Typography style={text} variant="h6"> Step 4</Typography>
                         <Typography style={text}>
                             Finally, after a number of responses have been recorded you will be directed to the final page [...]

@@ -26,6 +26,10 @@ export default class Consent extends Component {
     }
 
     render() {
+
+        // Adds a dialog box checking if refresh is the desired action
+        window.onbeforeunload = function() {return "X";}
+
         return (
             <MuiThemeProvider theme={theme}>
             <div id="container-consent">
