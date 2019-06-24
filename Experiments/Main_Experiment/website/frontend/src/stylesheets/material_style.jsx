@@ -2,7 +2,11 @@ export const paper = {
       padding: "10px", 
       backgroundColor: "#f3f1ef",
       margin: "0 auto",
-      marginTop: 0,
-      width: "800px",
+      width: "80%",
+      maxWidth: "800px",
       fontSize: "100%"
 };
+
+export const text = {
+      textAlign: 'left'
+}
