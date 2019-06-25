@@ -1,11 +1,19 @@
+import time
+
 class Experiment:
 
-    def __init__(self):
+    def __init__(self, experimentID, userAgent):
+        self.ExperimentID = experimentID
         self.VisualWords = []
         self.Responses = []
 
         # If they're the same as the VisualWords they will be blank
         self.AudioWords = []
+
+        self.StartTime = time.time()
+        self.EndTime = None
+
+        self.UserAgent = userAgent
 
     def add_round(self, visualWords, audioWords=None):
         self.VisualWords.append(visualWords)
@@ -28,3 +36,6 @@ class Experiment:
 
     def num_of_rounds(self):
         return len(self.VisualWords)
+
+    def end_experiment(self):
+        self.EndTime = time.time()

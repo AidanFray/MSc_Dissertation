@@ -1,3 +1,8 @@
+
+cd ../frontend
+./deploy.sh
+
+cd ../production
 rm -rvf ./website website.zip
 mkdir website
 

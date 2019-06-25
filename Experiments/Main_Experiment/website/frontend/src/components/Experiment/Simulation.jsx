@@ -65,7 +65,12 @@ export default class TrustwordSimulation extends Component {
   }
 
   play_audio() {
-    var audio = new Audio("/get_audio?id=" + window.expr_id);
+
+    // The `time` parameter isn't actually used, but it stops the browser from reusing
+    // previous audio instead of requesting a new one. The browser sees the request is 
+    // different and makes another call to `get_audio`.
+    var audio = new Audio("/get_audio?id=" + window.expr_id + "&time=" + new Date().getTime());
+    audio.load()
     audio.play()
   }
 

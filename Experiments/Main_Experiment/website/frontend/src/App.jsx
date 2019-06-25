@@ -17,7 +17,7 @@ export default class App extends Component {
 
     var isMobile = {
       Android: function() {
-          return navigator.userAgent.match(/Mozilla/i);
+          return navigator.userAgent.match(/Android/i);
       },
       BlackBerry: function() {
           return navigator.userAgent.match(/BlackBerry/i);
@@ -39,7 +39,7 @@ export default class App extends Component {
     return (
         <Router>
           <Route exact path="/" component={Consent} />
-          <Route exact path="/experiment" component={isMobile.any() ? TrustwordsSimulation : LandingPage} />
+          <Route exact path="/experiment" component={LandingPage} />
           <Route exact path="/instructions" component={Instruction} />
           <Route exact path="/post_experiment" component={PostExperiment} />
           <Route exact path="/bd65600d-8669-4903-8a14-af88203add38/" component={TrustwordsSimulation} />
