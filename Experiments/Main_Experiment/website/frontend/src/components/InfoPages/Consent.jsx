@@ -40,12 +40,26 @@ export default class Consent extends Component {
                     <br />
                     <Paper style={paper}>
                         <Typography>
-                            You have been invited to take part in a research study
-                        </Typography>
-                        <Typography component="p">
-                            [CONSENT FORM GOES HERE]
+                            You have been invited to take part in a research study run by the University of York. We're collecting data on user interactions with a 
+                            encrypted email service and their fallibility to attack. The data collected will be used to quantify the security of the system.
                         </Typography>
                         <br/>
+                        <Typography component="p">
+                           {/* https://www-users.cs.york.ac.uk/alistair/Ethics/index.php */}
+                           All data gathered from the study will be treated in a confidential fashion: It will be archived in a secure location and will be 
+                           interpreted only for purposes of this evaluation. When your data are reported or described, all identifying information will be removed. 
+                           There are no known risks to participation in this experiment, and you may withdraw at any point. 
+                        </Typography>
+                        <br/>
+                        <Typography component="p">
+                           Please feel free to contact the researcher if 
+                           you have any other questions; otherwise, if you are willing to participate, agree to this consent form and proceed with the experiment. 
+                        </Typography>
+                        <br/>
+
+                        <Typography>
+                            Email: ajf570@york.ac.uk
+                        </Typography>
 
                         <Button variant="text" onClick={() => window.print()}>
                             Print

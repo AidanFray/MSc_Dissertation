@@ -40,6 +40,8 @@ if __name__ == "__main__":
     words = list(map(str.strip, words))
 
     previous_run = check_for_previous_runs(words) - 1
+    if previous_run != 0: previous_run -= 1
+
     print(f"[!] Continuing from position: {previous_run} ({words[previous_run]})")
 
     for index, w in enumerate(words[previous_run:]):
