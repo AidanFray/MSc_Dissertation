@@ -14,7 +14,7 @@ def usage():
     exit()
 
 def save_word(word):
-    tts = gTTS(text=word, lang='en')
+    tts = gTTS(text=word.lower(), lang='en')
     tts.save(f"{word}.mp3")
 
 def check_for_previous_runs(words):
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     words = list(map(str.strip, words))
 
-    previous_run = check_for_previous_runs(words)
+    previous_run = check_for_previous_runs(words) - 1
     print(f"[!] Continuing from position: {previous_run} ({words[previous_run]})")
 
     for index, w in enumerate(words[previous_run:]):
