@@ -3,3 +3,4 @@ numpy
 pretty-bad-protocol
 matplotlib
 seaborn
+gTTS

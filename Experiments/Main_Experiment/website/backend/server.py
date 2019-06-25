@@ -112,7 +112,7 @@ def get_words():
 
                 # TODO: Active attack when all word recordsing are avaliable
                 # # Determines if their is an attack
-                # audio_words = None
+                audio_words = None
                 # if random.random() < ATTACK_CHANCE:
                 #     audio_words = generate_similar_match(new_words)
 
@@ -167,9 +167,16 @@ def submit_result():
 def save_experiment(expr):
     pickle.dump(expr, open(f"{BASE_FILE_LOCATION}results/{expr.ExperimentID}.pkl", "wb"))
 
-# TODO
 def load_wordlist(path):
-    pass
+    wordlist = []
+
+    with open(path, "r") as file:
+        
+        for line in file:
+            line = line.strip()
+            wordlist.append(line)
+
+    return wordlist
 
 def load_similar_words(path):
     similar_words = {}
@@ -197,7 +204,7 @@ def generate_similar_match(wordlist):
 
         # This is the make sure the cap isn't bias
         if len(similar_words) > MAX_SIMILAR_PERM_SIZE:
-            similar_words = random.shuffle(similar_words)
+            random.shuffle(similar_words)
 
         combinations += similar_words[:MAX_SIMILAR_PERM_SIZE] 
 

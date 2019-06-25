@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Device from "react-device-frame";
 import SplitterLayout from 'react-splitter-layout';
 
-import Instructions from '../InfoPages/Instructions.jsx'
+import AudioButton from '../Experiment/AudioButton.jsx'
 
 import 'react-splitter-layout/lib/index.css';
 
@@ -78,9 +78,25 @@ export default class LandingPage extends Component {
                     <Device name="iphone-8" color='black' url="/bd65600d-8669-4903-8a14-af88203add38" />
                 </div>
                 
-                <div>
-                    <Instructions showNextButton={'none'}/>
+                <div style={{
+                    height: "100%",
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: "column"
+                }}>
+                    <div>
+                        <AudioButton text="Authenticate with partner over the phone" color="#0000aa"/>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div>
+                        <AudioButton text="Repeat Authentication audio" color="#828282"/>
+                    </div>
+                    
                 </div>
+                
             </SplitterLayout>
         );
     }

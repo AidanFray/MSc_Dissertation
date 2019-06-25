@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { View, Image, StyleSheet, Text } from 'react-native';
-import { IoMdVolumeHigh } from "react-icons/io";
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 
 var trustword_top = require("../../images/trustwords_top.jpg");
 var trustword_filler = require("../../images/trustwords_filler.jpg");
+
+var URL_BASE = "http://localhost:5000"
 
 let styles = StyleSheet.create({
   top: {
@@ -33,7 +36,7 @@ export default class TrustwordSimulation extends Component {
   experiment_finished(response_text) {
     if (response_text === "DONE") {
 
-      alert("The experiment is finished. \n\n" + window.expr_id)
+      alert("The experiment is finished. \n\n" + this.expr_id)
 
       this.props.history.push("/post_experiment")
 
@@ -49,43 +52,33 @@ export default class TrustwordSimulation extends Component {
   }
 
   onClick_accept() {
-    fetch('/submit_result?id=' + window.expr_id + '&result=True')
+    fetch(URL_BASE + '/submit_result?id=' + this.expr_id + '&result=True')
       .then((response) => { return response.text() })
       .then((text) => {
-        this.refresh_words(window.expr_id)
+        this.refresh_words(this.expr_id)
       })
   }
 
   onClick_decline() {
-    fetch('/submit_result?id=' + window.expr_id + '&result=False')
+    fetch(URL_BASE + '/submit_result?id=' + this.expr_id + '&result=False')
       .then((response) => { return response.text() })
       .then((text) => {
-        this.refresh_words(window.expr_id)
+        this.refresh_words(this.expr_id)
       })
   }
 
-  play_audio() {
-
-    // The `time` parameter isn't actually used, but it stops the browser from reusing
-    // previous audio instead of requesting a new one. The browser sees the request is 
-    // different and makes another call to `get_audio`.
-    var audio = new Audio("/get_audio?id=" + window.expr_id + "&time=" + new Date().getTime());
-    audio.load()
-    audio.play()
-  }
-
-
   setup_experiment() {
-    fetch('/new_experiment?similar=TODO')
+    fetch(URL_BASE + '/new_experiment?similar=TODO')
       .then(response => response.text())
       .then(t => {
-        window.expr_id = t
+        cookies.set('ExperimentID', t, { path: '/' });
+        this.expr_id = t
         this.refresh_words(t)
       })
   }
 
   refresh_words(id) {
-    fetch('/get_words?id=' + id)
+    fetch(URL_BASE + '/get_words?id=' + id)
       .then(response => response.text())
       .then(t => {
 
@@ -125,20 +118,6 @@ export default class TrustwordSimulation extends Component {
           source={trustword_filler}
           style={styles.filler}
         />
-        <button
-          disabled={this.state.controls_disabled}
-          style={{
-            alignItems: "center",
-            margin: "50px",
-            height: "75px",
-            color: "#ffffff",
-            backgroundColor: "#0000cc",
-            visibility: this.state.audio_button_visibility
-          }}
-          onClick={() => this.play_audio()}>
-          <IoMdVolumeHigh size={50} />
-        </button>
-
       </View>
     );
   }
