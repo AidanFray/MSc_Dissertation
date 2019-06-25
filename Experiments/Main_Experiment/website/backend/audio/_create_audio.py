@@ -3,6 +3,8 @@ from gtts import gTTS
 import time
 import os
 
+#TODO: Spelling words: "ABAGAIL"
+
 """
     Script that generates .mp3 files for each words pronunciation
 """
