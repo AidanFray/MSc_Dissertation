@@ -40,9 +40,8 @@ if __name__ == "__main__":
     words = list(map(str.strip, words))
 
     previous_run = check_for_previous_runs(words) - 1
-    if previous_run != 0: previous_run -= 1
-
-    print(f"[!] Continuing from position: {previous_run} ({words[previous_run]})")
+    if previous_run < 0: previous_run = 0
+    #print(f"[!] Continuing from position: {previous_run} ({words[previous_run]})")
 
     for index, w in enumerate(words[previous_run:]):
         start_time = time.time()
@@ -51,4 +50,4 @@ if __name__ == "__main__":
 
         overall_time = ((end_time - start_time) * len(words) - index + previous_run) / 3600
 
-        print(f"[!] {index + previous_run}/{len(words)} -- Time: {round(overall_time, 2)} Hours", end="\r", flush=True)
+        #print(f"[!] {index + previous_run}/{len(words)} -- Time: {round(overall_time, 2)} Hours", end="\r", flush=True)
