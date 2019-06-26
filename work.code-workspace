@@ -262,6 +262,7 @@
 			"**/*.nvuser": true,
 			"**/.mfractor/": true,
 			"**/.localhistory/": true
-		}
+		},
+		"git.ignoreLimitWarning": true
 	}
 }
