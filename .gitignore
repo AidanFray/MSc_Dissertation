@@ -19,6 +19,7 @@ target_keys.txt
 env
 build
 website.zip
+Experiments/Main_Experiment/website/backend/audio/generated/*
 
 Code/WordVectors/computation/dictionary_popular/values.dat
 Code/WordVectors/computation/trustwords/values.dat

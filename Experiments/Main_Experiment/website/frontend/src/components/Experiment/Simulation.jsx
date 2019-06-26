@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { View, Image, StyleSheet, Text } from 'react-native';
+import {Flip, ToastContainer, toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 const cookies = new Cookies();
+
 
 var trustword_top = require("../../images/trustwords_top.jpg");
 var trustword_filler = require("../../images/trustwords_filler.jpg");
@@ -36,8 +41,6 @@ export default class TrustwordSimulation extends Component {
   experiment_finished(response_text) {
     if (response_text === "DONE") {
 
-      alert("The experiment is finished. \n\n" + this.expr_id)
-
       this.props.history.push("/post_experiment")
 
       this.setState({
@@ -52,6 +55,7 @@ export default class TrustwordSimulation extends Component {
   }
 
   onClick_accept() {
+    toast.success("ACCEPT")
     fetch(URL_BASE + '/submit_result?id=' + this.expr_id + '&result=True')
       .then((response) => { return response.text() })
       .then((text) => {
@@ -60,6 +64,7 @@ export default class TrustwordSimulation extends Component {
   }
 
   onClick_decline() {
+    toast.error("DECLINE" )
     fetch(URL_BASE + '/submit_result?id=' + this.expr_id + '&result=False')
       .then((response) => { return response.text() })
       .then((text) => {
@@ -117,6 +122,13 @@ export default class TrustwordSimulation extends Component {
         <Image
           source={trustword_filler}
           style={styles.filler}
+        />
+        <ToastContainer 
+          hideProgressBar={true} 
+          autoClose={1000} 
+          transition={Flip}
+          pauseOnHover={false}
+          newestOnTop
         />
       </View>
     );

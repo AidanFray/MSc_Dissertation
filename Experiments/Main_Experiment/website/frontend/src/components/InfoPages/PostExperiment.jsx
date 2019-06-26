@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 export default class PostExperiment extends Component {
 
@@ -22,7 +25,7 @@ export default class PostExperiment extends Component {
                 Please submit your unique ID to MTurk for payment
                 <br/>
                 <br/>
-                ID: <br/> <b>{window.expr_id}</b>
+                ID: <br/> <b>{cookies.get('ExperimentID')}</b>
                 <br/>
                 <br/>
                 After submitting your ID you may close the window.

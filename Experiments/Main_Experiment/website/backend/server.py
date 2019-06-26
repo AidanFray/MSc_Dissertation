@@ -12,18 +12,15 @@ from experiment import Experiment
 
 app = Flask(__name__, static_folder="./build/static", template_folder="./build/")
 
-SIMILAR_WORDS = {}
-WORDLIST = {}
-
-# Format:
-#   Similarity   : [None,   'Soundex',  ...]
-#   Words tested : [WList1, WList2,     ...]
-#   Responses    : [R1,     R2,         ...]
-#   Attack match : [[]],  WordList,       ...]
 experiments = {}
 
-WORDS = ["ABACUS", "ABBREVIATE", "ABIDING", "ADJACENCY"]
-SIMILARITY_METRICS = "SOUNDEX"
+WORDS               = None
+WORDLIST_NAME       = "trustwords_reduced.csv"
+
+SIMILAR_WORDS       = None
+SIMILAR_WORDS_FILE  = "en_soundex.csv"
+
+# SIMILARITY_METRICS  = "SOUNDEX"
 
 NUMBER_OF_ROUNDS = 5
 ATTACK_CHANCE = 0.25
@@ -33,10 +30,6 @@ ATTACK_CHANCE = 0.25
 #   /home/AFray/website/
 #
 BASE_FILE_LOCATION = ""
-
-def get_random_words():
-    random.shuffle(WORDS)
-    return WORDS[:4]
 
 # This is used to fix Flask's compatability with the react-routing 
 @app.route('/', defaults={'path': ''})
@@ -110,11 +103,10 @@ def get_words():
 
                 new_words = get_random_words()
 
-                # TODO: Active attack when all word recordsing are avaliable
                 # # Determines if their is an attack
                 audio_words = None
-                # if random.random() < ATTACK_CHANCE:
-                #     audio_words = generate_similar_match(new_words)
+                if random.random() < ATTACK_CHANCE:
+                    audio_words = generate_similar_match(new_words)
 
                 experiments[exp_id].add_round(new_words, audio_words)
 
@@ -191,6 +183,10 @@ def load_similar_words(path):
 
     return similar_words 
 
+def get_random_words():
+    random.shuffle(WORDS)
+    return WORDS[:4]
+
 def generate_similar_match(wordlist):
 
     # To make sure permutations size don't get too big    
@@ -215,9 +211,9 @@ def generate_similar_match(wordlist):
 
 if __name__ == "__main__":
 
-    WORDLIST = load_wordlist(f"{BASE_FILE_LOCATION}data/trustwords.csv")
+    WORDS = load_wordlist(f"{BASE_FILE_LOCATION}data/{WORDLIST_NAME}")
 
     #TODO Make this dynamic for the similar metric
-    SIMILAR_WORDS = load_similar_words(f"{BASE_FILE_LOCATION}data/similar/en_soundex.csv")
+    SIMILAR_WORDS = load_similar_words(f"{BASE_FILE_LOCATION}data/similar/{SIMILAR_WORDS_FILE}")
 
     app.run()

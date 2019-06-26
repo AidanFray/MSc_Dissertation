@@ -40,8 +40,8 @@ export default class Consent extends Component {
                     <br />
                     <Paper style={paper}>
                         <Typography>
-                            You have been invited to take part in a research study run by the University of York. We're collecting data on user interactions with a 
-                            encrypted email service and their fallibility to attack. The data collected will be used to quantify the security of the system.
+                            You have been invited to take part in a research study run by the University of York. We're collecting data on user interactions with an 
+                            encrypted email service and its fallibility to attack. The data collected will be used to quantify the security of this system.
                         </Typography>
                         <br/>
                         <Typography component="p">
