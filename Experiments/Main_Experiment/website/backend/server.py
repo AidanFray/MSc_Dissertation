@@ -11,26 +11,30 @@ import os
 from experiment import Experiment
 
 app = Flask(__name__, static_folder="./build/static", template_folder="./build/")
-app.secret_key = "I_Should_Really_Change_This"
+app.secret_key = "b9d53fe4b4564a95aed2cf966857540d"
 
-experiments = {}
-
-WORDS               = None
-WORDLIST_NAME       = "trustwords_reduced.csv"
-
-SIMILAR_WORDS       = None
-SIMILAR_WORDS_FILE  = "en_soundex.csv"
-
-# SIMILARITY_METRICS  = "SOUNDEX"
-
-NUMBER_OF_ROUNDS = 5
-ATTACK_CHANCE = 0.25
+#############################################
+# TODO: Need to store this variable in a    #
+#       better way. Redis maybe?            #
+#       I'm having issues with threading    #
+#       causing multiple instances to be    #
+#       created.                            #
+#############################################
+EXPERIMENTS_DICT = {}
 
 # This needs changing on the PythonAnywhere site
 #
 #   /home/AFray/website/
 #
 BASE_FILE_LOCATION = ""
+
+WORDLIST_NAME       = "trustwords_reduced.csv"
+SIMILAR_WORDS_FILE  = "en_soundex.csv"
+
+# SIMILARITY_METRICS  = "SOUNDEX"
+
+NUMBER_OF_ROUNDS = 100
+ATTACK_CHANCE = 0.25
 
 # This is used to fix Flask's compatability with the react-routing 
 @app.route('/', defaults={'path': ''})
@@ -54,25 +58,29 @@ def get_audio():
 
         exp_id = session.get("exp_id")
 
-        # Checks for an attack case
-        if experiments[exp_id].is_attack():
-            words = experiments[exp_id].get_current_audio_wordlist()
-        else:
-            words = experiments[exp_id].get_current_wordlist()
+        if exp_id in EXPERIMENTS_DICT:
+
+            # Checks for an attack case
+            if EXPERIMENTS_DICT[exp_id].is_attack():
+                words = EXPERIMENTS_DICT[exp_id].get_current_audio_wordlist()
+            else:
+                words = EXPERIMENTS_DICT[exp_id].get_current_wordlist()
+            
+            filePath = f"{BASE_FILE_LOCATION}audio/generated/{'_'.join(words)}.mp3"
+
+            if not os.path.isfile(filePath):
+
+                combined = AudioSegment.from_mp3(f"{BASE_FILE_LOCATION}audio/{words[0].upper()}.mp3")
+
+                for w in words[1:]:
+                    a = AudioSegment.from_mp3(f"{BASE_FILE_LOCATION}audio/{w.upper()}.mp3")
+                    combined += a
+
+                combined.export(filePath, format="mp3")
+
+            return send_from_directory(f'{BASE_FILE_LOCATION}audio/generated', filePath.split("/")[-1])
         
-        filePath = f"{BASE_FILE_LOCATION}audio/generated/{'_'.join(words)}.mp3"
-
-        if not os.path.isfile(filePath):
-
-            combined = AudioSegment.from_mp3(f"{BASE_FILE_LOCATION}audio/{words[0].upper()}.mp3")
-
-            for w in words[1:]:
-                a = AudioSegment.from_mp3(f"{BASE_FILE_LOCATION}audio/{w.upper()}.mp3")
-                combined += a
-
-            combined.export(filePath, format="mp3")
-
-        return send_from_directory(f'{BASE_FILE_LOCATION}audio/generated', filePath.split("/")[-1])
+        return "No Experiment found", 400
 
 @app.route('/get_words')
 @cross_origin()
@@ -84,25 +92,23 @@ def get_words():
     if request.method == "GET":
         exp_id = session.get("exp_id")
 
-        if not exp_id in experiments:
-            print("[!] Experiment not found, reissuing new value")
-            if "exp_id" in session: session.pop("exp_id")
-            new_experiment()
-            exp_id = session.get("exp_id")
+        print(EXPERIMENTS_DICT)
+        if exp_id in EXPERIMENTS_DICT:
 
-        # Finishes the experiment
-        if experiments[exp_id].num_of_rounds() >= NUMBER_OF_ROUNDS:
+            # Finishes the experiment
+            if EXPERIMENTS_DICT[exp_id].num_of_rounds() >= NUMBER_OF_ROUNDS:
 
-            experiments[exp_id].end_experiment()
-            save_experiment(experiments[exp_id])
+                EXPERIMENTS_DICT[exp_id].end_experiment()
+                save_experiment(EXPERIMENTS_DICT[exp_id])
 
-            return "DONE"
+                return "DONE"
 
-        # Else return current words
-        if exp_id in experiments:
-            return " ".join(experiments[exp_id].get_current_wordlist())
+            return " ".join(EXPERIMENTS_DICT[exp_id].get_current_wordlist())
 
-    return "Error: Method not allowed"
+        else:
+            return "Error: Experiment ID not found", 400
+
+    return "Error: Method not allowed", 400
 
 @app.route("/get_id")
 @cross_origin()
@@ -121,7 +127,7 @@ def new_experiment():
         user_agent = request.headers.get("User-Agent")
 
         exp_id = str(uuid.uuid4())
-        experiments[exp_id] = Experiment(exp_id, user_agent)
+        EXPERIMENTS_DICT[exp_id] = Experiment(exp_id, user_agent)
 
         session['exp_id'] = exp_id
 
@@ -142,20 +148,21 @@ def submit_result():
 
             exp_id = session.get("exp_id")
             
-            if exp_id in experiments:
+            if exp_id in EXPERIMENTS_DICT:
                 
-                experiments[exp_id].record_response(result)
+                EXPERIMENTS_DICT[exp_id].record_response(result)
                 gen_new_words()
                 return "OK"
             else:
-                return "Error: No experiment found!"
+                return "Error: No experiment found!", 400
 
         else:
-            return "Error: Missing parameter \'result\'"
+            return "Error: Missing parameter \'result\'", 400
 
 ######################
 ##      UTILS       ##
 ######################
+
 
 def save_experiment(expr):
     pickle.dump(expr, open(f"{BASE_FILE_LOCATION}results/{expr.ExperimentID}.pkl", "wb"))
@@ -168,6 +175,9 @@ def load_wordlist(path):
         for line in file:
             line = line.strip()
             wordlist.append(line)
+
+    if len(wordlist) == 0:
+        raise Exception("No word list loaded!")
 
     return wordlist
 
@@ -200,7 +210,7 @@ def gen_new_words():
     if random.random() < ATTACK_CHANCE:
         audio_words = generate_similar_match(new_words)
 
-    experiments[exp_id].add_round(new_words, audio_words)
+    EXPERIMENTS_DICT[exp_id].add_round(new_words, audio_words)
 
 def get_random_words():
     random.shuffle(WORDS)
@@ -228,11 +238,9 @@ def generate_similar_match(wordlist):
     random_match = list(perms[random.randint(0, len(perms))])
     return random_match
 
+SIMILAR_WORDS = load_similar_words(f"{BASE_FILE_LOCATION}data/similar/{SIMILAR_WORDS_FILE}")
+WORDS = load_wordlist(f"{BASE_FILE_LOCATION}data/{WORDLIST_NAME}")
+
 if __name__ == "__main__":
+    app.run(threaded=True)
 
-    WORDS = load_wordlist(f"{BASE_FILE_LOCATION}data/{WORDLIST_NAME}")
-
-    #TODO Make this dynamic for the similar metric
-    SIMILAR_WORDS = load_similar_words(f"{BASE_FILE_LOCATION}data/similar/{SIMILAR_WORDS_FILE}")
-
-    app.run()
