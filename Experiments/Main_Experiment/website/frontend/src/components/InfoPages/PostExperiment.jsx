@@ -1,19 +1,31 @@
 import React, { Component } from 'react';
-import Cookies from 'universal-cookie';
 
-const cookies = new Cookies();
+var URL_BASE = ""
 
 export default class PostExperiment extends Component {
 
-    constuctor() {
-        this.routeChange = this.routeChange.bind(this);
-    }
-    
-    routeChange() {
-        let path = '/';
-        this.props.history.push(path);
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            id: ""
+        }
     }
 
+    componentDidMount() {
+        this.request_id()
+    }
+
+    request_id() {
+        fetch(URL_BASE + '/get_id')
+          .then((r) => r.text())
+          .then((t) => {
+              console.log(t)
+              this.setState({
+                id: t
+              })
+          })
+      }
 
     render() {
         return (
@@ -25,7 +37,7 @@ export default class PostExperiment extends Component {
                 Please submit your unique ID to MTurk for payment
                 <br/>
                 <br/>
-                ID: <br/> <b>{cookies.get('ExperimentID')}</b>
+                ID: <br/> <b>{this.state.id}</b>
                 <br/>
                 <br/>
                 After submitting your ID you may close the window.

@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 import { View, Image, StyleSheet, Text } from 'react-native';
 import {Flip, ToastContainer, toast } from 'react-toastify';
-import Cookies from 'universal-cookie';
 import 'react-toastify/dist/ReactToastify.css';
-
-const cookies = new Cookies();
 
 var trustword_top = require("../../images/trustwords_top.jpg");
 var trustword_filler = require("../../images/trustwords_filler.jpg");
 
-var URL_BASE = "http://localhost:5000"
+var URL_BASE = ""
 
 let styles = StyleSheet.create({
   top: {
@@ -54,37 +51,28 @@ export default class TrustwordSimulation extends Component {
 
   onClick_accept() {
     toast.success("ACCEPT")
-    fetch(URL_BASE + '/submit_result?id=' + this.expr_id + '&result=True')
-      .then((response) => { return response.text() })
-      .then((text) => {
-        this.refresh_words(this.expr_id)
-      })
+    fetch(URL_BASE + '/submit_result?result=True')
+      .then((r) => r.text())
+      .then(() => this.refresh_words())
   }
 
   onClick_decline() {
     toast.error("DECLINE" )
-    fetch(URL_BASE + '/submit_result?id=' + this.expr_id + '&result=False')
-      .then((response) => { return response.text() })
-      .then((text) => {
-        this.refresh_words(this.expr_id)
-      })
+    fetch(URL_BASE + '/submit_result?result=False')
+      .then((r) => r.text())
+      .then(() => this.refresh_words())
   }
 
   setup_experiment() {
     fetch(URL_BASE + '/new_experiment?similar=TODO')
-      .then(response => response.text())
-      .then(t => {
-        cookies.set('ExperimentID', t);
-        this.expr_id = t
-        this.refresh_words(t)
-      })
+      .then((r) => r.text())
+      .then(() => this.refresh_words())
   }
 
-  refresh_words(id) {
-    fetch(URL_BASE + '/get_words?id=' + id)
+  refresh_words() {
+    fetch(URL_BASE + '/get_words')
       .then(response => response.text())
       .then(t => {
-
         if (!this.experiment_finished(t)) {
           this.setState({ words: t })
         }

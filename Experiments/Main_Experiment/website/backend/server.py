@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, render_template
+from flask import Flask, request, send_from_directory, render_template, session
 from flask_cors import cross_origin
 from pydub import AudioSegment
 import random
@@ -11,6 +11,7 @@ import os
 from experiment import Experiment
 
 app = Flask(__name__, static_folder="./build/static", template_folder="./build/")
+app.secret_key = "I_Should_Really_Change_This"
 
 experiments = {}
 
@@ -45,77 +46,68 @@ def index():
 @cross_origin()
 def get_audio():
 
-     if request.method == "GET":
-        exp_id = request.args.get("id", None)
+    """
+    Gets the currently active audio file
+    """
 
-        if exp_id:
-            
-            if exp_id in experiments:
+    if request.method == "GET":
 
-                # Checks for an attack case
-                if experiments[exp_id].is_attack():
-                    words = experiments[exp_id].get_current_audio_wordlist()
-                else:
-                    words = experiments[exp_id].get_current_wordlist()
-                
-                filePath = f"{BASE_FILE_LOCATION}audio/generated/{'_'.join(words)}.mp3"
+        exp_id = session.get("exp_id")
 
-                if not os.path.isfile(filePath):
-
-                    combined = AudioSegment.from_mp3(f"{BASE_FILE_LOCATION}audio/{words[0].upper()}.mp3")
-
-                    for w in words[1:]:
-                        a = AudioSegment.from_mp3(f"{BASE_FILE_LOCATION}audio/{w.upper()}.mp3")
-                        combined += a
-
-                    combined.export(filePath, format="mp3")
-
-                return send_from_directory(f'{BASE_FILE_LOCATION}audio/generated', filePath.split("/")[-1])
-            else:
-                return "Error: No experiment found!"
-
+        # Checks for an attack case
+        if experiments[exp_id].is_attack():
+            words = experiments[exp_id].get_current_audio_wordlist()
         else:
-            return "Error: Missing parameter \'id\'"
+            words = experiments[exp_id].get_current_wordlist()
+        
+        filePath = f"{BASE_FILE_LOCATION}audio/generated/{'_'.join(words)}.mp3"
+
+        if not os.path.isfile(filePath):
+
+            combined = AudioSegment.from_mp3(f"{BASE_FILE_LOCATION}audio/{words[0].upper()}.mp3")
+
+            for w in words[1:]:
+                a = AudioSegment.from_mp3(f"{BASE_FILE_LOCATION}audio/{w.upper()}.mp3")
+                combined += a
+
+            combined.export(filePath, format="mp3")
+
+        return send_from_directory(f'{BASE_FILE_LOCATION}audio/generated', filePath.split("/")[-1])
 
 @app.route('/get_words')
 @cross_origin()
 def get_words():
-    
     """
-    This method provides the next round of words, it is responsible for dealing 
-    out the 'attack' cases and working out their matches
+    Gets the currently active set of words
     """
 
     if request.method == "GET":
-        exp_id = request.args.get("id", None)
+        exp_id = session.get("exp_id")
 
-        if exp_id:
-            
-            if exp_id in experiments:
+        if not exp_id in experiments:
+            print("[!] Experiment not found, reissuing new value")
+            if "exp_id" in session: session.pop("exp_id")
+            new_experiment()
+            exp_id = session.get("exp_id")
 
-                # Finishes the experiment
-                if experiments[exp_id].num_of_rounds() >= NUMBER_OF_ROUNDS:
+        # Finishes the experiment
+        if experiments[exp_id].num_of_rounds() >= NUMBER_OF_ROUNDS:
 
-                    experiments[exp_id].end_experiment()
-                    save_experiment(experiments[exp_id])
+            experiments[exp_id].end_experiment()
+            save_experiment(experiments[exp_id])
 
-                    return "DONE"
+            return "DONE"
 
-                new_words = get_random_words()
+        # Else return current words
+        if exp_id in experiments:
+            return " ".join(experiments[exp_id].get_current_wordlist())
 
-                # # Determines if their is an attack
-                audio_words = None
-                if random.random() < ATTACK_CHANCE:
-                    audio_words = generate_similar_match(new_words)
+    return "Error: Method not allowed"
 
-                experiments[exp_id].add_round(new_words, audio_words)
-
-                return " ".join(new_words)
-            else:
-                return "Error: No experiment found!"
-
-        else:
-            return "Error: Missing parameter \'id\'"
+@app.route("/get_id")
+@cross_origin()
+def get_id():
+    return session.get("exp_id")
 
 @app.route('/new_experiment')
 @cross_origin()
@@ -124,33 +116,42 @@ def new_experiment():
     This end point is designed to initialise the experiment attached to a certain ID
     """
 
-    user_agent = request.headers.get("User-Agent")
+    if not session.get("exp_id"):
 
-    exp_id = str(uuid.uuid4())
-    experiments[exp_id] = Experiment(exp_id, user_agent)
+        user_agent = request.headers.get("User-Agent")
 
-    return exp_id
+        exp_id = str(uuid.uuid4())
+        experiments[exp_id] = Experiment(exp_id, user_agent)
+
+        session['exp_id'] = exp_id
+
+        gen_new_words()
+
+        return exp_id
+
+    return session.get('exp_id')
 
 @app.route('/submit_result')
 @cross_origin()
 def submit_result():
 
     if request.method == "GET":
-        exp_id = request.args.get("id", None)
         result = request.args.get("result", None)
 
-        if exp_id and result:
+        if result:
+
+            exp_id = session.get("exp_id")
             
             if exp_id in experiments:
                 
                 experiments[exp_id].record_response(result)
-
+                gen_new_words()
                 return "OK"
             else:
                 return "Error: No experiment found!"
 
         else:
-            return "Error: Missing parameter \'id\' or \'result\'"
+            return "Error: Missing parameter \'result\'"
 
 ######################
 ##      UTILS       ##
@@ -182,6 +183,24 @@ def load_similar_words(path):
             similar_words[line_parts[0]] = line_parts[1:-1]
 
     return similar_words 
+
+def gen_new_words():
+    
+    """
+    This method provides the next round of words, it is responsible for dealing 
+    out the 'attack' cases and working out their matches
+    """
+
+    exp_id = session.get("exp_id")
+
+    new_words = get_random_words()
+
+    # # Determines if their is an attack
+    audio_words = None
+    if random.random() < ATTACK_CHANCE:
+        audio_words = generate_similar_match(new_words)
+
+    experiments[exp_id].add_round(new_words, audio_words)
 
 def get_random_words():
     random.shuffle(WORDS)

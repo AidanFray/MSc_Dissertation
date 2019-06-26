@@ -3,15 +3,15 @@ cd ../frontend
 ./deploy.sh
 
 cd ../production
-rm -rvf ./website website.zip
+rm -rf ./website website.zip
 mkdir website
 
 cp -r ../backend/* ./website
 
-rm -rvf ./website/env
-rm -rvf ./website/__pycache__
-rm -rvf ./website/audio
+rm -rf ./website/env
+rm -rf ./website/__pycache__
+rm -rf ./website/audio
 
 zip -s 90M -r website.zip website
 
-rm -rvf website
+rm -rf website
