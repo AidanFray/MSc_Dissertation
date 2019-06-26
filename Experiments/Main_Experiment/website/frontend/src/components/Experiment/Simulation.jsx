@@ -4,9 +4,7 @@ import {Flip, ToastContainer, toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const cookies = new Cookies();
-
 
 var trustword_top = require("../../images/trustwords_top.jpg");
 var trustword_filler = require("../../images/trustwords_filler.jpg");
@@ -76,7 +74,7 @@ export default class TrustwordSimulation extends Component {
     fetch(URL_BASE + '/new_experiment?similar=TODO')
       .then(response => response.text())
       .then(t => {
-        cookies.set('ExperimentID', t, { path: '/' });
+        cookies.set('ExperimentID', t);
         this.expr_id = t
         this.refresh_words(t)
       })

@@ -10,7 +10,8 @@ cp -r ../backend/* ./website
 
 rm -rvf ./website/env
 rm -rvf ./website/__pycache__
+rm -rvf ./website/audio
 
-zip -r website.zip website
+zip -s 90M -r website.zip website
 
 rm -rvf website
