@@ -13,15 +13,6 @@ from experiment import Experiment
 app = Flask(__name__, static_folder="./build/static", template_folder="./build/")
 app.secret_key = "b9d53fe4b4564a95aed2cf966857540d"
 
-#############################################
-# TODO: Need to store this variable in a    #
-#       better way. Redis maybe?            #
-#       I'm having issues with threading    #
-#       causing multiple instances to be    #
-#       created.                            #
-#############################################
-EXPERIMENTS_DICT = {}
-
 # This needs changing on the PythonAnywhere site
 #
 #   /home/AFray/website/
@@ -33,7 +24,7 @@ SIMILAR_WORDS_FILE  = "en_soundex.csv"
 
 # SIMILARITY_METRICS  = "SOUNDEX"
 
-NUMBER_OF_ROUNDS = 100
+NUMBER_OF_ROUNDS = 10
 ATTACK_CHANCE = 0.25
 
 # This is used to fix Flask's compatability with the react-routing 
@@ -58,13 +49,13 @@ def get_audio():
 
         exp_id = session.get("exp_id")
 
-        if exp_id in EXPERIMENTS_DICT:
+        if exp_id in session:
 
             # Checks for an attack case
-            if EXPERIMENTS_DICT[exp_id].is_attack():
-                words = EXPERIMENTS_DICT[exp_id].get_current_audio_wordlist()
+            if Experiment.from_json(session[exp_id]).is_attack():
+                words = Experiment.from_json(session[exp_id]).get_current_audio_wordlist()
             else:
-                words = EXPERIMENTS_DICT[exp_id].get_current_wordlist()
+                words = Experiment.from_json(session[exp_id]).get_current_wordlist()
             
             filePath = f"{BASE_FILE_LOCATION}audio/generated/{'_'.join(words)}.mp3"
 
@@ -92,18 +83,20 @@ def get_words():
     if request.method == "GET":
         exp_id = session.get("exp_id")
 
-        print(EXPERIMENTS_DICT)
-        if exp_id in EXPERIMENTS_DICT:
+        if exp_id in session:
 
             # Finishes the experiment
-            if EXPERIMENTS_DICT[exp_id].num_of_rounds() >= NUMBER_OF_ROUNDS:
+            if Experiment.from_json(session[exp_id]).num_of_rounds() >= NUMBER_OF_ROUNDS:
 
-                EXPERIMENTS_DICT[exp_id].end_experiment()
-                save_experiment(EXPERIMENTS_DICT[exp_id])
+                exp = Experiment.from_json(session[exp_id])
+                exp.end_experiment()
+                session[exp_id] = exp.to_json()
+
+                save_experiment(Experiment.from_json(session[exp_id]))
 
                 return "DONE"
 
-            return " ".join(EXPERIMENTS_DICT[exp_id].get_current_wordlist())
+            return " ".join(Experiment.from_json(session[exp_id]).get_current_wordlist())
 
         else:
             return "Error: Experiment ID not found", 400
@@ -127,9 +120,9 @@ def new_experiment():
         user_agent = request.headers.get("User-Agent")
 
         exp_id = str(uuid.uuid4())
-        EXPERIMENTS_DICT[exp_id] = Experiment(exp_id, user_agent)
 
         session['exp_id'] = exp_id
+        session[exp_id] = Experiment(exp_id, user_agent).to_json()
 
         gen_new_words()
 
@@ -148,9 +141,13 @@ def submit_result():
 
             exp_id = session.get("exp_id")
             
-            if exp_id in EXPERIMENTS_DICT:
+            if exp_id in session:
                 
-                EXPERIMENTS_DICT[exp_id].record_response(result)
+
+                exp = Experiment.from_json(session[exp_id])
+                exp.record_response(result)
+                session[exp_id] = exp.to_json()
+                
                 gen_new_words()
                 return "OK"
             else:
@@ -210,7 +207,9 @@ def gen_new_words():
     if random.random() < ATTACK_CHANCE:
         audio_words = generate_similar_match(new_words)
 
-    EXPERIMENTS_DICT[exp_id].add_round(new_words, audio_words)
+    exp = Experiment.from_json(session[exp_id])
+    exp.add_round(new_words, audio_words)
+    session[exp_id] = exp.to_json()
 
 def get_random_words():
     random.shuffle(WORDS)

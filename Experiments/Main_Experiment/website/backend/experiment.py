@@ -35,7 +35,25 @@ class Experiment:
         return self.AudioWords[-1]
 
     def num_of_rounds(self):
-        return len(self.VisualWords)
+        return len(self.Responses)
 
     def end_experiment(self):
         self.EndTime = time.time()
+    
+    def to_json(self):
+        return self.__dict__
+
+    @staticmethod
+    def from_json(dictionary):
+        
+        exp = Experiment(None, None)
+
+        exp.ExperimentID    = dictionary["ExperimentID"]
+        exp.VisualWords     = dictionary["VisualWords"]
+        exp.Responses       = dictionary["Responses"]
+        exp.AudioWords      = dictionary["AudioWords"]
+        exp.StartTime       = dictionary["StartTime"]
+        exp.EndTime         = dictionary["EndTime"]
+        exp.UserAgent       = dictionary["UserAgent"]
+
+        return exp
