@@ -6,8 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 var trustword_top = require("../../images/trustwords_top.jpg");
 var trustword_filler = require("../../images/trustwords_filler.jpg");
 
-var URL_BASE = "http://afray.pythonanywhere.com"
-// var URL_BASE = "http://127.0.0.1:5000" //DEBUG
+// var URL_BASE = "http://afray.pythonanywhere.com"
+var URL_BASE = "http://localhost:5000" //DEBUG
 
 
 let styles = StyleSheet.create({

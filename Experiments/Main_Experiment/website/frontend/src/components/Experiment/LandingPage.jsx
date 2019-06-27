@@ -7,6 +7,7 @@ import AudioButton from '../Experiment/AudioButton.jsx'
 
 import 'react-splitter-layout/lib/index.css';
 
+
 export default class LandingPage extends Component {
 
     constructor(props) {
@@ -62,36 +63,35 @@ export default class LandingPage extends Component {
     render() {
 
         return (
+                <SplitterLayout percentage={true} primaryMinSize={70}>
 
-            <SplitterLayout percentage={true} primaryMinSize={70}>
-
-                <div ref={this.device_ref} style={{margin: this.deviceInitialMargin + "px"}}>
-                    <style>
-                    {`
-                        .marvel-device
-                        {
-                            transform: scale(${this.state.device_scale});
-                            margin: ${this.state.device_margin}px;
-                        }
-                    `}
-                    </style>
-                    <Device name="iphone-8" color='black' url="/bd65600d-8669-4903-8a14-af88203add38" />
-                </div>
-                
-                <div style={{
-                    height: "100%",
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexDirection: "column"
-                }}>
-                    <div>
-                        <AudioButton text="Authenticate with partner over the phone" color="#0000aa"/>
+                    <div ref={this.device_ref} style={{margin: this.deviceInitialMargin + "px"}}>
+                        <style>
+                        {`
+                            .marvel-device
+                            {
+                                transform: scale(${this.state.device_scale});
+                                margin: ${this.state.device_margin}px;
+                            }
+                        `}
+                        </style>
+                        <Device name="iphone-8" color='black' url="/bd65600d-8669-4903-8a14-af88203add38" />
                     </div>
-                </div>
-                
-            </SplitterLayout>
+                    
+                    <div style={{
+                        height: "100%",
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: "column"
+                    }}>
+                        <div>
+                            <AudioButton text="Authenticate with partner over the phone" color="#0000aa"/>
+                        </div>
+                    </div>
+                    
+                </SplitterLayout>
         );
     }
 }
