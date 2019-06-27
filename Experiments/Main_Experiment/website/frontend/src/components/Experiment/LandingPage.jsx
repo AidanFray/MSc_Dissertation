@@ -89,12 +89,6 @@ export default class LandingPage extends Component {
                     <div>
                         <AudioButton text="Authenticate with partner over the phone" color="#0000aa"/>
                     </div>
-                    <br/>
-                    <br/>
-                    <div>
-                        <AudioButton text="Repeat Authentication audio" color="#828282"/>
-                    </div>
-                    
                 </div>
                 
             </SplitterLayout>

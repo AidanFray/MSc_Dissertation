@@ -9,6 +9,7 @@ class Experiment:
 
         # If they're the same as the VisualWords they will be blank
         self.AudioWords = []
+        self.AudioButtonClicks = []
 
         self.StartTime = time.time()
         self.EndTime = None
@@ -18,6 +19,7 @@ class Experiment:
     def add_round(self, visualWords, audioWords=None):
         self.VisualWords.append(visualWords)
         self.AudioWords.append(audioWords)
+        self.AudioButtonClicks.append(0)
 
     def record_response(self, response):
         self.Responses.append(response)
@@ -30,6 +32,9 @@ class Experiment:
 
     def get_current_audio_wordlist(self):
         return self.AudioWords[-1]
+
+    def increment_audio_clicks(self):
+        self.AudioButtonClicks[-1] += 1
 
     def is_attack(self):
         return self.AudioWords[-1]
@@ -48,12 +53,13 @@ class Experiment:
         
         exp = Experiment(None, None)
 
-        exp.ExperimentID    = dictionary["ExperimentID"]
-        exp.VisualWords     = dictionary["VisualWords"]
-        exp.Responses       = dictionary["Responses"]
-        exp.AudioWords      = dictionary["AudioWords"]
-        exp.StartTime       = dictionary["StartTime"]
-        exp.EndTime         = dictionary["EndTime"]
-        exp.UserAgent       = dictionary["UserAgent"]
+        exp.ExperimentID        = dictionary["ExperimentID"]
+        exp.VisualWords         = dictionary["VisualWords"]
+        exp.Responses           = dictionary["Responses"]
+        exp.AudioWords          = dictionary["AudioWords"]
+        exp.AudioButtonClicks   = dictionary["AudioButtonClicks"]
+        exp.StartTime           = dictionary["StartTime"]
+        exp.EndTime             = dictionary["EndTime"]
+        exp.UserAgent           = dictionary["UserAgent"]
 
         return exp

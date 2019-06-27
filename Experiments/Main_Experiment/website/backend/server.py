@@ -24,7 +24,7 @@ SIMILAR_WORDS_FILE  = "en_soundex.csv"
 
 # SIMILARITY_METRICS  = "SOUNDEX"
 
-NUMBER_OF_ROUNDS = 10
+NUMBER_OF_ROUNDS = 15
 ATTACK_CHANCE = 0.25
 
 # This is used to fix Flask's compatability with the react-routing 
@@ -51,14 +51,20 @@ def get_audio():
 
         if exp_id in session:
 
+            # Converts the session cookie to object
+            exp = Experiment.from_json(session[exp_id])
+
+            # Increments and saves changes
+            exp.increment_audio_clicks()
+            session[exp_id] = exp.to_json()
+
             # Checks for an attack case
-            if Experiment.from_json(session[exp_id]).is_attack():
-                words = Experiment.from_json(session[exp_id]).get_current_audio_wordlist()
+            if exp.is_attack():
+                words = exp.get_current_audio_wordlist()
             else:
-                words = Experiment.from_json(session[exp_id]).get_current_wordlist()
+                words = exp.get_current_wordlist()
             
             filePath = f"{BASE_FILE_LOCATION}audio/generated/{'_'.join(words)}.mp3"
-
             if not os.path.isfile(filePath):
 
                 combined = AudioSegment.from_mp3(f"{BASE_FILE_LOCATION}audio/{words[0].upper()}.mp3")
@@ -85,8 +91,7 @@ def get_words():
 
         if exp_id in session:
 
-            # Finishes the experiment
-            if Experiment.from_json(session[exp_id]).num_of_rounds() >= NUMBER_OF_ROUNDS:
+            if experiment_finished(exp_id):
 
                 exp = Experiment.from_json(session[exp_id])
                 exp.end_experiment()
@@ -142,13 +147,14 @@ def submit_result():
             exp_id = session.get("exp_id")
             
             if exp_id in session:
-                
 
                 exp = Experiment.from_json(session[exp_id])
                 exp.record_response(result)
                 session[exp_id] = exp.to_json()
                 
-                gen_new_words()
+                if not experiment_finished(exp_id):
+                    gen_new_words()
+
                 return "OK"
             else:
                 return "Error: No experiment found!", 400
@@ -236,6 +242,9 @@ def generate_similar_match(wordlist):
 
     random_match = list(perms[random.randint(0, len(perms))])
     return random_match
+
+def experiment_finished(exp_id):
+    return Experiment.from_json(session[exp_id]).num_of_rounds() >= NUMBER_OF_ROUNDS
 
 SIMILAR_WORDS = load_similar_words(f"{BASE_FILE_LOCATION}data/similar/{SIMILAR_WORDS_FILE}")
 WORDS = load_wordlist(f"{BASE_FILE_LOCATION}data/{WORDLIST_NAME}")

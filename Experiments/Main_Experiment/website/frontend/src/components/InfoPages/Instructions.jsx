@@ -8,6 +8,7 @@ import {KeyboardArrowRight} from '@material-ui/icons';
 var phone_image = require("../../images/phone.png");
 var trustwords_image = require("../../images/trustwords.png")
 var audio_button_image = require("../../images/audio_button.png")
+var finish_images = require("../../images/finish.png")
 
 class Instruction extends Component {
 
@@ -47,7 +48,7 @@ class Instruction extends Component {
                         </Typography>
                         <br/>
                         <img 
-                            height="300px" 
+                            height="500px" 
                             src={phone_image}
                         />
                         <br/>
@@ -77,7 +78,7 @@ class Instruction extends Component {
                         <br/>
                         <br/>
                         <Typography style={text}>
-                            While listing to the audio, you need to decide if it matches the words displayed previously.
+                            While listing to the audio, you need to decide if it matches the words displayed.
                         </Typography>
                         <br/>
                         <Typography style={{color: "#00aa00"}}>
@@ -93,8 +94,8 @@ class Instruction extends Component {
                     <Paper style={paper}>
                         <Typography style={text} variant="h6"> Step 3</Typography>
                         <Typography style={text}>
-                            After submitting your choice, the experiment will continue and present some new words and recordings.
-                            This process will require repeating a number of times.
+                            After submitting your choice, the experiment will continue and present a fresh set of words and recordings.
+                            This process will require repitition a number of times.
                         </Typography>
                         <br/>
                     </Paper>
@@ -102,12 +103,28 @@ class Instruction extends Component {
                     <Paper style={paper}>
                         <Typography style={text} variant="h6"> Step 4</Typography>
                         <Typography style={text}>
-                            Finally, after a number of responses have been recorded you will be directed to the final page [...]
+                            Finally, after a number of responses have been recorded you will be directed to the final page where the device will
+                            display the final message.
+                            <br/>
+                            <br/>
+                            The message will look like the image below:
+                        </Typography>
+                        <br/>
+                        <img height="500px" src={finish_images}/>
+                        <br/>
+                        <br/>
+                        <Typography style={text}>
+                            The provided experiment ID is required by MTurk for payment and, therefore, need retaining.
                         </Typography>
                     </Paper>
                     <br />
                 </div>
 
+                <Typography variant="p">
+                        When ready, please click the button below to start the experiment.
+                </Typography>
+                <br/>
+                <br/>
                 <Button 
                     style={{display: this.props.showNextButton}}
                     variant="contained" 
