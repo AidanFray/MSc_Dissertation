@@ -7,8 +7,12 @@ class Experiment:
         self.VisualWords = []
         self.Responses = []
 
-        # If they're the same as the VisualWords they will be blank
-        self.AudioWords = []
+        # If no attack it will be None
+        # Design:
+        #
+        #   [<SIMILARY_METRIC>, <ATTACK_TYPE>, <SIMILAR_WORDS>]
+        #
+        self.AttackSchema = []
         self.AudioButtonClicks = []
 
         self.StartTime = time.time()
@@ -16,9 +20,9 @@ class Experiment:
 
         self.UserAgent = userAgent
 
-    def add_round(self, visualWords, audioWords=None):
+    def add_round(self, visualWords, attackSchema=None):
         self.VisualWords.append(visualWords)
-        self.AudioWords.append(audioWords)
+        self.AttackSchema.append(attackSchema)
         self.AudioButtonClicks.append(0)
 
     def record_response(self, response):
@@ -30,14 +34,17 @@ class Experiment:
     def get_current_respose(self):
         return self.Responses[-1]
 
-    def get_current_audio_wordlist(self):
-        return self.AudioWords[-1]
+    def get_current_attack_wordlist(self):
+        attackSchemea = self.AttackSchema[-1]
+        
+        # Last value is the wordlist
+        return attackSchemea[2]
 
     def increment_audio_clicks(self):
         self.AudioButtonClicks[-1] += 1
 
     def is_attack(self):
-        return self.AudioWords[-1]
+        return self.AttackSchema[-1]
 
     def num_of_rounds(self):
         return len(self.Responses)
@@ -56,7 +63,7 @@ class Experiment:
         exp.ExperimentID        = dictionary["ExperimentID"]
         exp.VisualWords         = dictionary["VisualWords"]
         exp.Responses           = dictionary["Responses"]
-        exp.AudioWords          = dictionary["AudioWords"]
+        exp.AttackSchema          = dictionary["AttackSchema"]
         exp.AudioButtonClicks   = dictionary["AudioButtonClicks"]
         exp.StartTime           = dictionary["StartTime"]
         exp.EndTime             = dictionary["EndTime"]

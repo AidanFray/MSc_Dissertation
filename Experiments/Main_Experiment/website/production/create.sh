@@ -12,6 +12,8 @@ rm -rf ./website/env
 rm -rf ./website/__pycache__
 rm -rf ./website/audio
 
+echo "BASE_FILE_LOCATION = \"/home/AFray/website/\"" > ./wesbite/CONFIG.py
+
 zip -s 90M -r website.zip website
 
 rm -rf website

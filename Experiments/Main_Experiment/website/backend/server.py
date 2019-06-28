@@ -8,24 +8,15 @@ import uuid
 import time
 import os
 
+from CONFIG import BASE_FILE_LOCATION
 from experiment import Experiment
+import attack
+import utils
 
 app = Flask(__name__, static_folder="./build/static", template_folder="./build/")
 app.secret_key = "b9d53fe4b4564a95aed2cf966857540d"
 
-# This needs changing on the PythonAnywhere site
-#
-#   /home/AFray/website/
-#
-BASE_FILE_LOCATION = ""
-
-WORDLIST_NAME       = "trustwords.csv"
-SIMILAR_WORDS_FILE  = "en_soundex.csv"
-
-# SIMILARITY_METRICS  = "SOUNDEX"
-
-NUMBER_OF_ROUNDS = 15
-ATTACK_CHANCE = 0.25
+WORDLIST_NAME = "trustwords.csv"
 
 # This is used to fix Flask's compatability with the react-routing 
 @app.route('/', defaults={'path': ''})
@@ -60,7 +51,7 @@ def get_audio():
 
             # Checks for an attack case
             if exp.is_attack():
-                words = exp.get_current_audio_wordlist()
+                words = exp.get_current_attack_wordlist()
             else:
                 words = exp.get_current_wordlist()
             
@@ -91,13 +82,13 @@ def get_words():
 
         if exp_id in session:
 
-            if experiment_finished(exp_id):
+            if utils.experiment_finished(exp_id):
 
                 exp = Experiment.from_json(session[exp_id])
                 exp.end_experiment()
                 session[exp_id] = exp.to_json()
 
-                save_experiment(Experiment.from_json(session[exp_id]))
+                utils.save_experiment(Experiment.from_json(session[exp_id]))
 
                 return "DONE"
 
@@ -129,7 +120,7 @@ def new_experiment():
         session['exp_id'] = exp_id
         session[exp_id] = Experiment(exp_id, user_agent).to_json()
 
-        gen_new_words()
+        utils.gen_new_words(WORDLIST)
 
         return exp_id
 
@@ -152,8 +143,8 @@ def submit_result():
                 exp.record_response(result)
                 session[exp_id] = exp.to_json()
                 
-                if not experiment_finished(exp_id):
-                    gen_new_words()
+                if not utils.experiment_finished(exp_id):
+                    utils.gen_new_words(WORDLIST)
 
                 return "OK"
             else:
@@ -162,93 +153,8 @@ def submit_result():
         else:
             return "Error: Missing parameter \'result\'", 400
 
-######################
-##      UTILS       ##
-######################
-
-
-def save_experiment(expr):
-    pickle.dump(expr, open(f"{BASE_FILE_LOCATION}results/{expr.ExperimentID}.pkl", "wb"))
-
-def load_wordlist(path):
-    wordlist = []
-
-    with open(path, "r") as file:
-        
-        for line in file:
-            line = line.strip()
-            wordlist.append(line)
-
-    if len(wordlist) == 0:
-        raise Exception("No word list loaded!")
-
-    return wordlist
-
-def load_similar_words(path):
-    similar_words = {}
-
-    with open(path, "r") as file:
-
-        for line in file:
-            line = line.strip()
-            line_parts = line.split(",")
-
-            similar_words[line_parts[0]] = line_parts[1:-1]
-
-    return similar_words 
-
-def gen_new_words():
-    
-    """
-    This method provides the next round of words, it is responsible for dealing 
-    out the 'attack' cases and working out their matches
-    """
-
-    exp_id = session.get("exp_id")
-
-    new_words = get_random_words()
-
-    # # Determines if their is an attack
-    audio_words = None
-    if random.random() < ATTACK_CHANCE:
-        audio_words = generate_similar_match(new_words)
-
-    exp = Experiment.from_json(session[exp_id])
-    exp.add_round(new_words, audio_words)
-    session[exp_id] = exp.to_json()
-
-def get_random_words():
-    random.shuffle(WORDS)
-    return WORDS[:4]
-
-def generate_similar_match(wordlist):
-
-    # To make sure permutations size don't get too big    
-    MAX_SIMILAR_PERM_SIZE = 100
-
-    combinations = []
-
-    for w in wordlist:
-
-        similar_words = [SIMILAR_WORDS[w]]
-
-        # This is the make sure the cap isn't bias
-        if len(similar_words) > MAX_SIMILAR_PERM_SIZE:
-            random.shuffle(similar_words)
-
-        combinations += similar_words[:MAX_SIMILAR_PERM_SIZE] 
-
-    perms = list(itertools.product(combinations[0], combinations[1], combinations[2], combinations[3]))
-
-    random_match = list(perms[random.randint(0, len(perms))])
-    return random_match
-
-def experiment_finished(exp_id):
-    return Experiment.from_json(session[exp_id]).num_of_rounds() >= NUMBER_OF_ROUNDS
-
-SIMILAR_WORDS = load_similar_words(f"{BASE_FILE_LOCATION}data/similar/{SIMILAR_WORDS_FILE}")
-WORDS = load_wordlist(f"{BASE_FILE_LOCATION}data/{WORDLIST_NAME}")
+WORDLIST = utils.load_wordlist(f"{BASE_FILE_LOCATION}data/{WORDLIST_NAME}")
 
 if __name__ == "__main__":
-    app.run(threaded=True)
+    app.run()
 
