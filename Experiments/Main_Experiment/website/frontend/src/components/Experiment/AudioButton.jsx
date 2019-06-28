@@ -2,25 +2,34 @@ import React, { Component } from 'react'
 import {Phone} from '@material-ui/icons';
 
 import LoadingOverlay from 'react-loading-overlay';
-
 import Sound from 'react-sound'
 
-var URL_BASE = "http://localhost:5000" //DEBUG
+var LOADING_TEXT = "Loading audio"
+var PLAYING_TEXT = "Playing audio"
 
 export default class AudioButton extends Component {
 
     constructor(props) {
         super(props)
 
-        this.state = {playing: false}
-        this.unique_request_id = new Date().getTime()
-
+        this.state = {
+            loading: false,
+            playing: false,
+            loadingText: LOADING_TEXT
+        }
     }
 
     _play_audio() {
+
+        var text = LOADING_TEXT
+        if (this.state.playing) {
+            text = PLAYING_TEXT
+        }
+
         this.setState({
-            playing: !this.state.playing,
-            loading: true
+            playing: true,
+            loading: true,
+            loadingText: text
         })
     }
 
@@ -29,15 +38,22 @@ export default class AudioButton extends Component {
             this.setState({
                 loading: false
             })
-            this.unique_request_id = new Date().getTime()
         }
     }
+
+    handleSongFinishedPlaying() {
+        this.setState({
+            playing: false,
+            loading: false
+        })
+    }
+
 
     render() {
         return (
             <LoadingOverlay
                 active={this.state.loading}
-                text='Loading audio ...'
+                text={this.state.loadingText}
             >
                 <button
                 style={{
@@ -56,17 +72,12 @@ export default class AudioButton extends Component {
                     <br/>
                 </button>
 
-                {/* // The `time` parameter isn't actually used, but it stops the browser from reusing
-                // previous audio instead of requesting a new one. The browser sees the request is 
-                // different and makes another call to `get_audio`.*/}
                 {this.state.playing &&
                     <Sound
-                        url={URL_BASE + "/get_audio?time=" + this.unique_request_id}
+                        url={"/get_audio"}
                         playStatus={Sound.status.PLAYING}
-                        // onLoading={() => this.handleSongLoading()}
                         onLoad={(loaded) => this.handleSongLoaded(loaded)}
-                        onPlaying={this.handleSongPlaying}
-                        onFinishedPlaying={this.handleSongFinishedPlaying}
+                        onFinishedPlaying={() => this.handleSongFinishedPlaying()}
                     />
                 }
             </LoadingOverlay>

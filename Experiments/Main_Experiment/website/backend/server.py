@@ -19,7 +19,7 @@ app.secret_key = "b9d53fe4b4564a95aed2cf966857540d"
 #
 BASE_FILE_LOCATION = ""
 
-WORDLIST_NAME       = "trustwords_reduced.csv"
+WORDLIST_NAME       = "trustwords.csv"
 SIMILAR_WORDS_FILE  = "en_soundex.csv"
 
 # SIMILARITY_METRICS  = "SOUNDEX"

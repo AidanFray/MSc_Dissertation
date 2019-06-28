@@ -48,6 +48,7 @@ class Instruction extends Component {
                         </Typography>
                         <br/>
                         <img 
+                            alt="" 
                             height="500px" 
                             src={phone_image}
                         />
@@ -60,7 +61,7 @@ class Instruction extends Component {
                             Read the words displayed on the device. An example of the words are shown below:
                         </Typography>
                         <br/>
-                            <img height="30px" src={trustwords_image}/>
+                            <img height="30px" alt="" src={trustwords_image}/>
                         <br/>
                         <br/>
                         <Typography style={text}>
@@ -74,7 +75,7 @@ class Instruction extends Component {
                             After familiarization with the words you will need to initiate the authentication process. The image below shows this button. Clicking this will produce spoken audio of the words (This can be pressed multiple times to repeat the audio).
                         </Typography>
                         <br/>
-                            <img src={audio_button_image}/>
+                            <img alt="" src={audio_button_image}/>
                         <br/>
                         <br/>
                         <Typography style={text}>
@@ -110,7 +111,7 @@ class Instruction extends Component {
                             The message will look like the image below:
                         </Typography>
                         <br/>
-                        <img height="500px" src={finish_images}/>
+                        <img alt="" height="500px" src={finish_images}/>
                         <br/>
                         <br/>
                         <Typography style={text}>
