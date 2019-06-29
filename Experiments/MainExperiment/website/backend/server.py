@@ -92,7 +92,7 @@ def get_words():
 
                 return "DONE"
 
-            return " ".join(Experiment.from_json(session[exp_id]).get_current_wordlist())
+            return "  ".join(Experiment.from_json(session[exp_id]).get_current_wordlist())
 
         else:
             return "Error: Experiment ID not found", 400

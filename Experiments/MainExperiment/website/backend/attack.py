@@ -1,6 +1,6 @@
 import random
 import itertools
-from CONFIG import BASE_FILE_LOCATION
+from CONFIG import BASE_FILE_LOCATION, ATTACK_CHANCE, ATTACK_METRICS
 
 """
 Each sub attack here will generate a random match from 
@@ -24,16 +24,6 @@ is all equal and therefore equally distributed
 
 # To make sure permutations size don't get too big    
 MAX_SIMILAR_PERM_SIZE = 100
-
-# 70 / 30 split
-ATTACK_CHANCE = 1.0
-
-## NOTE:
-#   Naming convension for files is:
-#
-#       ./data/similar/<lower_case_name>.csv
-#
-ATTACK_METRICS = ['SOUNDEX', "METAPHONE", "NYSIIS"]
 
 def decision(newWords):
     

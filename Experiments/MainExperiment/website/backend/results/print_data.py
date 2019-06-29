@@ -41,17 +41,17 @@ print_header("Responses")
 for i, e in enumerate(exp.Responses):
 
     # Counts errors in the experiment
-    if exp.AudioWords[i] != None and e == "True":
+    if exp.AttackSchema[i] != None and e == "True":
         e = red_text(e)
 
-    elif exp.AudioWords[i] == None and e == "False":
+    elif exp.AttackSchema[i] == None and e == "False":
         e = blue_text(e)
 
     print(f"\t{i + 1}. {e}")
 print()
 
 print_header("Audio Words")
-print_numbered_list(exp.AudioWords)
+print_numbered_list(exp.AttackSchema)
 
 print_header("Audio Clicks")
 for i, e in enumerate(exp.AudioButtonClicks):

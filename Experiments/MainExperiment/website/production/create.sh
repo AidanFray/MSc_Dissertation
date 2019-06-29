@@ -1,6 +1,6 @@
 
 cd ../frontend
-./deploy.sh
+# ./deploy.sh
 
 cd ../production
 rm -rf ./website website.zip
@@ -12,7 +12,7 @@ rm -rf ./website/env
 rm -rf ./website/__pycache__
 rm -rf ./website/audio
 
-echo "BASE_FILE_LOCATION = \"/home/AFray/website/\"" > ./website/CONFIG.py
+sed -i "s/\"\" #B700/\"\/home\/AFray\/website\/\"/g" ./website/CONFIG.py 
 
 zip -s 90M -r website.zip website
 

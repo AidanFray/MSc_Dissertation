@@ -4,9 +4,7 @@ import pickle
 import attack
 import random
 
-NUMBER_OF_ROUNDS = 15
-
-from CONFIG import BASE_FILE_LOCATION
+from CONFIG import BASE_FILE_LOCATION, NUMBER_OF_ROUNDS
 
 def save_experiment(expr):
     pickle.dump(expr, open(f"{BASE_FILE_LOCATION}results/{expr.ExperimentID}.pkl", "wb"))

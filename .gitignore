@@ -19,13 +19,13 @@ target_keys.txt
 env
 build
 website.zip
-Experiments/Main_Experiment/website/backend/audio/generated/*
+Experiments/MainExperiment/website/backend/audio/generated/*
+Experiments/MainExperiment/website/backend/results/*.pkl
 
 Code/WordVectors/computation/dictionary_popular/values.dat
 Code/WordVectors/computation/trustwords/values.dat
 Code/WordVectors/computation/trustwords/reduced_05.dat
 Code/WordVectors/computation/peerio/values.dat
-Experiments/Main_Experiment/website/backend/results/*.pkl
 
 
 ## Ignore Visual Studio temporary files, build results, and
