@@ -1,6 +1,7 @@
+import os
 import random
 import itertools
-from CONFIG import BASE_FILE_LOCATION, ATTACK_CHANCE, ATTACK_METRICS
+import CONFIG
 
 """
 Each sub attack here will generate a random match from 
@@ -28,21 +29,21 @@ MAX_SIMILAR_PERM_SIZE = 100
 def decision(newWords):
     
     # If not an attack
-    if not random.random() < ATTACK_CHANCE: 
+    if not random.SystemRandom().random() < CONFIG.ATTACK_CHANCE: 
         return None
 
-    attack_metric_choice = random.randint(0, 2)
-    attack_metric_string = ATTACK_METRICS[attack_metric_choice]
+    attack_metric_choice = random.SystemRandom().randint(0, 2)
+    attack_metric_string = CONFIG.ATTACK_METRICS[attack_metric_choice]
 
     similar_words = load_similar_words(attack_metric_string)
 
-    attack_type_choice = random.randint(0, 2)
+    attack_type_choice = random.SystemRandom().randint(0, 2)
     words = ATTACK_TYPES[attack_type_choice](newWords, similar_words)
 
     return [attack_metric_string, attack_type_choice, words]
 
 def load_similar_words(attackMetricChoice):
-    path = f"{BASE_FILE_LOCATION}data/similar/{attackMetricChoice.lower()}.csv"
+    path = f"{CONFIG.BASE_FILE_LOCATION}data/similar/{attackMetricChoice.lower()}.csv"
     similar_words = {}
 
     with open(path, "r") as file:
@@ -79,7 +80,7 @@ def _get_random_match(words, similarWordsDict, staticPositions):
 
     # print(combinations)
     perms = list(itertools.product(combinations[0], combinations[1], combinations[2], combinations[3]))
-    random_match = list(perms[random.randint(0, len(perms))])
+    random_match = list(perms[random.randint(0, len(perms) - 1)])
     
     return random_match
 
