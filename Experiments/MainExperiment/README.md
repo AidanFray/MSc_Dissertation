@@ -18,3 +18,11 @@
 
 - Talk about the ethics application
     - Purposefull misleading
+
+# Abnormal attacks
+
+### Attacks below had exactly the same as the original words
+
+['METAPHONE', 0, ['FOREWARN', 'ANTIFASCIST', 'MOP', 'CACHET']]
+['NYSIIS', 2, ['BLUE', 'STENGEL', 'ORKNEY', 'UNBOLT']]
+['NYSIIS', 2, ['HENDERSON', 'MICHIGANDER', 'KELP', 'VOLE']]

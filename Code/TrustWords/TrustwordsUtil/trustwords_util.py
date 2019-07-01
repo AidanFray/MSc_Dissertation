@@ -155,11 +155,7 @@ def find_possible_keys(perms, uncontrolledFingerprint):
     return key_possibilities
 
 def create_random_fingerprint(number_of_words):
-    sha = SHA1.new()
-    sha.update(os.urandom(15))
-    digest = sha.hexdigest()
-
-    return digest[:number_of_words *  4]
+    return os.urandom(8).hex()
 
 def create_actual_fingerprint_and_key(number_of_words, uncontrolledFingerprint):
     
@@ -225,19 +221,20 @@ def determine_average_perms(number_of_words, all_perms=True):
 
     max_perm = 0
     min_perm = None
-    loops = 100000
+    loops = 1000000
 
     total_all = 0
     total_one_static = 0
     total_two_static = 0
 
-    for x in range(loops):
+    for _ in range(loops):
         fingerprint = create_random_fingerprint(number_of_words)
+
         trustwords = fingerprint_to_words(fingerprint, PRINT=False)
 
         if all_perms:
             combinations = similar_combinations(trustwords, similar_word_mapping, word_to_hex_mapping)
-            
+
             one_static_combinatsions = similar_combinations(trustwords, \
                 similar_word_mapping, \
                 word_to_hex_mapping, staticPos=[0])
@@ -247,6 +244,10 @@ def determine_average_perms(number_of_words, all_perms=True):
                 word_to_hex_mapping, staticPos=[0, 3])
 
             perm_len = get_perm_size(combinations)
+
+            # # UNCOMMENT TO Print values out to file
+            # print(str(perm_len) + ",")
+
             one_perm_len = get_perm_size(one_static_combinatsions)
             two_perm_len = get_perm_size(two_static_combinatsions)
         else:
@@ -358,49 +359,50 @@ def args():
     parser.add_argument("-n","--num-of-words", dest="num_words", nargs=1, type=int, action="store")
     parser.add_argument("-o", "--output-file-name", dest="output", nargs=1, action="store")
     parser.add_argument("-p", "--perms-for-words", dest="perms", nargs=1, action="store")
-    args = parser.parse_args()
+    
+    arg = parser.parse_args()
 
     # Number of words
-    number_of_words = args.num_words[0] if args.num_words else 4
+    number_of_words = arg.num_words[0] if arg.num_words else 4
 
     # Output file name
-    outFileName = args.output[0] if args.output else "target_keys.txt"
+    outFileName = arg.output[0] if arg.output else "target_keys.txt"
 
-    if args.key:
-        CONTROLALBLE_FINGERPRINT = load_key_from_file_and_return_fingerprint(args.key[0], number_of_words)
+    if arg.key:
+        CONTROLALBLE_FINGERPRINT = load_key_from_file_and_return_fingerprint(arg.key[0], number_of_words)
 
     # Loads the file paths for similar wordlist
-    if args.similar: 
-        similar_mappings_file_name = args.similar[0]
+    if arg.similar: 
+        similar_mappings_file_name = arg.similar[0]
         load_similar_mappings(similar_mappings_file_name)
 
     # Sets the dictionary mapping file - Default is english
     dictionary_file_name = f"../../../Wordlists/Trustwords/{args.lang[0].upper()}/{args.lang[0].lower()}.csv" \
-        if args.lang else f"../../../Wordlists/Trustwords/EN/en.csv"
+        if arg.lang else f"../../../Wordlists/Trustwords/EN/en.csv"
     load_mappings(dictionary_file_name)
 
     ### MODES ###
     # Average number of potential keys
-    if args.average:
+    if arg.average:
         determine_average_perms(number_of_words)
         exit()
 
     # Finds number of average multi mapping perms
-    if args.average_multi:
+    if arg.average_multi:
         determine_average_perms(number_of_words, all_perms=False)
         exit()
 
     # Outputs the trust words for two actual keys
-    if args.trustwords:
-        generate_words_for_PGP_keys(args.keys[0], args.keys[1])
+    if arg.trustwords:
+        generate_words_for_PGP_keys(arg.trustwords[0], arg.trustwords[1])
         exit()
 
-    if args.find_keys:
+    if arg.find_keys:
         create_actual_fingerprint_and_key(number_of_words, UNCONTROLLED_FINGERPRINT)
         exit()
 
-    if args.perms:
-        input_string = args.perms[0]
+    if arg.perms:
+        input_string = arg.perms[0]
         input_string = input_string.replace("[", "")
         input_string = input_string.replace("]", "")
         input_string = input_string.replace("\'", "")
@@ -414,6 +416,8 @@ def args():
             m = similar_word_mapping[w] + [w]
             similar_words.append(m)
 
+        print(similar_words)
+
         y = get_perms(similar_words)
         print("[!] Permutations: ", len(y))
         exit()
@@ -423,7 +427,7 @@ def args():
 
     # Creates list of multiple mapping
     # i.e. the word "Tree" maps to 0xff43 and 0xf3ee
-    if args.multi:
+    if arg.multi:
         perms = multimap_perms(trustwords, word_to_hex_mapping) 
         key_possibilities = find_possible_keys(perms, UNCONTROLLED_FINGERPRINT)
         save_permutations(key_possibilities, outFileName)

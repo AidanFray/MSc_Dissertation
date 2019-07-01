@@ -1,6 +1,6 @@
 
 cd ../frontend
-# ./deploy.sh
+./deploy.sh
 
 cd ../production
 rm -rf ./website website.zip
