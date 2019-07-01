@@ -6,43 +6,21 @@ import itertools
 from pretty_bad_protocol import gnupg
 
 from Crypto.Hash import SHA1
+from permutations import *
 
-# DEBUG - For VSCode
-# file_path = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Code/TrustWords" 
+from timing import calculate_runtime, print_timing
+from CONFIG import HASHSPEED
+
 file_path = "."
 
 # GPG object
 gpg = gnupg.GPG(options=["--debug-quick-random"])
 
 # Stops the program from generating permutations that fill the RAM
-MAX_PEM_SIZE = 2000000000
 
-# Around a RX480
-HASHSPEED = 2000
-
-mappings_hex_to_word = {}
-mappings_word_to_hex = {}
-mappings_similar_words = {} 
-
-def timing(length_in_chars, permutations):
-    length_in_chars = float(length_in_chars)
-    hashspeed = int(HASHSPEED * 1000000)
-    permutations = float(permutations)
-
-    top = (2**(4 * (length_in_chars)))
-    time_seconds = top / hashspeed / permutations
-   
-    return time_seconds
-
-def print_timing(time_seconds):
-
-    time_days = time_seconds / 3600 / 24
-    print()
-    print(f"        {round(time_seconds, 2)} seconds!")
-    print(f"        {round(time_seconds / 60, 2)} minutes!")
-    print(f"        {round(time_days, 2)} days!")
-    print(f"        {round(time_days / 365, 2)} years!")
-    print()
+hex_to_word_mapping = {}
+word_to_hex_mapping = {}
+similar_word_mapping = {} 
 
 def load_mappings(fileName):
     """
@@ -54,22 +32,27 @@ def load_mappings(fileName):
         line = None
         while True:
             line = file.readline()
-            if line == '': break
+            if line == '':
+                break
             
             line_parts = line.split(",")
 
-            # Maps string to 
-            word                =  line_parts[2]
-            word_hex    =  hex(int(line_parts[1]))[2:].zfill(4)
+            # Maps string to
+            word = line_parts[2]
+            word_hex = hex(int(line_parts[1]))[2:].zfill(4)
 
             # Hex --> Word
-            mappings_hex_to_word.update({word_hex : word})
+            hex_to_word_mapping.update(
+                {
+                    word_hex: word
+                })
 
             # Word --> Hex
-            if word in mappings_word_to_hex:
-                mappings_word_to_hex[word].append(word_hex)
+            if word in word_to_hex_mapping:
+                word_to_hex_mapping[word].append(word_hex)
             else:
-                mappings_word_to_hex.update({word : [word_hex]})
+                word_to_hex_mapping.update({word: [word_hex]})
+
 def load_similar_mappings(fileName):
     """
     Loads the mapping that have been found to be similar
@@ -87,7 +70,7 @@ def load_similar_mappings(fileName):
         base_word = line_parts[0]
         similar_words = line_parts[1:-1]
 
-        mappings_similar_words.update({base_word : similar_words})
+        similar_word_mapping.update({base_word: similar_words})
 
 def save_permutations(perms, outFileName):
     """
@@ -112,7 +95,7 @@ def fingerprint_to_words(fingerprint, PRINT=True):
     chunks = re.findall(".{4}", fingerprint)
 
     for chunk in chunks:
-        word = mappings_hex_to_word[chunk.lower()]
+        word = hex_to_word_mapping[chunk.lower()]
         trustwords.append(word)
 
     if PRINT:
@@ -124,6 +107,7 @@ def fingerprint_to_words(fingerprint, PRINT=True):
         print("#" * (len(trustwords_str) + 1))
 
     return trustwords
+
 def XOR_fingerprints(fingerprint1, fingerprint2):
     """
     XORs two fingerprints, this is usefull because pEp
@@ -151,7 +135,6 @@ def XOR_fingerprints(fingerprint1, fingerprint2):
 
         combined.append(c_hex)
 
-    
     return "".join(combined)
 
 def find_possible_keys(perms, uncontrolledFingerprint):
@@ -171,149 +154,13 @@ def find_possible_keys(perms, uncontrolledFingerprint):
 
     return key_possibilities
 
-def gen_all_same_perms(wordlist, PRINT=True):
-    mappings = gen_all_same_combinations(wordlist)
-
-    if check_perm_size(mappings):
-        perms = gen_permutations(mappings)
-        if PRINT: print(f"[*] Mapping allows {len(perms)} same combinations!")
-
-    return perms
-def gen_all_same_combinations(wordlist):
-    mappings = []
-
-    for word in wordlist:
-        mappings.append(mappings_word_to_hex[word])
-
-    return mappings
-
-def gen_all_similar_perms(trustwords, PRINT=True):
-    """
-    This method takes multi-mappings (Same word multiple value) and
-    similar words and creates all the permutations of fingerprints
-    that allow these near matches
-    """
-
-    fingerprint_chunks = gen_all_similar_combinations(trustwords)
-    
-    output_perms = []
-    if check_perm_size(fingerprint_chunks):
-        output_perms = gen_permutations(fingerprint_chunks)
-        if PRINT: print(f"[*] Mapping allows {len(output_perms)} similar combinations!")
-
-    return output_perms
-def gen_all_similar_combinations(trustwords):
-    similar_words = []
-
-    # Finds all similar words from the current fingerprint
-    for word in trustwords:
-
-        try:
-            similar_words.append(mappings_similar_words[word])
-        
-        # No similar words
-        except KeyError:
-            similar_words.append([])
-
-    for index, _ in enumerate(similar_words):
-        # Adds the original words to the lists
-        similar_words[index].append(trustwords[index])
-
-    # Then finds all multi-mapped words and calculates the full number of perms
-    fingerprint_chunks = []
-    for words in similar_words:
-
-        perms = []
-        for w in words:
-            chunk = mappings_word_to_hex[w]
-            perms += chunk
-
-        fingerprint_chunks.append(perms)
-
-    return fingerprint_chunks
-
-def gen_permutations(lists):
-    """
-    This method uses ittertools to create all the
-    permutations of fingerprints
-    """
-
-    perm_size = 1
-    for l in lists:
-        perm_size *= len(l) 
-
-    size = len(lists)
-
-    # Full mapping
-    if size == 10:
-        return list(itertools.product(
-                    lists[0],
-                    lists[1],
-                    lists[2],
-                    lists[3],
-                    lists[4],
-                    lists[5],
-                    lists[6],
-                    lists[7],
-                    lists[8],
-                    lists[9]
-                ))
-
-    # Long mapping
-    if size == 9:
-        return list(itertools.product(
-                    lists[0],
-                    lists[1],
-                    lists[2],
-                    lists[3],
-                    lists[4],
-                    lists[5],
-                    lists[6],
-                    lists[7],
-                    lists[8],
-                ))
-
-    # Short mapping
-    elif size == 5:
-        return list(itertools.product(
-                    lists[0],
-                    lists[1],
-                    lists[2],
-                    lists[3],
-                    lists[4],
-                ))
-
-    # Minimum size
-    elif size == 4:
-        return list(itertools.product(
-                    lists[0],
-                    lists[1],
-                    lists[2],
-                    lists[3],
-                ))
-    else:
-        raise Exception("Invalid permutation size!")
-def check_perm_size(lists):
-    perm_size = get_perm_size(lists)
-
-    if perm_size > MAX_PEM_SIZE:
-        print(f"[!] Permutation too big at: {perm_size}. Ignoring due to RAM constraints")
-        return False
-    else:
-        return True
-def get_perm_size(lists):
-    perm_size = 1
-    for l in lists:
-        perm_size *= len(l) 
-
-    return perm_size
-
 def create_random_fingerprint(number_of_words):
     sha = SHA1.new()
     sha.update(os.urandom(15))
     digest = sha.hexdigest()
 
     return digest[:number_of_words *  4]
+
 def create_actual_fingerprint_and_key(number_of_words, uncontrolledFingerprint):
     
     biggest_perm_size = 0
@@ -322,7 +169,7 @@ def create_actual_fingerprint_and_key(number_of_words, uncontrolledFingerprint):
     DEBUG_FINGERPRINT = None
 
     # TODO: Determine number of keys to test
-    total_keys = 1
+    total_keys = 100
 
     loop = 0
     for x in range(total_keys):
@@ -337,7 +184,7 @@ def create_actual_fingerprint_and_key(number_of_words, uncontrolledFingerprint):
         combined_fingerprint = XOR_fingerprints(reduced_fingerprint, uncontrolledFingerprint)
         trustWords = fingerprint_to_words(combined_fingerprint, PRINT=False)
 
-        combinations = gen_all_similar_combinations(trustWords)
+        combinations = similar_combinations(trustWords, similar_word_mapping, word_to_hex_mapping)
         perm_size = get_perm_size(combinations)
 
         if perm_size > biggest_perm_size:
@@ -357,7 +204,6 @@ def create_actual_fingerprint_and_key(number_of_words, uncontrolledFingerprint):
     # TODO: Fix private key export
     print(gpg.export_keys(biggest_key, secret=True))
     
-
 def load_key_from_file_and_return_fingerprint(filePath, number_of_words):
 
     data = None
@@ -380,17 +226,31 @@ def determine_average_perms(number_of_words, all_perms=True):
     max_perm = 0
     min_perm = None
     loops = 100000
-    total = 0
+
+    total_all = 0
+    total_one_static = 0
+    total_two_static = 0
 
     for x in range(loops):
         fingerprint = create_random_fingerprint(number_of_words)
         trustwords = fingerprint_to_words(fingerprint, PRINT=False)
 
         if all_perms:
-            combinations = gen_all_similar_combinations(trustwords)
+            combinations = similar_combinations(trustwords, similar_word_mapping, word_to_hex_mapping)
+            
+            one_static_combinatsions = similar_combinations(trustwords, \
+                similar_word_mapping, \
+                word_to_hex_mapping, staticPos=[0])
+
+            two_static_combinatsions = similar_combinations(trustwords, \
+                similar_word_mapping, \
+                word_to_hex_mapping, staticPos=[0, 3])
+
             perm_len = get_perm_size(combinations)
+            one_perm_len = get_perm_size(one_static_combinatsions)
+            two_perm_len = get_perm_size(two_static_combinatsions)
         else:
-            combinations = gen_all_same_combinations(trustwords)
+            combinations = multimap_combinations(trustwords, word_to_hex_mapping)
             perm_len = get_perm_size(combinations)
         
         # MAX
@@ -401,21 +261,33 @@ def determine_average_perms(number_of_words, all_perms=True):
         if min_perm == None or perm_len < min_perm:
             min_perm = perm_len
 
-        total += perm_len
+        total_all += perm_len
+        total_one_static += one_perm_len
+        total_two_static += two_perm_len
 
-    average_perm = total / loops
+    average_all_perm = total_all / loops
+    average_static_one_perm = total_one_static / loops
+    average_static_two_perm = total_two_static / loops
 
     # 4 hex chars per word
     number_of_characters = float(number_of_words * 4)
 
-    min_time = timing(number_of_characters, min_perm)
-    max_time = timing(number_of_characters, max_perm)
+    min_time = calculate_runtime(number_of_characters, min_perm)
+    max_time = calculate_runtime(number_of_characters, max_perm)
 
-    average_time = timing(number_of_characters, average_perm) 
+    average_all_time = calculate_runtime(number_of_characters, average_all_perm)
+    average_one_static = calculate_runtime(number_of_characters,average_static_one_perm)
+    average_two_static = calculate_runtime(number_of_characters,average_static_two_perm)
 
     print(f"[!] At a speed of {HASHSPEED}MH/s")
-    print(f"[!] Average permutations is: {average_perm}")
-    print_timing(average_time)
+    print(f"[!] Average permutations is: {average_all_perm}")
+    print_timing(average_all_time)
+
+    print(f"[!] Average one static word permutations is: {average_static_one_perm}")
+    print_timing(average_one_static)
+
+    print(f"[!] Average two static word permutations is: {average_static_two_perm}")
+    print_timing(average_two_static)
 
     print(f"[!] Max: {max_perm}")
     print_timing(max_time)
@@ -423,40 +295,40 @@ def determine_average_perms(number_of_words, all_perms=True):
     print(f"[!] Min: {min_perm}")
     print_timing(min_time)
     
+def PGP_key_hash(key_data):
+    # Skips headers and formatting lines
+    key_base64 = ""
+    for l in key_data[1:-2]:
+        key_base64 += l.strip()
+
+    # All the bytes from the key
+    key_bytes = base64.b64decode(key_base64)
+
+    # Takes the PGP packey length from the header
+    key_length = int.from_bytes(key_bytes[1:3], byteorder="big")
+
+    # Takes the header and length
+    key_formatted_bytes = key_bytes[:key_length + 3]
+
+    sha1 = SHA1.new()
+    sha1.update(key_formatted_bytes)
+
+    # Takes the left 64-bit
+    return sha1.hexdigest()[:16].upper()
+
 def generate_words_for_PGP_keys(key_path_1, key_path_2):
     
-    # TODO: Add ability to pass the first key
-    # key_data_1 = []
-    # with open(key_path_1) as key1:
-    #     key_data_1 = key1.readlines()
+    key_data_1 = []
+    with open(key_path_1) as key1:
+        key_data_1 = key1.readlines()
     
-    # TEMP
-    key_finger_print_1 = "7E6C 4BF0 5CE3 F379".replace(" ", "")
-
     key_data_2 = []
     with open(key_path_2) as key2:
         key_data_2 = key2.readlines()
 
-    key_base64_2 = ""
-
-    # Skips headers and formatting lines
-    for l in key_data_2[1:-2]:
-        key_base64_2 += l.strip()
-
-    # All the bytes from the key
-    bytes_2 = base64.b64decode(key_base64_2)
-
-    # Takes the PGP packey length from the header
-    key_length = int.from_bytes(bytes_2[1:3], byteorder="big")
-
-    # Takes the header and length
-    key_bytes_2 = bytes_2[:key_length + 3]
-
-    sha1 = SHA1.new()
-    sha1.update(key_bytes_2)
-
     # Takes the left 64-bit
-    key_finger_print_2 = sha1.hexdigest()[:16].upper()
+    key_finger_print_1 = PGP_key_hash(key_data_1)
+    key_finger_print_2 = PGP_key_hash(key_data_2)
 
     combined_key = XOR_fingerprints(key_finger_print_1, key_finger_print_2)
     fingerprint_to_words(combined_key)
@@ -476,7 +348,7 @@ def args():
     parser.add_argument("-m","--multi-mappings", dest="multi", action="store_true")
     parser.add_argument("--am", "--average-multi", dest="average_multi", action="store_true")
     parser.add_argument("-a", "--average", dest="average", action="store_true")
-    parser.add_argument("-t", "--trustwords", dest="keys", nargs=2, action="store")
+    parser.add_argument("-t", "--trustwords", dest="trustwords", nargs=2, action="store")
     parser.add_argument("-f", "--find-keys", dest="find_keys", action="store_true")
     
     # Params
@@ -485,8 +357,8 @@ def args():
     parser.add_argument("-l", "--langauge", dest="lang", nargs=1, action="store")
     parser.add_argument("-n","--num-of-words", dest="num_words", nargs=1, type=int, action="store")
     parser.add_argument("-o", "--output-file-name", dest="output", nargs=1, action="store")
+    parser.add_argument("-p", "--perms-for-words", dest="perms", nargs=1, action="store")
     args = parser.parse_args()
-
 
     # Number of words
     number_of_words = args.num_words[0] if args.num_words else 4
@@ -495,21 +367,16 @@ def args():
     outFileName = args.output[0] if args.output else "target_keys.txt"
 
     if args.key:
-        CONTROLLABLE_FINGERPRINT = load_key_from_file_and_return_fingerprint(args.key[0], number_of_words)
+        CONTROLALBLE_FINGERPRINT = load_key_from_file_and_return_fingerprint(args.key[0], number_of_words)
 
     # Loads the file paths for similar wordlist
     if args.similar: 
         similar_mappings_file_name = args.similar[0]
         load_similar_mappings(similar_mappings_file_name)
-    else:
-        # Average multi and multi options do not require a similar wordlist
-        if not args.average_multi or args.multi:
-            print("[!] Please include similar wordlist!")
-            exit()
 
     # Sets the dictionary mapping file - Default is english
-    dictionary_file_name = f"../../Wordlists/Trustwords/{args.lang[0].upper()}/{args.lang[0].lower()}.csv" \
-        if args.lang else f"../../Wordlists/Trustwords/EN/en.csv"
+    dictionary_file_name = f"../../../Wordlists/Trustwords/{args.lang[0].upper()}/{args.lang[0].lower()}.csv" \
+        if args.lang else f"../../../Wordlists/Trustwords/EN/en.csv"
     load_mappings(dictionary_file_name)
 
     ### MODES ###
@@ -524,12 +391,31 @@ def args():
         exit()
 
     # Outputs the trust words for two actual keys
-    if args.keys:
+    if args.trustwords:
         generate_words_for_PGP_keys(args.keys[0], args.keys[1])
         exit()
 
     if args.find_keys:
         create_actual_fingerprint_and_key(number_of_words, UNCONTROLLED_FINGERPRINT)
+        exit()
+
+    if args.perms:
+        input_string = args.perms[0]
+        input_string = input_string.replace("[", "")
+        input_string = input_string.replace("]", "")
+        input_string = input_string.replace("\'", "")
+
+        similar_words = []
+
+        words = input_string.split(",")
+        words = list(map(str.strip, words))
+
+        for w in words:
+            m = similar_word_mapping[w] + [w]
+            similar_words.append(m)
+
+        y = get_perms(similar_words)
+        print("[!] Permutations: ", len(y))
         exit()
 
     combined_fingerprint = XOR_fingerprints(CONTROLLABLE_FINGERPRINT, UNCONTROLLED_FINGERPRINT)
@@ -538,13 +424,13 @@ def args():
     # Creates list of multiple mapping
     # i.e. the word "Tree" maps to 0xff43 and 0xf3ee
     if args.multi:
-        perms = gen_all_same_perms(trustwords) 
+        perms = multimap_perms(trustwords, word_to_hex_mapping) 
         key_possibilities = find_possible_keys(perms, UNCONTROLLED_FINGERPRINT)
         save_permutations(key_possibilities, outFileName)
 
     # Default mode of finding all mappings
     else:
-        perms = gen_all_similar_perms(trustwords)
+        perms = similar_perms(trustwords, similar_word_mapping, word_to_hex_mapping)
         key_possibilities = find_possible_keys(perms, UNCONTROLLED_FINGERPRINT)
         save_permutations(key_possibilities, outFileName)
 
