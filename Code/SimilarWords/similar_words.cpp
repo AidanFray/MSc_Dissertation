@@ -6,7 +6,7 @@
 #include <fstream>
 
 #include "./modes/soundex.hpp"
-#include "./modes/levenshtien.hpp"
+#include "./modes/levenshtein.hpp"
 #include "./modes/metaphone.hpp"
 #include "./modes/nysiis.hpp"
 #include "./modes/word_vectors.hpp"
