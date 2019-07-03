@@ -11,7 +11,7 @@
             "request":"launch",
             "program":"${fileDirname}/${fileBasename}",
             "console":"integratedTerminal",
-            "args": ["${fileDirname}/../../../Wordlists/PGP_word_list/all/words.txt"]
+            "args": []
         },
         {
             "name": "g++ build hash.cpp",

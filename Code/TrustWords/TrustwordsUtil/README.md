@@ -44,6 +44,13 @@ A set of trustwords can be passed as a parameter. The script will out the number
 python trustword_util.py -p "['WORD1', 'WORD2', 'WORD3', WORD4']" -s <SIMILAR_LIST>
 ```
 
+### Number of vuln keys
+By entering a list of keys and a value for the number of perms required to be vulnerable the script can produce a percentage of vulnerable keys
+
+```
+python trustword_util.py --vuln-keys <KEY_LIST_PATH> <NUM_OF_PERMS> -s <SIMILAR_LIST>
+```
+
 ### Options
 
 **Similar list (`-s`)**

@@ -1,35 +1,40 @@
 import itertools
+import sys
 
-from CONFIG import MAX_PEM_SIZE
+sys.path.insert(0, "..")
 
-def multimap_perms(wordlist, mappingWordToHex, PRINT=True):
-    mappings = multimap_combinations(wordlist, mappingWordToHex)
+from mappings import *
 
-    if check_perm_size(mappings):
-        perms = get_perms(mappings)
+from util.CONFIG import MAX_PEM_SIZE
+
+def multimap_perms(wordlist, mapping, PRINT=True):
+    combinations = multimap_combinations(wordlist, mapping)
+
+    if check_perm_size(combinations):
+        perms = get_perms(combinations)
 
         if PRINT:
             print(f"[*] Mapping allows {len(perms)} same combinations!")
 
     return perms
 
-def multimap_combinations(wordlist, wordToHexMapping):
-    mappings = []
+def multimap_combinations(wordlist, mapping):
+    combinations = []
 
     for word in wordlist:
-        mappings.append(wordToHexMapping[word])
+        combinations.append(mapping.getMapping(MappingModes.WordToHex, word))
 
-    return mappings
+    return combinations
 
-def similar_perms(trustwords, similarWordMapping, wordToHexMapping, PRINT=True):
+def similar_perms(trustwords, mapping, PRINT=True):
     """
     This method takes multi-mappings (Same word multiple value) and
     similar words and creates all the permutations of fingerprints
     that allow these near matches
     """
 
-    fingerprint_chunks = similar_combinations(trustwords, similarWordMapping, wordToHexMapping)
-    
+    fingerprint_chunks = similar_combinations(trustwords, mapping)
+
     output_perms = []
     if check_perm_size(fingerprint_chunks):
         output_perms = get_perms(fingerprint_chunks)
@@ -37,7 +42,7 @@ def similar_perms(trustwords, similarWordMapping, wordToHexMapping, PRINT=True):
 
     return output_perms
 
-def similar_combinations(trustwords, similarWordsMapping, wordToHexMapping, staticPos=[]):
+def similar_combinations(trustwords, mapping, staticPos=[]):
     similar_words = []
 
     # Finds all similar words from the current fingerprint
@@ -45,7 +50,7 @@ def similar_combinations(trustwords, similarWordsMapping, wordToHexMapping, stat
 
         if index not in staticPos:
             try:
-                similar_words.append(similarWordsMapping[word])
+                similar_words.append(mapping.getMapping(MappingModes.SimilarWord, word))
             
             # No similar words
             except KeyError:
@@ -61,7 +66,7 @@ def similar_combinations(trustwords, similarWordsMapping, wordToHexMapping, stat
 
         perms = []
         for w in words:
-            chunk = wordToHexMapping[w]
+            chunk = mapping.getMapping(MappingModes.WordToHex, w)
             perms += chunk
 
         fingerprint_chunks.append(perms)
