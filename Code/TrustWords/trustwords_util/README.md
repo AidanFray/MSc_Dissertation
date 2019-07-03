@@ -48,7 +48,7 @@ python trustword_util.py -p "['WORD1', 'WORD2', 'WORD3', WORD4']" -s <SIMILAR_LI
 By entering a list of keys and a value for the number of perms required to be vulnerable the script can produce a percentage of vulnerable keys
 
 ```
-python trustword_util.py --vuln-keys <KEY_LIST_PATH> <NUM_OF_PERMS> -s <SIMILAR_LIST>
+python trustword_util.py --vuln-keys <KEY_LIST_PATH> <NUM_OF_PERMS> <STATIC_WORDS> (0-2) -s <SIMILAR_LIST>
 ```
 
 ### Options

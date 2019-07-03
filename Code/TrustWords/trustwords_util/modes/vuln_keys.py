@@ -17,19 +17,27 @@ def load_keys_and_parse(filePath):
 
     return keys
 
-def find_vuln_keys(vulnKeyFilePath, mapping, targetNumberOfPerms):
+def find_vuln_keys(vulnKeyFilePath, targetNumberOfPerms, staticWordsVal, mapping):
     
     keys = load_keys_and_parse(vulnKeyFilePath)
 
-    trustwords = []
-    for k in keys:
-        trustwords.append(fingerprint_to_words(k, mapping, PRINT=False))
+    static_pos = []
+    if staticWordsVal == 2:
+        static_pos = [0, 2]
+    elif staticWordsVal == 1:
+        static_pos = [0]
 
-    # Finds the keys that have the permuataions over our targets
-    for t in trustwords:
-        num_of_perms = len(similar_perms(t, mapping, PRINT=False))
+    total_loops = len(keys)
 
-        if num_of_perms >= targetNumberOfPerms:
-            print(t)
+    for i, k in enumerate(keys):
+        trustwords = fingerprint_to_words(k, mapping, PRINT=False)
+
+        num_of_perms = len(similar_perms(trustwords, mapping, PRINT=False, staticPos=static_pos))
+
+        # num_of_perms == 0 is when RAM protection activates
+        if num_of_perms >= targetNumberOfPerms or num_of_perms == 0:
+            print(k)
+
+        sys.stderr.write(f"{i}/{total_loops}\r")
 
     

@@ -26,14 +26,22 @@ def xor_fingerprint(f1, f2):
     return hex(xor)[2:].zfill(40)
 
 
-def gen_pairs(fingerprints):
+def gen_pairs(fingerprints, numOfPairs):
 
+    count = 0
     for i1, f1 in enumerate(fingerprints):
         for _, f2 in enumerate(fingerprints[i1 + 1:]):
             print(xor_fingerprint(f1, f2))
 
+            count += 1
+
+            if count > numOfPairs:
+                exit()
+
 if __name__ == "__main__":
     
+    NUMBER_OF_PAIRS = 10000
+
     if len(sys.argv) != 2:
         usage()
 
@@ -42,4 +50,4 @@ if __name__ == "__main__":
     fingerprints = []
     load_fingerprints(fingerprints, fingerprint_filepath)
 
-    gen_pairs(fingerprints)
+    gen_pairs(fingerprints, NUMBER_OF_PAIRS)

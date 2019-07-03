@@ -26,14 +26,14 @@ def multimap_combinations(wordlist, mapping):
 
     return combinations
 
-def similar_perms(trustwords, mapping, PRINT=True):
+def similar_perms(trustwords, mapping, PRINT=True, staticPos=[]):
     """
     This method takes multi-mappings (Same word multiple value) and
     similar words and creates all the permutations of fingerprints
     that allow these near matches
     """
 
-    fingerprint_chunks = similar_combinations(trustwords, mapping)
+    fingerprint_chunks = similar_combinations(trustwords, mapping, staticPos)
 
     output_perms = []
     if check_perm_size(fingerprint_chunks):
@@ -55,6 +55,9 @@ def similar_combinations(trustwords, mapping, staticPos=[]):
             # No similar words
             except KeyError:
                 similar_words.append([])
+
+        else:
+            similar_words.append([])
 
     for index, _ in enumerate(similar_words):
         # Adds the original words to the lists
@@ -78,7 +81,6 @@ def get_perms(lists):
     This method uses ittertools to create all the
     permutations of fingerprints
     """
-
     perm_size = 1
     for l in lists:
         perm_size *= len(l) 
@@ -139,7 +141,7 @@ def check_perm_size(lists):
     perm_size = get_perm_size(lists)
 
     if perm_size > MAX_PEM_SIZE:
-        print(f"[!] Permutation too big at: {perm_size}. Ignoring due to RAM constraints")
+        sys.stderr.write(f"[!] Permutation too big at: {perm_size}. Ignoring due to RAM constraints\n")
         return False
     else:
         return True

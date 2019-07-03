@@ -147,7 +147,7 @@ def args():
     parser.add_argument("-n","--num-of-words", dest="num_words", nargs=1, type=int, action="store")
     parser.add_argument("-o", "--output-file-name", dest="output", nargs=1, action="store")
     parser.add_argument("-p", "--perms-for-words", dest="perms", nargs=1, action="store")
-    parser.add_argument("--vuln-keys", dest="vuln", nargs=2, action="store")
+    parser.add_argument("--vuln-keys", dest="vuln", nargs=3, action="store")
     
     arg = parser.parse_args()
 
@@ -166,7 +166,7 @@ def args():
         load_similar_mappings(similar_mappings_file_name)
 
     # Sets the dictionary mapping file - Default is english
-    dictionary_file_name = f"../../../Wordlists/Trustwords/{args.lang[0].upper()}/{args.lang[0].lower()}.csv" \
+    dictionary_file_name = f"../../../Wordlists/Trustwords/{arg.lang[0].upper()}/{arg.lang[0].lower()}.csv" \
         if arg.lang else f"../../../Wordlists/Trustwords/EN/en.csv"
     load_mappings(dictionary_file_name)
 
@@ -201,8 +201,9 @@ def args():
     if arg.vuln:
         key_list_path = arg.vuln[0]
         num_of_perms = int(arg.vuln[1])
+        static_words_val = int(arg.vuln[2])
 
-        VK.find_vuln_keys(key_list_path, mapping, num_of_perms)    
+        VK.find_vuln_keys(key_list_path, num_of_perms, static_words_val, mapping)    
         exit()
 
     combined_fingerprint = XOR_fingerprints(CONTROLLABLE_FINGERPRINT, UNCONTROLLED_FINGERPRINT)
