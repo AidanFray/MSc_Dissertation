@@ -2,6 +2,9 @@
 
 Here, the comparison of number of matches is a good way to loosely justify the value used for word vectors distance.
 
+(All words match)
+MAX MATCHES = 2693921409
+
 ----------------------------------------------------
 
 ### Wordvec (3)
@@ -28,7 +31,7 @@ Here, the comparison of number of matches is a good way to loosely justify the v
 
 ### Leven (2)
 
-	- TODO
+	- 0.03974340143788508
 
 ### Metephone
 
