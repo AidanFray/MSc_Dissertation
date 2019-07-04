@@ -13,7 +13,7 @@ NUM_OF_DEMOGRAPHIC_QUESTIONS = 4
 #   1. English proficiency
 #   2. Attension question "UNIVERSITY-UNIVERSITY"
 #   3. Attension question "DYNAMIC-DYNAMIC"
-NEWLY_ADDED_QUESTIONS = 3
+NEWLY_ADDED_QUESTIONS = 6
 
 SECTIONS = ["Soundex", "Metaphone", "Leven", "NYSIIS", "WordVec", "Random"]
 

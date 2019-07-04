@@ -1,7 +1,22 @@
 # Meeting Notes
 
+Minimum wage: $7.25
+Living wage:  ~$15.00
+
 ## Experiment 1
 
+### Participants and timings
+
+Timing: **2:30 mins**
+
+Required participants: **80** (5 samples per metric total required 384)
+
+Payment per completion: **$0.30**
+
+TOTAL:                  **$24**
+
+
+### Wordvec value
 Choice for the Word vector size
 
 ```
@@ -21,6 +36,16 @@ NYSIIS          - 188,474
 ```
 
 ## Experiment 2
+
+### Participants and timing
+
+Timing: **3.5 minuites**
+
+Required participants: **385**
+
+Payment for completion: **$0.42**
+
+TOTAL:                  **$161.7**
 
 ### Currrently broken attacks
 
