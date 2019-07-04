@@ -13,7 +13,7 @@ MAX MATCHES = 2693921409
 
 ### Wordvec (4)
 
-	- TODO
+	- 0.00274%4
 
 ### Wordvec (5)
 

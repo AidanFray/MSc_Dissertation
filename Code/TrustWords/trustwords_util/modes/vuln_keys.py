@@ -32,7 +32,7 @@ def find_vuln_keys(vulnKeyFilePath, targetNumberOfPerms, staticWordsVal, mapping
     for i, k in enumerate(keys):
         trustwords = fingerprint_to_words(k, mapping, PRINT=False)
 
-        num_of_perms = len(similar_perms(trustwords, mapping, PRINT=False, staticPos=static_pos))
+        num_of_perms = similar_perms_size(trustwords, mapping, staticPos=static_pos)
 
         # num_of_perms == 0 is when RAM protection activates
         if num_of_perms >= targetNumberOfPerms or num_of_perms == 0:

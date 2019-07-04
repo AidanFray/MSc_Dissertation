@@ -1,8 +1,8 @@
-PERMS=1000
+PERMS=100000
 
 PAIR_SIZE=100000
 
-declare -a metricArr=("leven" "metaphone" "nysiis" "wordvec")
+declare -a metricArr=("soundex" "leven" "metaphone" "nysiis" "wordvec")
 declare -a staticArr=("0" "1" "2")
 
 rm report-perms-$PERMS.md
@@ -14,6 +14,7 @@ do
     do
         echo $i-$s
   
+        mkdir ./vuln_keys/$i
         mkdir ./vuln_keys/$i/$i-$PERMS
         mkdir ./vuln_keys/$i/$i-$PERMS/$PERM
 

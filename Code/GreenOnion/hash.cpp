@@ -45,15 +45,15 @@ static std::mutex kernel_work_lock;
 
 // TODO: Make these script arguments
 bool PRINT_SHA1_TEST = true;
-bool END_ON_KEY_FOUND = false;
+bool END_ON_KEY_FOUND = true;
 
 // RSA key params
 int KEY_LENGTH = 2048;
 int EXPONENT = 0x01000001;
 
 // Bloom filter params
-uint BLOOM_NUMBER_OF_HASHES_STATIC  = 2;    //Set to 0 for dynamic size
-long BLOOM_SIZE_STATIC              = 1700000;    //Set to 0 for dynamic size
+uint BLOOM_NUMBER_OF_HASHES_STATIC  = 2;          //Set to 0 for dynamic size
+long BLOOM_SIZE_STATIC              = 1000000;    //Set to 0 for dynamic size
 
 // Threading params
 bool running = true;

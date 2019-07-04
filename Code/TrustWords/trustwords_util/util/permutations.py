@@ -42,6 +42,14 @@ def similar_perms(trustwords, mapping, PRINT=True, staticPos=[]):
 
     return output_perms
 
+def similar_perms_size(trustwords, mapping, staticPos=[]):
+    """
+    This method just calculates the size of the permutations
+    this should save time and memory
+    """
+    fingerprint_chunks = similar_combinations(trustwords, mapping, staticPos)
+    return get_perm_size(fingerprint_chunks)
+
 def similar_combinations(trustwords, mapping, staticPos=[]):
     similar_words = []
 
