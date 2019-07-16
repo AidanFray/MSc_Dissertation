@@ -32,10 +32,15 @@ def gen_new_words(wordlist):
 
     exp_id = session.get("exp_id")
 
-    new_words = get_random_words(wordlist)
-
     # # Determines if their is an attack
-    attack_schema = attack.decision(new_words)
+    attack_schema = attack.decision()
+
+    if attack_schema:
+
+        # Grabs the original words to show
+        new_words = attack_schema[3]
+    else:
+        new_words = get_random_words(wordlist)
 
     exp = Experiment.from_json(session[exp_id])
     exp.add_round(new_words, attack_schema)

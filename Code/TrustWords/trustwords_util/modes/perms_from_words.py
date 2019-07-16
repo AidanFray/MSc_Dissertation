@@ -12,12 +12,8 @@ def num_of_perms_of_words(trustwords, mapping):
 
     similar_words = []
 
-    words = trustwords.split(",")
+    words = trustwords.split(" ")
     words = list(map(str.strip, words))
 
-    for w in words:
-        m = mapping.getMapping(MappingModes.SimilarWord, w) + [w]
-        similar_words.append(m)
-
-    y = get_perms(similar_words)
-    print("[!] Permutations: ", len(y))
+    y = similar_perms_size(words, mapping)
+    print("[!] Permutations: ", y)
