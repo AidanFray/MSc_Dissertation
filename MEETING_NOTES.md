@@ -1,6 +1,7 @@
 # Meeting Notes
 
 Minimum wage: $7.25
+
 Living wage:  ~$15.00
 
 ## Experiment 1
@@ -51,8 +52,8 @@ TOTAL:                  **$161.7**
 
 Examples like:
 ```
-    'MOTTLE', 'INTEROCULAR', 'COLONIAL', 'PLEASANTER'
-    'SOCORRO', 'WIGEON', 'STRONGBOW', 'ARCO'
+'MOTTLE', 'INTEROCULAR', 'COLONIAL', 'PLEASANTER'
+'SOCORRO', 'WIGEON', 'STRONGBOW', 'ARCO'
 ```
 
 Are producing **exactly** the same audio as their worded counterparts. This is proudcing attacks that show literally nothing.
@@ -98,4 +99,24 @@ metaphone    22902/100000   (22.90%)
 nysiis       10900/100000   (10.90%)
 leven        6537/100000    ( 6.53%)
 wordvec      5478/100000    ( 5.478)
+```
+
+# Test pilot study
+
+Remove results with a "high" average for the random values?
+
+```
+Leven       - 3.49
+WordVec     - 2.91
+NYSIIS      - 2.78
+Metaphone   - 2.51
+Soundex     - 2.38
+Random      - 1.52
+```
+
+Rejectable result
+```
+8 
+    RANDOM VALUES: ['4', '4', '2', '3', '4']
+    UNIVERISTY-UNIVERISTY: 3
 ```

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import TrustwordsSimulation from './components/Experiment/Simulation' 
-import LandingPage from './components/Experiment/LandingPage.jsx' 
+import TrustwordsSimulation from './components/Experiment/Simulation'
+import LandingPage from './components/Experiment/LandingPage.jsx'
 
 import Consent from './components/InfoPages/Consent.jsx'
 import Instruction from './components/InfoPages/Instructions.jsx'
@@ -11,32 +11,25 @@ import PostExperiment from './components/InfoPages/PostExperiment.jsx'
 
 import './stylesheets/App.css';
 
+function areCookiesEnabled() {
+  console.log("cookie")
+  try {
+    document.cookie = 'cookietest=1';
+    var cookiesEnabled = document.cookie.indexOf('cookietest=') !== -1;
+    document.cookie = 'cookietest=1; expires=Thu, 01-Jan-1970 00:00:01 GMT';
+    return cookiesEnabled;
+  } catch (e) {
+    return false;
+  }
+}
+
+
 export default class App extends Component {
 
   render() {
 
-    var isMobile = {
-      Android: function() {
-          return navigator.userAgent.match(/Android/i);
-      },
-      BlackBerry: function() {
-          return navigator.userAgent.match(/BlackBerry/i);
-      },
-      iOS: function() {
-          return navigator.userAgent.match(/iPhone|iPod/i);
-      },
-      Opera: function() {
-          return navigator.userAgent.match(/Opera Mini/i);
-      },
-      Windows: function() {
-          return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
-      },
-      any: function() {
-          return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
-      }
-    };
-
-    return (
+    if (areCookiesEnabled()) {
+      return (
         <Router>
           <Route exact path="/" component={Consent} />
           <Route exact path="/experiment" component={LandingPage} />
@@ -46,4 +39,17 @@ export default class App extends Component {
         </Router>
       );
     }
-  } 
+    else {
+      return (
+        <div>
+          <div>
+            This experiment cannot be completed with cookied deactivated.           
+          </div>
+          <div>
+            Please enable cookies and reload the page.
+          </div>
+        </div>
+      )
+    }
+  }
+} 

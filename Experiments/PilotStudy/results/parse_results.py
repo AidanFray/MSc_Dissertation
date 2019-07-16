@@ -13,6 +13,8 @@ NUM_OF_DEMOGRAPHIC_QUESTIONS = 4
 #   1. English proficiency
 #   2. Attension question "UNIVERSITY-UNIVERSITY"
 #   3. Attension question "DYNAMIC-DYNAMIC"
+#   4. Worder ID
+#   5. Consent
 NEWLY_ADDED_QUESTIONS = 6
 
 SECTIONS = ["Soundex", "Metaphone", "Leven", "NYSIIS", "WordVec", "Random"]
@@ -38,16 +40,15 @@ def order_results(filepath):
     del responses[0]
 
     # Splits data into 5x5 sections
-    for r in responses:
+    for i, r in enumerate(responses):
 
         parts = r.split(",")
 
-        # HACK: Removes the english ability question added later 
-        parts = parts[:-(NEWLY_ADDED_QUESTIONS + 1)]
+        parts = parts[NUM_OF_DEMOGRAPHIC_QUESTIONS:-(NEWLY_ADDED_QUESTIONS)]
 
         # Prints out each section
         response_sections = []
-        for x in range(NUM_OF_DEMOGRAPHIC_QUESTIONS, len(parts), 5):
+        for x in range(0, len(parts), 5):
 
             section = parts[x:x + 5]
             section = list(map(str.strip, section))

@@ -1,7 +1,7 @@
 var FORM_ID = "14h2xS2iWBYhWsj41x9rW-pbxYPtl3sYHnQxjRB5-YpQ";
 
 var ALGOS =       ["Soundex", "Metaphone", "Leven", "NYSIIS", "WordVec", "Random"];
-var ALGO_SIZES =  [763777,     412916,      97730,   188474,   14550,     10000];
+var ALGO_SIZES =  [763777,     412916,      97730,   188474,   73962,     10000];
 
 var QUESTION_PER_ALGO = 5;
 
