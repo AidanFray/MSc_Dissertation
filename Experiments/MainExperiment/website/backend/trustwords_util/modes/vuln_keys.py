@@ -41,18 +41,3 @@ def find_vuln_keys(vulnKeyFilePath, targetNumberOfPerms, staticWordsVal, mapping
             print(" ".join(trustwords))
 
         sys.stderr.write(f"{i}/{total_loops}\r")
-
-#DEBUG
-X = "FRIAR CORPOREALITY OSSEOUS AMRITSAR"
-
-if __name__ == "__main__":
-    m = Mappings()
-
-    load_similar_mappings(f"../../data/similar/soundex.csv", m)
-    load_mappings("../../data/en.csv", m)
-
-    # find_vuln_keys("../avergae_perms/realWorldAverage/100000_pairs.txt", 1000, [], m)
-
-    x = similar_perms_size(X.split(" "), m, staticPos=[0, 2])
-    print(x)
-        
