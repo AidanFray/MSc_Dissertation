@@ -3,6 +3,9 @@ import random
 import itertools
 import CONFIG
 
+from trustwords_util.mappings import Mappings
+from trustwords_util.util import load, permutations, trustwords
+
 """
 Each sub attack here will generate a random match from 
 the list of combinations:
@@ -24,7 +27,7 @@ is all equal and therefore equally distributed
 """
 
 # To make sure permutations size don't get too big    
-MAX_SIMILAR_PERM_SIZE = 100
+MAX_SIMILAR_PERM_SIZE = 5000000
 
 def decision():
     
@@ -39,9 +42,12 @@ def decision():
 
     originalWords = _sample_from_vuln_keys(attack_metric_string, str(attack_type_choice))
 
-    similar_words = load_similar_words(attack_metric_string)
+    m = Mappings()
 
-    words = ATTACK_TYPES[attack_type_choice](originalWords, similar_words)
+    load.load_mappings("./data/en.csv", m)
+    load.load_similar_mappings(f"./data/similar/{attack_metric_string.lower()}.csv", m)
+
+    words = ATTACK_TYPES[attack_type_choice](originalWords, m)
 
     print("[D] Attack: ", attack_metric_string, attack_type_choice)
 
@@ -61,41 +67,18 @@ def load_similar_words(attackMetricChoice):
 
     return similar_words 
 
-def _get_random_match(words, similarWordsDict, staticPositions):
-    combinations = []
+def _get_random_match(words, mapping, staticPositions):
 
-    for i, w in enumerate(words):
+    fingerprintChunks = permutations.similar_perms(words, mapping, PRINT=False, staticPos=staticPositions)   
 
-        possibilities = []
+    print("[D] Words:", words)
+    print("[D] similar_perms(): ", len(fingerprintChunks))
+    print("[D] similar_perms_size(): ", permutations.similar_perms_size(words, mapping, staticPos=staticPositions))
 
-        possibilities.append(w)
-        if not i in staticPositions:
+    chunkChoice = random.choice(fingerprintChunks)
 
-            similar_word = [similarWordsDict[w]]
+    return trustwords.fingerprint_to_words("".join(chunkChoice), mapping, PRINT=False)
 
-            # This is the make sure the cap isn't bias
-            if len(similar_word) > MAX_SIMILAR_PERM_SIZE:
-                random.shuffle(similar_word)
-
-            for similarWords in similar_word[:MAX_SIMILAR_PERM_SIZE]:
-                for s in similarWords:
-                    possibilities.append(s)
-
-        combinations.append(possibilities)
-
-    # TODO: Refactor me 
-    MAX_LIST_SIZE = 5000000
-
-    perms = list(itertools.product(
-            combinations[0][:MAX_LIST_SIZE], 
-            combinations[1][:MAX_LIST_SIZE], 
-            combinations[2][:MAX_LIST_SIZE], 
-            combinations[3][:MAX_LIST_SIZE])
-        )
-    print("[D] Perm size: ", len(perms))
-    random_match = list(perms[random.randint(0, len(perms) - 1)])
-    
-    return random_match
 
 def _sample_from_vuln_keys(attackMetric, attackType):
 
@@ -109,14 +92,14 @@ def _sample_from_vuln_keys(attackMetric, attackType):
 
     return words
 
-def generate_zero_static_word_match(words, similarWordsDict):
-    return _get_random_match(words, similarWordsDict, staticPositions=[])
+def generate_zero_static_word_match(words, mapping):
+    return _get_random_match(words, mapping, staticPositions=[])
 
-def generate_one_static_word_match(words, similarWordsDict):
-    return _get_random_match(words, similarWordsDict, staticPositions=[0])
+def generate_one_static_word_match(words, mapping):
+    return _get_random_match(words, mapping, staticPositions=[0])
 
-def generate_two_static_word_match(words, similarWordsDict):
-    return _get_random_match(words, similarWordsDict, staticPositions=[0, 3])
+def generate_two_static_word_match(words, mapping):
+    return _get_random_match(words, mapping, staticPositions=[0, 3])
 
 ATTACK_TYPES = \
     [

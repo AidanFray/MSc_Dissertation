@@ -1,9 +1,0 @@
-soundex-0 92006/100000
-soundex-1 37272/100000
-soundex-2 136/100000
-metaphone-0 22902/100000
-metaphone-1 1575/100000
-metaphone-2 3/100000
-nysiis-0 10900/100000
-nysiis-1 264/100000
-nysiis-2 0/100000
