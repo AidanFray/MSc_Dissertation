@@ -43,8 +43,8 @@ def decision():
 
     m = mappings.Mappings()
 
-    load.load_mappings("./data/en.csv", m)
-    load.load_similar_mappings(f"./data/similar/{attack_metric_string.lower()}.csv", m)
+    load.load_mappings(f"{CONFIG.BASE_FILE_LOCATION}data/en.csv", m)
+    load.load_similar_mappings(f"{CONFIG.BASE_FILE_LOCATION}data/similar/{attack_metric_string.lower()}.csv", m)
 
     words = ATTACK_TYPES[attack_type_choice](originalWords, m)
 
@@ -81,7 +81,7 @@ def _get_random_match(words, mapping, staticPositions):
 
 def _sample_from_vuln_keys(attackMetric, attackType):
 
-    file_path = f"./data/vuln_keys/{attackMetric.lower()}/{attackMetric.lower()}-static-{attackType}.txt"
+    file_path = f"{CONFIG.BASE_FILE_LOCATION}data/vuln_keys/{attackMetric.lower()}/{attackMetric.lower()}-static-{attackType}.txt"
 
     data = None
     with open(file_path, "r") as file:

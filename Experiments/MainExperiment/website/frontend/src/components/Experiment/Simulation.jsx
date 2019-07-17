@@ -54,6 +54,7 @@ export default class TrustwordSimulation extends Component {
   }
 
   onClick_accept() {
+    this.show_word_loading()
     toast.success("ACCEPT")
     fetch(URL_BASE + '/submit_result?result=True')
       .then((r) => r.text())
@@ -61,6 +62,7 @@ export default class TrustwordSimulation extends Component {
   }
 
   onClick_decline() {
+    this.show_word_loading()
     toast.error("DECLINE" )
     fetch(URL_BASE + '/submit_result?result=False')
       .then((r) => r.text())
@@ -74,7 +76,6 @@ export default class TrustwordSimulation extends Component {
   }
 
   refresh_words() {
-    this.setState({ words: <Loader type="ThreeDots" color="#00BFFF" height="14"	width="20"/>  })
 
     fetch(URL_BASE + '/get_words')
       .then(response => response.text())
@@ -83,6 +84,10 @@ export default class TrustwordSimulation extends Component {
           this.setState({ words: t })
         }
       })
+  }
+
+  show_word_loading() {
+    this.setState({ words: <Loader type="ThreeDots" color="#00BFFF" height="14"	width="20"/>  })
   }
 
   render() {
@@ -125,6 +130,5 @@ export default class TrustwordSimulation extends Component {
       </View>
     );
   }
-
 
 }

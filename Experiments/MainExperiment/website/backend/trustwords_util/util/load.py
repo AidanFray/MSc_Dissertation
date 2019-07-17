@@ -1,11 +1,9 @@
-file_path = "."
-
 def load_mappings(fileName, mapping):
     """
     Loads the hex -> word mapping into a local dictionary
     """
 
-    with open(f"{file_path}/{fileName}") as file:
+    with open(f"{fileName}") as file:
 
         line = None
         while True:
@@ -38,7 +36,7 @@ def load_similar_mappings(fileName, mapping):
     this program from the method used to determine
     'similarity'
     """
-    with open(f"{file_path}/{fileName}") as file:
+    with open(f"{fileName}") as file:
         lines = file.readlines()
 
     for line in lines:
