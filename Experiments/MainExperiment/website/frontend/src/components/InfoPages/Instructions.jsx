@@ -44,7 +44,7 @@ class Instruction extends Component {
                         </Typography>
                         <br/>
                         <Typography style={text}>
-                        You'll initially be provided with a virtual device like the one bellow that will allow you to interact with the experiment.
+                            You'll initially be provided with a virtual device like the one below that will allow you to interact with the experiment.
                         </Typography>
                         <br/>
                         <img 

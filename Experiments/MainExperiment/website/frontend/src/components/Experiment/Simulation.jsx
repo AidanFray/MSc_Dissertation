@@ -70,6 +70,7 @@ export default class TrustwordSimulation extends Component {
   }
 
   setup_experiment() {
+    this.show_word_loading()
     fetch(URL_BASE + '/new_experiment?similar=TODO')
       .then((r) => r.text())
       .then(() => this.refresh_words())
