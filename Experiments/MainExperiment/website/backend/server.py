@@ -153,7 +153,7 @@ def submit_result():
         else:
             return "Error: Missing parameter \'result\'", 400
 
-WORDLIST = utils.load_wordlist(f"./{BASE_FILE_LOCATION}data/{WORDLIST_NAME}")
+WORDLIST = utils.load_wordlist(f"{BASE_FILE_LOCATION}data/{WORDLIST_NAME}")
 
 if __name__ == "__main__":
     app.run()
