@@ -1,11 +1,8 @@
 import itertools
 import sys
 
-sys.path.append("./trustwords_util")
-sys.path.append("..")
-
-from mappings import *
-from util.CONFIG import MAX_PEM_SIZE
+from .CONFIG import *
+from .mappings import *
 
 def multimap_perms(wordlist, mapping, PRINT=True):
     combinations = multimap_combinations(wordlist, mapping)

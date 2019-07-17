@@ -3,7 +3,7 @@ import sys
 
 sys.path.insert(0, "..")
 
-from mappings import *
+from .mappings import *
 
 def fingerprint_to_words(fingerprint, mapping, PRINT=True):
     """

@@ -12,6 +12,7 @@
     "react-device-frame": "^2.1.4",
     "react-dom": "^16.8.6",
     "react-icons": "^3.7.0",
+    "react-loader-spinner": "^2.3.0",
     "react-loading-overlay": "^1.0.1",
     "react-native-web": "^0.11.4",
     "react-router": "^5.0.1",

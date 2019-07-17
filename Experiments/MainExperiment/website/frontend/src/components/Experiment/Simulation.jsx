@@ -3,6 +3,8 @@ import { View, Image, StyleSheet, Text } from 'react-native';
 import {Flip, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Loader from 'react-loader-spinner'
+
 var trustword_top = require("../../images/trustwords_top.jpg");
 var trustword_filler = require("../../images/trustwords_filler.jpg");
 
@@ -72,6 +74,8 @@ export default class TrustwordSimulation extends Component {
   }
 
   refresh_words() {
+    this.setState({ words: <Loader type="ThreeDots" color="#00BFFF" height="14"	width="20"/>  })
+
     fetch(URL_BASE + '/get_words')
       .then(response => response.text())
       .then(t => {
@@ -92,7 +96,7 @@ export default class TrustwordSimulation extends Component {
           source={trustword_top}
           style={styles.top}
         />
-        <Text style={{ backgroundColor: "white", color: "black", margin: "10px" }}>
+        <Text style={{ backgroundColor: "white", color: "black", margin: "10px"}}>
           {this.state.words}
         </Text>
         <button

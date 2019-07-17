@@ -15,7 +15,8 @@ export default class AudioButton extends Component {
         this.state = {
             loading: false,
             playing: false,
-            loadingText: LOADING_TEXT
+            loadingText: LOADING_TEXT,
+            id: 0
         }
     }
 
@@ -44,7 +45,8 @@ export default class AudioButton extends Component {
     handleSongFinishedPlaying() {
         this.setState({
             playing: false,
-            loading: false
+            loading: false,
+            id: this.state.id += 1
         })
     }
 
@@ -74,7 +76,7 @@ export default class AudioButton extends Component {
 
                 {this.state.playing &&
                     <Sound
-                        url={"/get_audio"}
+                        url={"/get_audio?id=" + this.state.id}
                         playStatus={Sound.status.PLAYING}
                         onLoad={(loaded) => this.handleSongLoaded(loaded)}
                         onFinishedPlaying={() => this.handleSongFinishedPlaying()}

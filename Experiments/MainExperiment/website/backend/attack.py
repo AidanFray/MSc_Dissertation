@@ -3,8 +3,7 @@ import random
 import itertools
 import CONFIG
 
-from trustwords_util.mappings import Mappings
-from trustwords_util.util import load, permutations, trustwords
+from trustwords_util.util import load, permutations, trustwords, mappings
 
 """
 Each sub attack here will generate a random match from 
@@ -42,7 +41,7 @@ def decision():
 
     originalWords = _sample_from_vuln_keys(attack_metric_string, str(attack_type_choice))
 
-    m = Mappings()
+    m = mappings.Mappings()
 
     load.load_mappings("./data/en.csv", m)
     load.load_similar_mappings(f"./data/similar/{attack_metric_string.lower()}.csv", m)

@@ -14,7 +14,7 @@ from util.trustwords import *
 from util.timing import calculate_runtime, print_timing
 from util.CONFIG import HASHSPEED
 
-from mappings import Mappings
+from util.mappings import Mappings
 
 # MODES
 import modes.vuln_keys as VK

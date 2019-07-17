@@ -1,8 +1,8 @@
-import util.CONFIG as CONFIG
+from .CONFIG import *
 
 def calculate_runtime(length_in_chars, permutations):
     length_in_chars = float(length_in_chars)
-    hashspeed = int(CONFIG.HASHSPEED * 1000000)
+    hashspeed = int(HASHSPEED * 1000000)
     permutations = float(permutations)
 
     top = (2**(4 * (length_in_chars)))
