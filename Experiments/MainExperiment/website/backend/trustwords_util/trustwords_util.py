@@ -26,7 +26,7 @@ import modes.perms_from_words as PW
 from util.load import load_mappings, load_similar_mappings
 
 # GPG object
-gpg = gnupg.GPG(options=["--debug-quick-random"])
+gpg = gnupg.GPG(options=["--debug-quick-random", "--batch"])
 
 # Object that contains all the mapping dictionaries
 mapping = Mappings()
@@ -77,12 +77,12 @@ def load_key_from_file_and_return_fingerprint(filePath, number_of_words):
 
 def args():
     # The fingerprint of the target
-    UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379"
-    # UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379 1191"
-
-    # The fingerprint we can change via MITM
+    #   John Johnson <john@work.com>
+    UNCONTROLLED_FINGERPRINT    = "5067 4BA4 9A2E 5050"
     CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"
     # CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3 5F80"
+
+    staticWords = []
 
     parser = argparse.ArgumentParser(description='Compute similar TrustWord keys')
 
@@ -91,7 +91,7 @@ def args():
     parser.add_argument("--am", "--average-multi", dest="average_multi", action="store_true")
     parser.add_argument("-a", "--average", dest="average", action="store_true")
     parser.add_argument("-t", "--trustwords", dest="trustwords", nargs=2, action="store")
-    parser.add_argument("-f", "--find-keys", dest="find_keys", action="store_true")
+    parser.add_argument("-f", "--find-keys", nargs=1, dest="find_keys", action="store")
     
     # Params
     parser.add_argument("-k", "--key", dest="key", nargs=1, action="store")
@@ -101,6 +101,7 @@ def args():
     parser.add_argument("-o", "--output-file-name", dest="output", nargs=1, action="store")
     parser.add_argument("-p", "--perms-for-words", dest="perms", nargs=1, action="store")
     parser.add_argument("--vuln-keys", dest="vuln", nargs=3, action="store")
+    parser.add_argument("--static-words", dest="static", nargs=1, action="store")
     
     arg = parser.parse_args()
 
@@ -110,8 +111,11 @@ def args():
     # Output file name
     outFileName = arg.output[0] if arg.output else "target_keys.txt"
 
+    if arg.static:
+        staticWords = static_word_value_parse(int(arg.static[0]))
+
     if arg.key:
-        CONTROLALBLE_FINGERPRINT = load_key_from_file_and_return_fingerprint(arg.key[0], number_of_words)
+        CONTROLLABLE_FINGERPRINT = load_key_from_file_and_return_fingerprint(arg.key[0], number_of_words)
 
     # Loads the file paths for similar wordlist
     if arg.similar: 
@@ -141,7 +145,9 @@ def args():
 
     # Finds an actual key that produces the higest permutation size
     if arg.find_keys:
-        CK.create_actual_fingerprint_and_key(number_of_words, UNCONTROLLED_FINGERPRINT, mapping, gpg)
+        staticWords = int(arg.find_keys[0])
+
+        CK.create_actual_fingerprint_and_key(number_of_words, staticWords, UNCONTROLLED_FINGERPRINT, mapping, gpg)
         exit()
 
     # Returns the number of permutations for a trustword set
@@ -171,7 +177,7 @@ def args():
 
     # Default mode of finding all mappings
     else:
-        perms = similar_perms(trustwords, mapping)
+        perms = similar_perms(trustwords, mapping, staticPos=staticWords)
 
         key_possibilities = find_possible_keys(perms, UNCONTROLLED_FINGERPRINT)
         save_permutations(key_possibilities, outFileName)

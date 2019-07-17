@@ -4,7 +4,7 @@ sys.path.append("./trustword_util/util")
 
 from util.permutations import *
 from util.trustwords import *
-from mappings import *
+from util.mappings import *
 from util.load import *
 
 NUM_OF_WORDS = 4

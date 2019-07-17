@@ -59,3 +59,16 @@ def XOR_fingerprints(fingerprint1, fingerprint2):
         combined.append(c_hex)
 
     return "".join(combined)
+
+def static_word_value_parse(value):
+
+    if value == 0:
+        return []
+
+    if value == 1:
+        return [0]
+
+    if value == 2:
+        return [0, 3]
+
+    raise Exception("Invalid value")

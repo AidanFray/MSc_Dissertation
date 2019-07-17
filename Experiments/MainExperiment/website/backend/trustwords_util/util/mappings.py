@@ -22,10 +22,6 @@ class Mappings:
 
     def getMapping(self, mode, query):
         
-        # Checks for an empty list
-        if len(self._mappings[mode]) == 0:
-            raise Exception(f"Error: {mode} not loaded")
-
         output = self._mappings[mode][query]
 
         # Copy is required to make sure the values remian read only

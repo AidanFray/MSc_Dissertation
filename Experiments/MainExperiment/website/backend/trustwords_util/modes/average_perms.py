@@ -15,7 +15,7 @@ def determine_average_perms(number_of_words, mapping, all_perms=True):
 
     max_perm = 0
     min_perm = None
-    loops = 1000000
+    loops = 10000
 
     total_all = 0
     total_one_static = 0

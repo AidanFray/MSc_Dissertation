@@ -2,7 +2,6 @@ import sys
 import base64
 from Crypto.Hash import SHA1
 
-
 sys.path.insert(0, "..")
 
 from util.trustwords import *

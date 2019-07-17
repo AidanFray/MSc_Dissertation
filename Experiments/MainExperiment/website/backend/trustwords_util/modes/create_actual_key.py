@@ -1,13 +1,16 @@
 
 import sys
 
+from util.permutations import *
+from util.trustwords import *
+
 sys.path.insert(0, " ..")
 
-from util.trustwords import *
-from util.permutations import *
 
-def create_actual_fingerprint_and_key(number_of_words, uncontrolledFingerprint, mapping, gpg):
+def create_actual_fingerprint_and_key(numberOfWords, staticWords, uncontrolledFingerprint, mapping, gpg):
     
+    staticPositions = static_word_value_parse(staticWords)
+
     biggest_perm_size = 0
     biggest_key = None
 
@@ -23,13 +26,14 @@ def create_actual_fingerprint_and_key(number_of_words, uncontrolledFingerprint, 
         key = gpg.gen_key(input_data)
         fp = key.fingerprint
 
-        number_finger_chars = int(number_of_words * 4)
+        number_finger_chars = int(numberOfWords * 4)
         reduced_fingerprint = fp[-number_finger_chars:]
 
         combined_fingerprint = XOR_fingerprints(reduced_fingerprint, uncontrolledFingerprint)
         trustWords = fingerprint_to_words(combined_fingerprint, mapping, PRINT=False)
 
-        combinations = similar_combinations(trustWords, mapping)
+        combinations = similar_combinations(trustWords, mapping, staticPos=staticPositions)
+
         perm_size = get_perm_size(combinations)
 
         if perm_size > biggest_perm_size:
@@ -44,8 +48,7 @@ def create_actual_fingerprint_and_key(number_of_words, uncontrolledFingerprint, 
     print()
     print(biggest_perm_size)
     print(gpg.export_keys(biggest_key))
-    print(DEBUG_FINGERPRINT)
+    # print(DEBUG_FINGERPRINT)
 
     # TODO: Fix private key export
-    print(gpg.export_keys(biggest_key, secret=True))
-    
+    # print(gpg.export_keys(biggest_key, secret=True))
