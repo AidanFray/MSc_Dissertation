@@ -8,6 +8,7 @@ import LandingPage from './components/Experiment/LandingPage.jsx'
 import Consent from './components/InfoPages/Consent.jsx'
 import Instruction from './components/InfoPages/Instructions.jsx'
 import PostExperiment from './components/InfoPages/PostExperiment.jsx'
+import Demographics from './components/InfoPages/Demographics.jsx'
 
 import './stylesheets/App.css';
 
@@ -32,8 +33,9 @@ export default class App extends Component {
       return (
         <Router>
           <Route exact path="/" component={Consent} />
-          <Route exact path="/experiment" component={LandingPage} />
+          <Route exact path="/demographics" component={Demographics} />
           <Route exact path="/instructions" component={Instruction} />
+          <Route exact path="/experiment" component={LandingPage} />
           <Route exact path="/post_experiment" component={PostExperiment} />
           <Route exact path="/bd65600d-8669-4903-8a14-af88203add38/" component={TrustwordsSimulation} />
         </Router>

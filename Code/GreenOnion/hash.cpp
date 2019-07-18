@@ -54,6 +54,9 @@ int KEY_LENGTH = 2048;
 int EXPONENT = 0x01000001;
 
 // Bloom filter params
+
+// TODO: DO NOT CHANGE ME! WITHOUT ALTERING THE VALUE IN THE opencl/SHA1.cl file
+//       passing this value to the script is required
 uint BLOOM_NUMBER_OF_HASHES_STATIC  = 2;          //Set to 0 for dynamic size
 long BLOOM_SIZE_STATIC              = 1000000;    //Set to 0 for dynamic size
 
@@ -331,6 +334,7 @@ void compute()
                 << " -- Loops: "               << loops 
                 << " -- FP: "                  << false_positives
                 << " -- FP Percentage: "       << fp_percentage << "%"
+                << " -- Work: "                << kernel_work.size()
                 << " -- Runtime: "             << calculate_run_time(hashPerSecond, number_of_target_keys)
                 << "\r"
                 << std::flush;
