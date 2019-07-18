@@ -26,7 +26,7 @@ import modes.perms_from_words as PW
 from util.load import load_mappings, load_similar_mappings
 
 # GPG object
-gpg = gnupg.GPG(options=["--debug-quick-random", "--batch"])
+gpg = gnupg.GPG(options=["--debug-quick-random", "--allow-non-selfsigned-uid"])
 
 # Object that contains all the mapping dictionaries
 mapping = Mappings()
@@ -66,6 +66,16 @@ def load_key_from_file_and_return_fingerprint(filePath, number_of_words):
 
     import_result = gpg.import_keys(data)
 
+    if import_result.results == []:
+        print("[!] Error importing key!")
+        print("[*] This could be due to an invalid or missing user ID packet")
+
+        for x in import_result.counts:
+            print(x, import_result.counts[x])
+        exit()
+
+    x = gpg.verify(data)
+
     fingerprint = import_result.fingerprints[0]
     print(fingerprint)
 
@@ -78,9 +88,12 @@ def load_key_from_file_and_return_fingerprint(filePath, number_of_words):
 def args():
     # The fingerprint of the target
     #   John Johnson <john@work.com>
-    UNCONTROLLED_FINGERPRINT    = "5067 4BA4 9A2E 5050"
+    # UNCONTROLLED_FINGERPRINT    = "5067 4BA4 9A2E 5050"
+
+    #   aidanfray15@gmail.com
+    UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379"
+
     CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"
-    # CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3 5F80"
 
     staticWords = []
 
@@ -90,10 +103,11 @@ def args():
     parser.add_argument("-m","--multi-mappings", dest="multi", action="store_true")
     parser.add_argument("--am", "--average-multi", dest="average_multi", action="store_true")
     parser.add_argument("-a", "--average", dest="average", action="store_true")
-    parser.add_argument("-t", "--trustwords", dest="trustwords", nargs=2, action="store")
+    parser.add_argument("-t", "--trustwords", dest="trustwords", nargs="*", action="store")
     parser.add_argument("-f", "--find-keys", nargs=1, dest="find_keys", action="store")
-    
+
     # Params
+    parser.add_argument("--key-id", dest="key_id", nargs=1, action="store")
     parser.add_argument("-k", "--key", dest="key", nargs=1, action="store")
     parser.add_argument("-s", "--similar-wordlist", dest="similar", nargs=1, action="store")
     parser.add_argument("-l", "--langauge", dest="lang", nargs=1, action="store")
@@ -116,6 +130,15 @@ def args():
 
     if arg.key:
         CONTROLLABLE_FINGERPRINT = load_key_from_file_and_return_fingerprint(arg.key[0], number_of_words)
+
+    if arg.key_id:
+
+        fingerprint = arg.key_id[0][:16]
+        parts = re.findall(r"....", fingerprint)
+
+        CONTROLLABLE_FINGERPRINT = " ".join(parts)
+        print(CONTROLLABLE_FINGERPRINT)
+
 
     # Loads the file paths for similar wordlist
     if arg.similar: 
@@ -140,7 +163,17 @@ def args():
 
     # Outputs the trust words for two actual keys
     if arg.trustwords:
-        WK.generate_words_for_PGP_keys(arg.trustwords[0], arg.trustwords[1], mapping)
+
+        if len(arg.trustwords) == 2:
+            WK.generate_words_for_PGP_keys(arg.trustwords[0], arg.trustwords[1], mapping)
+        if len(arg.trustwords) == 1:
+            WK.generate_words_for_PGP_keys_one_static(arg.trustwords[0], UNCONTROLLED_FINGERPRINT, mapping)
+        else:
+            print("[!] Error: Invalid number of arguments for --trustwords")
+
+        exit()
+
+    if arg.uncontrolled:
         exit()
 
     # Finds an actual key that produces the higest permutation size

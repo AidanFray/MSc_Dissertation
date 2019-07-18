@@ -325,13 +325,8 @@ void print_found_key(KernelWork work, std::string exponent)
 
     // std::cout << "\n\n";
     // std::cout << public_armour_key                                        << std::endl;
-    // std::cout << private_armor_key                                        << std::endl;
+    std::cout << private_armor_key                                        << std::endl;
     // gpg_command_line(private_armor_key);
 
     auto filePath = save_found_key(public_armour_key, private_armor_key);
-
-    //TEMP: Need to incorporate this functionality into the script
-    //      running from an external script can be fucky
-    auto command = "cd ../TrustWords ; python create_perms.py --keys ./ ../GreenOnion/" + filePath + "/public.key";
-    std::system(command.c_str());
 }

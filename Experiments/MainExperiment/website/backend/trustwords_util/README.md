@@ -30,6 +30,12 @@ Two pem key files can be passed as parameter and the resulting trustwords can be
 python trustwords_util.py -t <KEY_1> <KEY_2>
 ```
 
+This option also supports a single key parameter that will then be compared to the static `UNCONTROLLED_FINGERPRINT` option in the script
+
+```
+python trustwords_util.py -t <KEY_1>
+```
+
 ### Find key
 Finds an actual key that creates the biggest permutation size.
 
@@ -64,6 +70,10 @@ Language can be changed
 **Key (`-k`)**
 <br/>
 Controllable key can be changed
+
+**Key (`--key-id`)**
+<br/>
+Full key ID can be used to changed the controllerable key
 
 **Number of words (`-n`)**
 <br/>

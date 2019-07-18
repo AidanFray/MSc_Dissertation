@@ -46,6 +46,8 @@ static std::mutex kernel_work_lock;
 // TODO: Make these script arguments
 bool PRINT_SHA1_TEST = true;
 bool END_ON_KEY_FOUND = true;
+bool PRINT_STATS = true;
+bool TEST_KEY_MODE = false;
 
 // RSA key params
 int KEY_LENGTH = 2048;
@@ -229,6 +231,10 @@ void compute()
     cl::Kernel kernel(program, "key_hash");
     cl::CommandQueue queue(context, device);
 
+    if (TEST_KEY_MODE) {
+        target_keys_file_path = "./target_keys/debug.txt";
+    }
+
     // ### FILTER INIT ###
     auto number_of_target_keys = get_and_check_target_key_length(target_keys_file_path);
 
@@ -318,15 +324,17 @@ void compute()
 
             double fp_percentage = ((double)false_positives / (double)loops) * 100;
 
-            std::cout << std::setprecision(2) << std::setiosflags(std::ios::fixed)
-            << "[*]" 
-            << " -- Current Rate:  "       << HPS << " MH/s" 
-            << " -- Loops: "               << loops 
-            << " -- FP: "                  << false_positives
-            << " -- FP Percentage: "       << fp_percentage << "%"
-            << " -- Runtime: "             << calculate_run_time(hashPerSecond, number_of_target_keys)
-            << "\r"
-            << std::flush;
+            if (PRINT_STATS) {
+                std::cout << std::setprecision(2) << std::setiosflags(std::ios::fixed)
+                << "[*]" 
+                << " -- Current Rate:  "       << HPS << " MH/s" 
+                << " -- Loops: "               << loops 
+                << " -- FP: "                  << false_positives
+                << " -- FP Percentage: "       << fp_percentage << "%"
+                << " -- Runtime: "             << calculate_run_time(hashPerSecond, number_of_target_keys)
+                << "\r"
+                << std::flush;
+            }
 
             //Looks for the positive result value
             if (outResult[0] == (uint)0x12345678)
@@ -384,7 +392,10 @@ void create_work()
                 auto PGP_v4_packet = create_pgp_v4_fingerprint_packet(n, e, timestamp + i);
 
                 // DEBUG
-                // PGP_v4_packet = "99010e045cdfe0dd010800D06223A61A67F848EC1F7C6739D8FE22BD6A0C6083E309149FC8BD081B99CCDA10A1182F8690402CCE679626B77157A039B543C7239D597534572F0A91BC1FA001355B45D1FC05CBC900F043E3A9C055DA3D35D3FBCDCFC1CF82D006A81943599E445B797489C496462F7AAB3BD1BB4E40D994E3A78F0E28149E242BBCF3661F07827E728B5C259FCF0A8EA3CA37822602620DA8C89C27F0DF226AE84EA7F1980F9CEE2373C707610C45536903B3E03B37B98D979ADA24B68748A2321EB51D986BF29048108F31592C1B11B7E34B34BE5185435BE0F0B6F9C11C9CA9FFEEB8060A63F7A594B1CC72A61E9E505EEE023FDA8D2B1356015E74D6513D20B228BC5F001901000001";
+                if (TEST_KEY_MODE) 
+                {
+                    PGP_v4_packet = "99010e045cdfe0dd010800D06223A61A67F848EC1F7C6739D8FE22BD6A0C6083E309149FC8BD081B99CCDA10A1182F8690402CCE679626B77157A039B543C7239D597534572F0A91BC1FA001355B45D1FC05CBC900F043E3A9C055DA3D35D3FBCDCFC1CF82D006A81943599E445B797489C496462F7AAB3BD1BB4E40D994E3A78F0E28149E242BBCF3661F07827E728B5C259FCF0A8EA3CA37822602620DA8C89C27F0DF226AE84EA7F1980F9CEE2373C707610C45536903B3E03B37B98D979ADA24B68748A2321EB51D986BF29048108F31592C1B11B7E34B34BE5185435BE0F0B6F9C11C9CA9FFEEB8060A63F7A594B1CC72A61E9E505EEE023FDA8D2B1356015E74D6513D20B228BC5F001901000001";
+                }
 
                 uint finalBlock[16]; 
                 uint intermediate_digest[5];

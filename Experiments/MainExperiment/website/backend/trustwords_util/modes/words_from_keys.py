@@ -43,3 +43,14 @@ def generate_words_for_PGP_keys(key_path_1, key_path_2, mapping):
 
     combined_key = XOR_fingerprints(key_finger_print_1, key_finger_print_2)
     fingerprint_to_words(combined_key, mapping)
+
+def generate_words_for_PGP_keys_one_static(keyPath, staticFingerprint, mapping):
+    key_data = []
+    with open(keyPath) as key:
+        key_data = key.readlines()
+
+    # Takes the left 64-bit
+    key_fingerprint = PGP_key_hash(key_data)
+
+    combined_key = XOR_fingerprints(key_fingerprint, staticFingerprint)
+    fingerprint_to_words(combined_key, mapping)
