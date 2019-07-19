@@ -384,7 +384,6 @@ __kernel void key_hash(__global uint* finalBlock,
 					   __global uint* currentDigest, 
 					   __global bool* bitVector,
 					   __global long* bitVectorSize,
-					//    __global uint* numberOfHashes,
 					   __global uint* outResult)
 {
 	// We have 3 bytes to work with proving us with 16777215 (2^24)

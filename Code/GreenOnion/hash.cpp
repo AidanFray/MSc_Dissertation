@@ -58,7 +58,7 @@ int EXPONENT = 0x01000001;
 // TODO: DO NOT CHANGE ME! WITHOUT ALTERING THE VALUE IN THE opencl/SHA1.cl file
 //       passing this value to the script is required
 uint BLOOM_NUMBER_OF_HASHES_STATIC  = 2;          //Set to 0 for dynamic size
-long BLOOM_SIZE_STATIC              = 1000000;    //Set to 0 for dynamic size
+long BLOOM_SIZE_STATIC              = 80000000;    //Set to 0 for dynamic size
 
 // Threading params
 bool running = true;
@@ -218,21 +218,13 @@ std::string calculate_run_time(long hashRate, long numberOfKeys)
 */
 void compute()
 {
+    int err;
+
+    KernelWork work;
+    
     int loops = 1;
     int false_positives = 0;
 
-    // ### OpenCL INIT ###
-    auto platform = GetPlatform();
-    auto devices = GetAllDevices(platform, opencl_device_number, false);
-    auto device = devices[opencl_device_number];
-
-    cl::Context context(devices);
-    
-    auto program = BuildProgram(kernel_file_path, context);
-    // int workGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
-    //std::cout << OUTPUT << " Work Group size set to: " << workGroupSize << std::endl;
-    cl::Kernel kernel(program, "key_hash");
-    cl::CommandQueue queue(context, device);
 
     if (TEST_KEY_MODE) {
         target_keys_file_path = "./target_keys/debug.txt";
@@ -261,11 +253,51 @@ void compute()
     std::map<std::string, bool> target_keys_hash_table;
     BloomFilter bf(BLOOM_SIZE, BLOOM_NUMBER_OF_HASHES);
     load_filters(bf, target_keys_hash_table, target_keys_file_path);
+    
+    // ### OpenCL INIT ###
+    auto platform = GetPlatform();
+    auto devices = GetAllDevices(platform, opencl_device_number, false);
+    auto device = devices[opencl_device_number];
+
+    cl::Context context(devices);
+    
+    auto program = BuildProgram(kernel_file_path, context);
+    int workGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
+    std::cout << OUTPUT << " Work Group size set to: " << workGroupSize << std::endl;
+    cl::Kernel kernel(program, "key_hash");
+
+    cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR ,(sizeof(bool) * BLOOM_SIZE), bf.m_bits, &err);
+    if (err != 0) opencl_handle_error(err, "bit_vector");
+
+    cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), bloom_bit_vector_size, &err);
+    if (err != 0) opencl_handle_error(err, "bit_vector_size");
 
     while (true)
     {
+        cl::CommandQueue queue(context, device);
+
+        // Will hold the result of the hash on OpenCL
+        // is size of the hash plus the success value (0x12345678) and exponent used
+        uint outResult[2];
+        auto resultSize = sizeof(uint) * 2;
+
+        cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, work.FinalBlock, &err);
+        if (err != 0) opencl_handle_error(err, "final_block");
+
+        cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
+        if (err != 0) opencl_handle_error(err, "current_hash");
+
+
+        
+        cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
+
+        kernel.setArg(0, buf_finalBlock);
+        kernel.setArg(1, buf_currentHash);
+        kernel.setArg(2, buf_bitVector);
+        kernel.setArg(3, buf_bitVectorSize);
+        kernel.setArg(4, buf_out_result);
+
         Timer tmr;
-        KernelWork work;
 
         if (kernel_work.empty())
         {
@@ -280,35 +312,6 @@ void compute()
                 work = kernel_work.front();
                 kernel_work.pop();
             }
-
-            // Will hold the result of the hash on OpenCL
-            // is size of the hash plus the success value (0x12345678) and exponent used
-            uint outResult[2];
-            auto resultSize = sizeof(uint) * 2;
-
-            int err;
-            cl::Buffer buf_finalBlock(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 16, work.FinalBlock, &err);
-            if (err != 0) opencl_handle_error(err, "final_block");
-
-            cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
-            if (err != 0) opencl_handle_error(err, "current_hash");
-
-            cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (sizeof(bool) * BLOOM_SIZE), bf.m_bits, &err);
-            if (err != 0) opencl_handle_error(err, "bit_vector");
-
-            cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), bloom_bit_vector_size, &err);
-            if (err != 0) opencl_handle_error(err, "bit_vector_size");
-
-            cl::Buffer buf_numberOfHashes(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint), bloom_number_of_hashes, &err);
-            if (err != 0) opencl_handle_error(err, "number_of_hashes");
-            
-            cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
-
-            kernel.setArg(0, buf_finalBlock);
-            kernel.setArg(1, buf_currentHash);
-            kernel.setArg(2, buf_bitVector);
-            kernel.setArg(3, buf_bitVectorSize);
-            kernel.setArg(4, buf_out_result);
 
             queue.enqueueNDRangeKernel(
                 kernel, 
