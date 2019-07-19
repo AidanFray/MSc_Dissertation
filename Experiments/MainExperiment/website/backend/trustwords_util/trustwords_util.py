@@ -88,12 +88,15 @@ def load_key_from_file_and_return_fingerprint(filePath, number_of_words):
 def args():
     # The fingerprint of the target
     #   John Johnson <john@work.com>
-    # UNCONTROLLED_FINGERPRINT    = "5067 4BA4 9A2E 5050"
+    UNCONTROLLED_FINGERPRINT    = "5067 4BA4 9A2E 5050"
 
     #   aidanfray15@gmail.com
-    UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379"
+    # UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379"
 
-    CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"
+    # CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"
+
+    CONTROLLABLE_FINGERPRINT    = "93BA 447A 23B6 83BE"
+
 
     staticWords = []
 
@@ -171,9 +174,6 @@ def args():
         else:
             print("[!] Error: Invalid number of arguments for --trustwords")
 
-        exit()
-
-    if arg.uncontrolled:
         exit()
 
     # Finds an actual key that produces the higest permutation size
