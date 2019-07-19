@@ -16,6 +16,8 @@ class Experiment:
         self.AudioButtonClicks = []
 
         self.StartTime = time.time()
+        self.RoundStartTimes = []
+        self.RoundEndTimes = []
         self.EndTime = None
 
         self.UserAgent = userAgent
@@ -27,6 +29,12 @@ class Experiment:
 
     def record_response(self, response):
         self.Responses.append(response)
+
+    def record_round_start_time(self):
+        self.RoundStartTimes.append(time.time())
+
+    def record_round_end_time(self):
+        self.RoundEndTimes.append(time.time())
 
     def get_current_wordlist(self):
         return self.VisualWords[-1]
@@ -63,9 +71,11 @@ class Experiment:
         exp.ExperimentID        = dictionary["ExperimentID"]
         exp.VisualWords         = dictionary["VisualWords"]
         exp.Responses           = dictionary["Responses"]
-        exp.AttackSchema          = dictionary["AttackSchema"]
+        exp.AttackSchema        = dictionary["AttackSchema"]
         exp.AudioButtonClicks   = dictionary["AudioButtonClicks"]
         exp.StartTime           = dictionary["StartTime"]
+        exp.RoundStartTimes     = dictionary["RoundStartTimes"]
+        exp.RoundEndTimes       = dictionary["RoundEndTimes"]
         exp.EndTime             = dictionary["EndTime"]
         exp.UserAgent           = dictionary["UserAgent"]
 

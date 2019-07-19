@@ -40,7 +40,13 @@ class Instruction extends Component {
                     <br />
                     <Paper style={paper}>
                         <Typography style={text}>
-                            This experiment is investigating authentication of secure email. Below are the steps required to complete the experiment.
+                            This experiment is investigating the handshake of secure email. Below are the steps required to complete the experiment.
+                        </Typography>
+                        <br/>
+                        <Typography style={text}>
+                            In order to make communication with a partner secure & trusted a handshake is required. This is to verify, that the 
+                            communication between you and your communication 
+                            partner happens between and only between the two of you. One way to achive this is the comparison of words. This is the process you'll be completing today. 
                         </Typography>
                         <br/>
                         <Typography style={text}>
@@ -49,7 +55,7 @@ class Instruction extends Component {
                         <br/>
                         <img 
                             alt="" 
-                            height="500px" 
+                            height="400px" 
                             src={phone_image}
                         />
                         <br/>
@@ -58,21 +64,20 @@ class Instruction extends Component {
                     <Paper style={paper}>
                         <Typography  style={text} variant="h6"> Step 1 </Typography>
                         <Typography style={text}>
-                            Read the words displayed on the device. An example of the words are shown below:
+                            Read the words displayed on the device. 
                         </Typography>
-                        <br/>
-                            <img height="30px" alt="" src={trustwords_image}/>
-                        <br/>
                         <br/>
                         <Typography style={text}>
-                            These will be the elements you will need to verify in order to successfully authenticate.                        
+                            An example of the words are shown below:
                         </Typography>
+                        <br/>
+                        <img height="30px" alt="" src={trustwords_image}/>
                     </Paper>
                     <br/><br/>
                     <Paper style={paper}>
                         <Typography style={text} variant="h6"> Step 2 </Typography>
                         <Typography style={text}>
-                            After familiarization with the words you will need to initiate the authentication process. The image below shows this button. Clicking this will produce spoken audio of the words (This can be pressed multiple times to repeat the audio).
+                            After familiarization with the words clicking the button pictured below will produce spoken audio of the words (This can be pressed multiple times to repeat the audio).
                         </Typography>
                         <br/>
                             <img alt="" src={audio_button_image}/>
@@ -95,15 +100,6 @@ class Instruction extends Component {
                     <Paper style={paper}>
                         <Typography style={text} variant="h6"> Step 3</Typography>
                         <Typography style={text}>
-                            After submitting your choice, the experiment will continue and present a fresh set of words and recordings.
-                            This process will require repitition a number of times.
-                        </Typography>
-                        <br/>
-                    </Paper>
-                    <br/><br/>
-                    <Paper style={paper}>
-                        <Typography style={text} variant="h6"> Step 4</Typography>
-                        <Typography style={text}>
                             Finally, after a number of responses have been recorded you will be directed to the final page where the device will
                             display the final message.
                             <br/>
@@ -112,11 +108,6 @@ class Instruction extends Component {
                         </Typography>
                         <br/>
                         <img alt="" height="500px" src={finish_images}/>
-                        <br/>
-                        <br/>
-                        <Typography style={text}>
-                            The provided experiment ID is required by MTurk for payment and, therefore, need retaining.
-                        </Typography>
                     </Paper>
                     <br />
                 </div>
