@@ -88,10 +88,10 @@ def load_key_from_file_and_return_fingerprint(filePath, number_of_words):
 def args():
     # The fingerprint of the target
     #   John Johnson <john@work.com>
-    # UNCONTROLLED_FINGERPRINT    = "5067 4BA4 9A2E 5050"
+    UNCONTROLLED_FINGERPRINT    = "5067 4BA4 9A2E 5050"
 
     #   aidanfray15@gmail.com
-    UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379"
+    # UNCONTROLLED_FINGERPRINT    = "7E6C 4BF0 5CF3 F379"
 
     CONTROLLABLE_FINGERPRINT    = "2F88 CE86 1A1B 19D3"
 
@@ -146,8 +146,8 @@ def args():
         load_similar_mappings(similar_mappings_file_name, mapping)
 
     # Sets the dictionary mapping file - Default is english
-    dictionary_file_name = f"../../../../../Wordlists/Trustwords/{arg.lang[0].upper()}/{arg.lang[0].lower()}.csv" \
-        if arg.lang else f"../../../../../Wordlists/Trustwords/EN/en.csv"
+    dictionary_file_name = f"../../Wordlists/Trustwords/{arg.lang[0].upper()}/{arg.lang[0].lower()}.csv" \
+        if arg.lang else f"../../Wordlists/Trustwords/EN/en.csv"
     load_mappings(dictionary_file_name, mapping)
 
     ### MODES ###
@@ -171,9 +171,6 @@ def args():
         else:
             print("[!] Error: Invalid number of arguments for --trustwords")
 
-        exit()
-
-    if arg.uncontrolled:
         exit()
 
     # Finds an actual key that produces the higest permutation size
