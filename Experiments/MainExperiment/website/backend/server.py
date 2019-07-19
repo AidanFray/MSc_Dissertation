@@ -92,6 +92,10 @@ def get_words():
 
                 return "DONE"
 
+            exp = Experiment.from_json(session[exp_id])
+            exp.record_round_start_time()
+            session[exp_id] = exp.to_json()
+
             return "  ".join(Experiment.from_json(session[exp_id]).get_current_wordlist())
 
         else:
@@ -141,6 +145,7 @@ def submit_result():
 
                 exp = Experiment.from_json(session[exp_id])
                 exp.record_response(result)
+                exp.record_round_end_time()
                 session[exp_id] = exp.to_json()
                 
                 if not utils.experiment_finished(exp_id):

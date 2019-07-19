@@ -4,7 +4,7 @@ import pickle
 import attack
 import random
 
-from CONFIG import BASE_FILE_LOCATION, NUMBER_OF_ROUNDS
+from CONFIG import BASE_FILE_LOCATION, NUMBER_OF_ROUNDS, GRACE_ROUNDS
 
 def save_experiment(expr):
     pickle.dump(expr, open(f"{BASE_FILE_LOCATION}results/{expr.ExperimentID}.pkl", "wb"))
@@ -31,9 +31,13 @@ def gen_new_words(wordlist):
     """
 
     exp_id = session.get("exp_id")
+    exp = Experiment.from_json(session[exp_id])
 
-    # # Determines if their is an attack
-    attack_schema = attack.decision()
+    if exp.get_round_number () >= GRACE_ROUNDS:
+        # # Determines if their is an attack
+        attack_schema = attack.decision()
+    else:
+        attack_schema = None
 
     if attack_schema:
 
