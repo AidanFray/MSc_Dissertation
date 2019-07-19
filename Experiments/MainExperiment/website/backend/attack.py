@@ -48,8 +48,6 @@ def decision():
 
     words = ATTACK_TYPES[attack_type_choice](originalWords, m)
 
-    print("[D] Attack: ", attack_metric_string, attack_type_choice)
-
     return [attack_metric_string, attack_type_choice, words, originalWords]
 
 def load_similar_words(attackMetricChoice):
@@ -69,10 +67,6 @@ def load_similar_words(attackMetricChoice):
 def _get_random_match(words, mapping, staticPositions):
 
     fingerprintChunks = permutations.similar_perms(words, mapping, PRINT=False, staticPos=staticPositions)   
-
-    print("[D] Words:", words)
-    print("[D] similar_perms(): ", len(fingerprintChunks))
-    print("[D] similar_perms_size(): ", permutations.similar_perms_size(words, mapping, staticPos=staticPositions))
 
     chunkChoice = random.choice(fingerprintChunks)
 

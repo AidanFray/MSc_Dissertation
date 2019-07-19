@@ -90,7 +90,7 @@ for i, r in enumerate(exp.RoundStartTimes):
     if exp.AttackSchema[i] != None:
         diff = blue_text(diff)
 
-    print(f"\t{i}. {diff} secs")
+    print(f"\t{i + 1}. {diff} secs")
 print()
 
 print_header("Overall Time")

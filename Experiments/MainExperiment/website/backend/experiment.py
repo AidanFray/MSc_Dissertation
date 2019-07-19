@@ -36,6 +36,9 @@ class Experiment:
     def record_round_end_time(self):
         self.RoundEndTimes.append(time.time())
 
+    def get_round_number(self):
+        return len(self.Responses)
+
     def get_current_wordlist(self):
         return self.VisualWords[-1]
 

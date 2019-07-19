@@ -30,7 +30,7 @@ export default class TrustwordSimulation extends Component {
       words: [],
       audio_url: [],
       controls_disabled: false,
-      audio_button_visibility: "visible"
+      audio_button_visibility: "visible",
     }
 
     this.setup_experiment();
@@ -81,13 +81,23 @@ export default class TrustwordSimulation extends Component {
       .then(response => response.text())
       .then(t => {
         if (!this.experiment_finished(t)) {
-          this.setState({ words: t })
+          this.setState(
+            { 
+              words: t,
+              controls_disabled: false
+            }
+          )
         }
       })
   }
 
   show_word_loading() {
-    this.setState({ words: <Loader type="ThreeDots" color="#00BFFF" height="14"	width="20"/>  })
+    this.setState(
+      { 
+        words: <Loader type="ThreeDots" color="#00BFFF" height="14"	width="20"/>,
+        controls_disabled: true
+      }
+    )
   }
 
   render() {
