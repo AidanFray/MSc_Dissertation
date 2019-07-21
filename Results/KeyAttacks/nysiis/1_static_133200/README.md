@@ -8,8 +8,8 @@
 
 Using 4x 2000MH/s GPUs
 
-Start: Fri 19 Jul 09:37:57 BST 2019
-End:   Fri 19 Jul 
+Time: Unknown
+Expected: 4.8 hours
 
 ```
     ASSUMING SUMMON DENNI CONNOR

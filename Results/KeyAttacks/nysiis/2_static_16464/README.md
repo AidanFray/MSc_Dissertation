@@ -6,25 +6,17 @@
 
 # Computed match
 
-Started:    Jul 18 10:55
-Found:      Jul 18 20:06
-
 Using 3x 2000MH/s GPUs
+
+Started:    Jul 18 10:55
+<br/>
+Found:      Jul 18 20:06
+<br/>
+Total: ~15 hours
+<br/>
+GPU Days: 1.875
+
 
 ```
     VOCATION BARE TONE ANTE
 ```
-```
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-mQEOBF0wxGEBCACsqQN92G3IizweQHw42OhUM5ZySKTvzPqVhAeCb2ETSBDZFbGN
-lHYPa6dytXwLbU6kdlt8kgxbk75iPJsCSPLAUzKvlVd2rkTu5xtKPFqDTRvbjOjf
-Ik8zJimXJGZNYVrMUqkfPR2FtVC4VUJXtML8voj/1lcLxTWRcYjuNQuSRNhJQtUP
-ViZMTj97IO894lVg+ciZXEZkzHzlriqeLqwTupQxvzqjmObmeH1NCPSfGcTSNIBu
-cNG/DrXTXsVpZPUilIRsXTtc2FM9iY49Zjv01KdzsJlV97JVyghYFFCEe1xq7Twp
-U9TOzypXD4NdTKivFZUNT4jdG2HoJE4IcZ3NABkBh0qYtB5Kb2huIERvZSA8Y2hh
-bmdlX21lQGVtYWlsLmNvbT4=
-=0nU6
------END PGP PUBLIC KEY BLOCK-----
-```
-
