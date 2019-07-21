@@ -6,7 +6,7 @@ set -e
 # declare -a permsArr=("1000" "10000" "100000")
 
 declare -a metricArr=("wordvec_3" "wordvec_4" "wordvec_5")
-declare -a permsArr=("100000")
+declare -a permsArr=("50000")
 declare -a staticArr=("0" "1" "2")
 
 for perm in "${permsArr[@]}"

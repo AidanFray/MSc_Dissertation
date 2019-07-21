@@ -17,7 +17,7 @@ std::string outputFileName = "";
 
 // Values for quantifying tolerance or the measurement of "difference"
 static float COMBINED_TOLERANCE = 1;
-static float WORDVEC_TOLERANCE = 3.0;
+static float WORDVEC_TOLERANCE = 4.5;
 
 // Command line tags
 std::string SOUNDEX_CLI_TAG     = "-s";
