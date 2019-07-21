@@ -26,6 +26,7 @@ Code/WordVectors/computation/dictionary_popular/values.dat
 Code/WordVectors/computation/trustwords/values.dat
 Code/WordVectors/computation/trustwords/reduced_05.dat
 Code/WordVectors/computation/peerio/values.dat
+Code/TrustwordUtil/vuln_keys/*
 
 
 ## Ignore Visual Studio temporary files, build results, and

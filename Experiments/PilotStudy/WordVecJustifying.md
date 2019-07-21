@@ -5,21 +5,17 @@ Here, the comparison of number of matches is a good way to loosely justify the v
 (All words match)
 MAX MATCHES = 2693921409
 
-----------------------------------------------------
-
 ### Wordvec (3)
 	
 	- 0.00054%
 
 ### Wordvec (4)
 
-	- 0.00274%4
+	- 0.00274
 
 ### Wordvec (5)
 
 	- 0.0254%
-
-----------------------------------------------------
 
 ### Soundex
 
@@ -40,5 +36,3 @@ MAX MATCHES = 2693921409
 ### NYSIIS
 
 	- 0.006996%
-
-----------------------------------------------------

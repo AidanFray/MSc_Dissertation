@@ -1,28 +1,45 @@
-# Experiment Queries:
+# Experiment Design
 
-- How many rounds is acceptable?
+### Rounds
+35 (5 at the start always benign)
 
-- What data should I collect?
-    - Start/end time
+### Attack Ratio
+30/70 Attack to non-attack with there being an equal chance to receive one of three attacks:
+
+    - 0 static words (100,000 perms  - 1   GPU Day)
+    - 1 static words (10,000  perms  - 10  GPU Days)
+    - 2 static words (1,000   perms  - 100 GPU Days)
+
+NOTE: Number of permutations aim for a 24 hour compute time.
+
+These are defined with attack strength in mind. Where all attack keys will be sampled from a list of keys
+found as **vulnerable** with these permutations in mind
+
+Three metrics will also be assessed. The ones chosen will be selected in 
+the pilot study.
+
+### Vulnerable keys percentages
+
+TODO
+
+### Data Collection
+    - Overall Start/end time
+    - Round Start/end time
     - Accept/Decline results
     - User agent
+    - Audio button clicks
 
-- Should I still save incomplete attempts?
+## Attention metrics
+    - Audio button clicks - (i.e. 0 button clicks is a red flag)
+    - Time taken (This will require creating a 'reasonable' time)
 
-- How could I improve accuracy i.e. remove click-throughts?
 
-- Attacks at the moment are **all** words are similar matches, think I should have levels of attacks
-    - 1 static words
-    - 2 static words
-    - No static words
+### Participants and timing
 
-- Talk about the ethics application
-    - Purposefull misleading
+Timing: **3.5 minuites** (TODO: CHECK)
 
-# Abnormal attacks
+Required participants: **385** (TODO: CHECK)
 
-### Attacks below had exactly the same as the original words
+Payment for completion: **$0.42** 
 
-['METAPHONE', 0, ['FOREWARN', 'ANTIFASCIST', 'MOP', 'CACHET']]
-['NYSIIS', 2, ['BLUE', 'STENGEL', 'ORKNEY', 'UNBOLT']]
-['NYSIIS', 2, ['HENDERSON', 'MICHIGANDER', 'KELP', 'VOLE']]
+TOTAL:                  **$161.7**

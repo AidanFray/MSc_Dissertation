@@ -36,40 +36,9 @@ Metephone       - 412,916
 NYSIIS          - 188,474
 ```
 
-## Experiment 2
-
-### Participants and timing
-
-Timing: **3.5 minuites**
-
-Required participants: **385**
-
-Payment for completion: **$0.42**
-
-TOTAL:                  **$161.7**
-
-### Currrently broken attacks
-
-Examples like:
-```
-'MOTTLE', 'INTEROCULAR', 'COLONIAL', 'PLEASANTER'
-'SOCORRO', 'WIGEON', 'STRONGBOW', 'ARCO'
-```
-
-Are producing **exactly** the same audio as their worded counterparts. This is proudcing attacks that show literally nothing.
-
 ### Attack Cases
 
-Number of permutations aim for a 24 hour compute time.
 
-```
-0 static words (100,000 -   1 GPU) (2^48)
-1 static words ( 10,000 -  10 GPU) (2^51)
-2 static words (  1,000 - 100 GPU) (2^54)
-```
-
-Where all attack keys will be sampled from a list of keys
-found as **vulnerable**
 
 ### 1,000 - 2 static words
 

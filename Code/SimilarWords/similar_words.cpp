@@ -25,8 +25,8 @@ std::string LEV_CLI_TAG         = "-l";
 std::string METAPHONE_CLI_TAG   = "-m";
 std::string NYSIIS_CLI_TAG      = "-n";
 std::string WORD_VEC_CLI_TAG    = "-v";
-std::string MAR_CLI_TAG         = "-a";
-std::string COMBINED_MODE_TAG   = "-c";
+std::string MAR_CLI_TAG         = "-a"; //NOT USED
+std::string COMBINED_MODE_TAG   = "-c"; //NOT USED
 
 // Mode booleans
 static bool LEV_DISTANCE        = false;
@@ -169,7 +169,9 @@ void find_similar_words(std::vector<std::string> words, bool combined=false)
 */
 void usage()
 {
-    std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH> <MODE> [-s|-l|-m|-c|-v|-n|-a]" << std::endl;
+    std::cout << "Usage: ./a.out <IN_WORDLIST_PATH> <OUT_WORDLIST_PATH> <MODE>" << std::endl;
+    std::cout << "\nModes: " << std::endl;
+    std::cout << " -s (Soundex)\n -l (Levenshtein)\n -m (Metaphone)\n -v (WordVector)\n -n (NYSIIS)]" << std::endl;
     exit(0);
 }
 
