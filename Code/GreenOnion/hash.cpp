@@ -58,7 +58,7 @@ int EXPONENT = 0x01000001;
 // TODO: DO NOT CHANGE ME! WITHOUT ALTERING THE VALUE IN THE opencl/SHA1.cl file
 //       passing this value to the script is required
 uint BLOOM_NUMBER_OF_HASHES_STATIC  = 2;          //Set to 0 for dynamic size
-long BLOOM_SIZE_STATIC              = 80000000;    //Set to 0 for dynamic size
+long BLOOM_SIZE_STATIC              = 8000000;    //Set to 0 for dynamic size
 
 // Threading params
 bool running = true;

@@ -26,6 +26,6 @@ The overall aim will be to show that it is possible to find a key for each scena
 ## TODO:
 
 ### NYSIIS
-- [ ] Zero static
-- [ ] *One static* (In progress)
-- [ ] **Two static** (Complete)
+- [X] **Zero static**
+- [X] **One static**
+- [X] **Two static**
