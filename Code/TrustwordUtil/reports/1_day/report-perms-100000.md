@@ -10,6 +10,6 @@ metaphone-2 0/100000
 nysiis-0 294/100000
 nysiis-1 25/100000
 nysiis-2 0/100000
-wordvec-0 0/100000
-wordvec-1 0/100000
-wordvec-2 0/100000
+wordvec_4_5-0 329/100000
+wordvec_4_5-1 23/100000
+wordvec_4_5-2 0/100000

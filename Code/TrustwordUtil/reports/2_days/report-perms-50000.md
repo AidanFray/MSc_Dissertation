@@ -1,0 +1,15 @@
+soundex-0 88035/100000
+soundex-1 41943/100000
+soundex-2 617/100000
+leven-0 33/100000
+leven-1 1/100000
+leven-2 0/100000
+metaphone-0 4924/100000
+metaphone-1 1001/100000
+metaphone-2 12/100000
+nysiis-0 609/100000
+nysiis-1 84/100000
+nysiis-2 0/100000
+wordvec_4_5-0 716/100000
+wordvec_4_5-1 76/100000
+wordvec_4_5-2 0/100000
