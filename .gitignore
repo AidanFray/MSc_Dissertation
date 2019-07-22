@@ -10,6 +10,10 @@
 *.dvi
 *.fls
 *.out
+*.bcf
+*.lof
+*.lot
+*.run.xml
 .~lock*
 
 *.fdb_latexmk

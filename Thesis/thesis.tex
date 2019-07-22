@@ -1,0 +1,45 @@
+\documentclass{UoYCSproject}
+\usepackage{mathptmx}
+\usepackage{amsfonts}
+\usepackage{booktabs}
+\usepackage{gensymb}
+\usepackage{hyperref}
+
+\addbibresource{references.bib}
+
+\author{Aidan Fray}
+\title{Investigating the Security of  P\texorpdfstring{$\equiv$}{E}P's Trustword PGP Fingerprint Encoding}
+% \date{10 September 2019}
+\supervisor{Siamak Fayyaz Shahandashti}
+\CYB
+
+% \dedication{To all students everywhere}
+
+\acknowledgements{
+  I would like to thank my goldfish for all the help it gave me
+  writing this document.
+ 
+  As usual, my boss was an inspiring source of sagacious advice.
+}
+
+% More definitions & declarations in example.ldf
+
+\begin{document}
+  \pagenumbering{roman}
+  \maketitle
+  \listoffigures
+  \listoftables
+  %\renewcommand*{\lstlistlistingname}{List of Listings}
+  %\lstlistoflistings
+
+  \input{pages/introduction.tex}
+  \input{pages/lit_review.tex}
+  \input{pages/background.tex}
+  \input{pages/design.tex}
+  \input{pages/experiments.tex}
+  \input{pages/conclusion.tex}
+  \input{pages/appendix.tex}
+
+  \printbibliography
+
+\end{document}
