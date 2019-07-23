@@ -69,7 +69,12 @@
 			"scoped_allocator": "cpp",
 			"shared_mutex": "cpp",
 			"typeindex": "cpp",
-			"valarray": "cpp"
+			"valarray": "cpp",
+			"bit": "cpp",
+			"map": "cpp",
+			"set": "cpp",
+			"string": "cpp",
+			"variant": "cpp"
 		},
 		"files.exclude": {
 			"**/*.toc": true,
