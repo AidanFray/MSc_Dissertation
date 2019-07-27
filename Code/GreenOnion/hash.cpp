@@ -47,7 +47,7 @@ static std::mutex kernel_work_lock;
 bool PRINT_SHA1_TEST = true;
 bool END_ON_KEY_FOUND = true;
 bool PRINT_STATS = true;
-bool TEST_KEY_MODE = false;
+bool TEST_KEY_MODE = true;
 
 // RSA key params
 int KEY_LENGTH = 2048;
@@ -261,8 +261,6 @@ void compute()
     cl::Context context(devices);
     
     auto program = BuildProgram(kernel_file_path, context);
-    int workGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
-    std::cout << OUTPUT << " Work Group size set to: " << workGroupSize << std::endl;
     cl::Kernel kernel(program, "key_hash");
 
     cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR ,(sizeof(bool) * BLOOM_SIZE), bf.m_bits, &err);
@@ -271,8 +269,11 @@ void compute()
     cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), bloom_bit_vector_size, &err);
     if (err != 0) opencl_handle_error(err, "bit_vector_size");
 
+    auto startTime = std::time(nullptr);
+
     while (true)
     {
+
         cl::CommandQueue queue(context, device);
 
         // Will hold the result of the hash on OpenCL
@@ -360,7 +361,12 @@ void compute()
                 if(target_keys_hash_table.count(hex_digest))
                 {
                     print_found_key(work, exponent);
+                    auto endTime = std::time(nullptr);
+                    std::cout << INFO << " Time to compute: " << endTime - startTime << " seconds" <<std::endl;
                     if (END_ON_KEY_FOUND) break;
+
+                    // Resets the time calc
+                    startTime = endTime;
                 }
                 else
                 {

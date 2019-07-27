@@ -23,5 +23,8 @@ GPU Days: 1.875
 
 # Extra:
 
-Start: Sun 21 Jul 10:58:21 
-End:   ?
+Using: 3x 2100 MH/s GPUS
+
+Start: 1563881889.8384812
+
+**IN PROGRESS**
