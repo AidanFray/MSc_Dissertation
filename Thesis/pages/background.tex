@@ -37,16 +37,50 @@ Each element of a PGP key is split into what is know as a 'packet'. The 'fingerp
 
 \textbf{TODO: } Generate an image of PGP v4 fingerprint packet
 
+\newpage
+
 \section{Pretty Easy Privacy}
-Pretty Easy Privacy (\pep) is a data encryption system that utilises PGP encryption to provide E2EE on all common channels of communication such as email of SMS. \pep's design principles state that above all the systems should be easy to install, use and understand.
-
-\pep deals with the threat of MiTM attacks by having users compare the respective key fingerprints encoded as a set of words. 
-
-\begin{figure}[h!]
+\begin{wrapfigure}{r}{5cm}
     \centering
     \includegraphics[scale=0.15]{trustwords/trustword_handshake.jpg}
     \caption{Trustword fingerprint verification}
+    \label{fig:trustwords}
+\end{wrapfigure}
+
+Pretty Easy Privacy (\pep) is a data encryption system that utilises PGP encryption to provide E2EE on all common channels of communication such as email of SMS. \pep's design principles state that above all the systems should be easy to install, use and understand.
+
+\pep deals with the threat of MiTM attacks by having users compare the respective key fingerprints encoded as a set of words. Figure \ref{fig:trustwords} shows the \pep Android implementation of trustwords. The user pair of users then authenticate the words on an OOB (Out of Band) channel such as a phone call or in-person communication. If both users decide the words match they will accept or decline respectively.
+
+The trustwords are unique for each pair of keys, this is the alternative of having a static key for each user. The justification behind the unique set for each user pair is in an attempt to motivate users to perform the authentication ceremony. The unique combined fingerprint is believed to reduced complacency due to inherent change \textbf{[CITE ME]}. 
+
+Each key pair is the exclusive-or of each key's fingerprint, this combined values is then broken down into 16-bit chunks and mapped to words via a pre-defined dictionary.
+
+\begin{figure}[h!]
+    \centering
+    $KeyFingerprint_{1} \oplus KeyFingerprint_{2} = TrustwordsFingerprint$
+    \caption{Creation of the combined Trustword fingerprint}
 \end{figure}
+
+\begin{wrapfigure}{r}{5cm}
+    \centering
+    \begin{BVerbatim}
+    [...]
+52127 ZYGOTE
+52128 ZYGOTIC
+52129 ZYMURGY
+52130 AACHEN
+52131 AARDVARK
+52132 AAREN
+    [...]
+    \end{BVerbatim}
+    \caption{Re-mapping position in Trustword dictionary}
+    \label{fig:remap}
+\end{wrapfigure}
+
+Due to the number of words required ($2^{16}$) alongside the design choice to exclude slang and profanities the english Trustword dictionary requires dual-mapping of a section of words. Approximately 13633/65536 (20.8\%) of words are re-mapped in the dictionary leaving 51903 unique words. The re-mapping is also done on a loop with it remaining alphabetical. Figure \ref{fig:remap} shows the position in the dictionary where this occurs. This predictability within the dictionary will be explored later in the paper.
+
+
+
 
 % Does this need explaining?
 \section{OpenCL}
