@@ -45,9 +45,9 @@ static std::mutex kernel_work_lock;
 
 // TODO: Make these script arguments
 bool PRINT_SHA1_TEST = true;
-bool END_ON_KEY_FOUND = true;
+bool END_ON_KEY_FOUND = false;
 bool PRINT_STATS = true;
-bool TEST_KEY_MODE = true;
+bool TEST_KEY_MODE = false;
 
 // RSA key params
 int KEY_LENGTH = 2048;
