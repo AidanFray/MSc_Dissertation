@@ -45,7 +45,7 @@ static std::mutex kernel_work_lock;
 
 // TODO: Make these script arguments
 bool PRINT_SHA1_TEST = true;
-bool END_ON_KEY_FOUND = false;
+bool END_ON_KEY_FOUND = true;
 bool PRINT_STATS = true;
 bool TEST_KEY_MODE = false;
 
@@ -58,7 +58,7 @@ int EXPONENT = 0x01000001;
 // TODO: DO NOT CHANGE ME! WITHOUT ALTERING THE VALUE IN THE opencl/SHA1.cl file
 //       passing this value to the script is required
 uint BLOOM_NUMBER_OF_HASHES_STATIC  = 2;          //Set to 0 for dynamic size
-long BLOOM_SIZE_STATIC              = 8000000;    //Set to 0 for dynamic size
+long BLOOM_SIZE_STATIC              = 1000000;    //Set to 0 for dynamic size
 
 // Threading params
 bool running = true;
@@ -67,10 +67,6 @@ std::vector<std::thread> workThreads;
 
 size_t NUM_OF_HASHES = 16777215;            // The amount of hashes per loop
 size_t MAX_WORK_SIZE = 1000;                //Set to 0 for no cap
-
-//DEBUG
-// std::string target_keys_file_path = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Code/GreenOnion/target_keys.txt";
-// std::string kernel_file_path = "/home/main_user/GitHub/Cyber-Security-Individual-Project/Code/GreenOnion/opencl/SHA1.cl";
 
 std::string target_keys_file_path = "";
 std::string kernel_file_path = "./opencl/SHA1.cl";
@@ -269,8 +265,6 @@ void compute()
     cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), bloom_bit_vector_size, &err);
     if (err != 0) opencl_handle_error(err, "bit_vector_size");
 
-    auto startTime = std::time(nullptr);
-
     while (true)
     {
 
@@ -286,6 +280,8 @@ void compute()
 
         cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
         if (err != 0) opencl_handle_error(err, "current_hash");
+
+        
         
         cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
 
@@ -361,12 +357,7 @@ void compute()
                 if(target_keys_hash_table.count(hex_digest))
                 {
                     print_found_key(work, exponent);
-                    auto endTime = std::time(nullptr);
-                    std::cout << INFO << " Time to compute: " << endTime - startTime << " seconds" <<std::endl;
                     if (END_ON_KEY_FOUND) break;
-
-                    // Resets the time calc
-                    startTime = endTime;
                 }
                 else
                 {
