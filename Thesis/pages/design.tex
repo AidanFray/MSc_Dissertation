@@ -1,5 +1,113 @@
 \chapter{Design}
 \label{cha:Design}
 
+This chapter will discuss and overview of the proposed attack and the elements that are required.
+
+\section{Overall attack design}
+
+The attack on Trustwords involves generating "near-collision" keys. These are keys that are deemed a match by the phonetic similar metric (More on this aspect in the following sections). A similarity metric is an algorithm designed to determine if two words are phonetically a match. For example, the words "THEIR" and "THERE" will be phonetically be a match whereas the words "DARK" and "PRINCIPLE" are not phonetically matching.
+
+As each combined key in Trustwords is an exclusive-or of both sides public key (Figure \ref{fig:xor_trustwords} shows this process) the attack is target to a single pair of users and will require recomputation for every attack instance, this will be considered when discussing the attack feasibility. Each pair is also split into a "Uncontrolled" and "Controlled" key. Uncontrolled is the reciever of the communication, and, thus, we cannot control their key. The Controlled key is the one we are attempting to impersonate, and it is assumed that we have the ability to replace the Controlled key with our malicious option. These descriptions will be the terminology used throughout the paper. However, it should also be considered that the uncontrolled and controlled can be swapped around with the ability to compute both directions. Thus, resulting in the possibility to intercept both directions of communication. This, however, will require performing the attack separately for both directions.
+
+\begin{figure}[h!]
+    \centering
+    $KeyFingerprint_{1} \oplus KeyFingerprint_{2} = TrustwordsFingerprint$
+    \caption{Creation of the combined Trustword fingerprint}
+    \label{fig:xor_trustwords}
+\end{figure}
+
+When attacking the respective similarity metric will be used to compute a list of possibilities for each position in the combined fingerprint.
+
+Figure \ref{fig:nearMatch} shows the process of generating a sub section of the combinations. A list of each words matches are generated and then the total number of permutations are generated overall.
+
+\begin{figure}[h!]
+    \centering
+    \begin{BVerbatim}[commandchars=\\\{\}]
+        \centering
+\textbf{ CHOKE BLUSHING FRIGHTENING HAND}
+    \end{BVerbatim}
+    \\
+    \verb|COKE                           |
+    \\
+    \verb|SMOKE                          |
+    \\
+    \hspace{1cm}
+
+
+
+    \verb|CHOKE                          |
+    \\
+    \begin{BVerbatim}[commandchars=\\\{\}]
+\textbf{COKE BLUSHING FRIGHTENING HAND}
+    \end{BVerbatim}
+    \\
+    \verb|SMOKE                          |
+    \\
+    \hspace{1cm}
+
+
+    \verb|CHOKE                          |
+    \\
+    \verb|COKE                           |
+    \\
+    \begin{BVerbatim}[commandchars=\\\{\}]
+        \centering
+\textbf{ SMOKE BLUSHING FRIGHTENING HAND}
+    \end{BVerbatim}
+    \caption{Visualization of the generation of near matches}
+    \label{fig:nearMatch}
+\end{figure}
+
+To generate an actual list of fingerprints to search for, the near collision words are converted back into hexadecimal and XORed with the uncontrolled key. The provides the impersonated key that will produce the desired combined near-collision. Completing this for all of the near-collision permutations will produce a list of fingerprints that can be inserted into a tool designed to hash keys and search for targets. This aspect of using a large list to search for keys massively reduces the complexity of the search.
+
+In summary the, attack steps are:
+
+\begin{enumerate}
+    \item Compute all possible matches using a similarity metric on all words in a dictionary (Only needs performing once).
+
+    \item Select a target and allocate "Uncontrolled" and "Controlled" key identification.
+    
+    \item Calculate all permutations of near-collisions for the key pair and produce a list of similar key fingerprints.
+    
+    \item Use list of similar keys in mass computation of keys to find near-collision keys.
+
+\end{enumerate}
+
+\subsection{Similarity metrics}
+
+\subsubsection{Soundex}
+One of the first requirements for the attack is quantifying "phonetic similarity". There are many algorithms currently available to provide this function, is known as Soundex. It is one of the most famous example of a phonetic algorithm due to its implementation into major database clients like MySQL\cite{mysql_soundex}, Oracle\cite{moved_2005} and PostgreSQL\cite{postgresql}. Originally designed for indexing names by sound alongside spelling mistakes due to small changes in letters. However, due to its design being based on the phonetic features it is highly suitable for this use-case. 
+
+Soundex produces a four digit code for each word assessed.
+The first letter of the word is retained alongside the removal of all of a, e, i, o, u, y, h and w. The remaining letters are then mapped to numbers.
+
+\begin{figure}[h!]
+    \centering
+    \begin{BVerbatim}
+b, f, p, v               1
+c, g, j, k, q, s, x, z   2
+d, t                     3
+l                        4
+m, n                     5
+r                        6
+    \end{BVerbatim}
+
+    \caption{Soundex mappings of letters to numbers}
+\end{figure}
+
+Further steps are performed on the code, as the technical details do not add anything to the discussion, the steps of the algorithm can be found in Appendix TODO.
+
+Due to the fixed length and limited digit set the initial concerns from this design is the limited number of combinations. There are a total of 5616 codes due to 26 initial letters and three digits of 6 values ($26 * 6^3$).
+The limited combinations will result in matches of a limited quality. This will require consideration later in the project.
+
+\subsubsection{Metaphone}
+\textbf{TODO}
+
+\subsubsection{NYSIIS}
+\textbf{TODO}
+
+\subsubsection{Levenshtien}
+\textbf{TODO}
+
 \section{Design of GreenOnion}
 And the way it works. Need to explain it is based on Scallion but improved with the use of C++ alongside a bloom filter.

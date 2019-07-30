@@ -30,6 +30,7 @@ RESULTS = {
 
 def usage():
     print("Usage ./{__file__} <RESULTS_CSV>")
+    exit()
 
 def order_results(filepath):
     responses = []

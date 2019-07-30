@@ -1,4 +1,5 @@
 import sys
+sys.path.insert(0, "..")
 sys.path.insert(0, ".")
 import attack
 
@@ -29,7 +30,7 @@ def check_attacks():
         sys.stderr.write(f"{x}/{ROUNDS}\r")
         sys.stderr.flush()
 
-        a = attack.decision(WORDS)
+        a = attack.decision()
         if a != None: 
             METRIC_COUNT[a[0]] += 1
             ATTACK_TYPE_COUNT[a[1]] += 1

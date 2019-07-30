@@ -8,8 +8,8 @@ import Loader from 'react-loader-spinner'
 var trustword_top = require("../../images/trustwords_top.jpg");
 var trustword_filler = require("../../images/trustwords_filler.jpg");
 
-// var URL_BASE = "https://afray.pythonanywhere.com"
-var URL_BASE = "http://localhost:5000" //DEBUG
+var URL_BASE = "https://afray.pythonanywhere.com"
+// var URL_BASE = "http://localhost:5000" //DEBUG
 
 let styles = StyleSheet.create({
   top: {

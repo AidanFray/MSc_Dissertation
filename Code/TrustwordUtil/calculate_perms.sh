@@ -2,12 +2,14 @@
 
 set -e
 
-declare -a metricArr=("soundex" "leven" "metaphone" "nysiis" "wordvec_4_5")
+# declare -a metricArr=("soundex" "leven" "metaphone" "nysiis" "wordvec_4_5")
+declare -a metricArr=("wordvec_4")
+
 
 # declare -a permsArr=("1000" "10000" "100000") # 1 day
 # declare -a permsArr=("500" "5000" "50000") # 2 days
-declare -a permsArr=("250" "2500" "25000") # 3 days
-# declare -a permsArr=("152" "1525" "15250") # 1 week
+# declare -a permsArr=("250" "2500" "25000") # 3 days
+declare -a permsArr=("152" "1525" "15250") # 1 week
 
 declare -a staticArr=("0" "1" "2")
 

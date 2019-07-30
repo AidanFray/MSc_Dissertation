@@ -1,14 +1,6 @@
 \chapter{Background}
 \label{cha:Background}
 
-\section{Problem Context}
-% Goal of the project? Why am I concentrating on PEP's Trustwords?
-The project aims to asses the security of \pep's fingerprint representation "Trustwords". Trustwords aim to sacrifice security for increased usability. The encoding scheme has been designed to assist this by having  the user compare a reduced set of words by about half in comparison to other schemes. To achieve this a larger number of bits are required per word. In this case Trustwords maps 16bits per word providing 65537 different combinations. This is, however, the largest number of bits per words (As show in the Literature Review in Chapter \ref{cha:LiteratureReview}) and pushes the boundaries of a language's usable vocabulary.
-
-This abnormal design choice has not received a security assessment to back up claims. This paper, therefore, aims to rectify this research gap.
-
-However, in order to fully understand the project goal it is important to understand public-key cryptography, the role and functioning of \pep and the role fingerprint comparison has in preventing Man-in-the-middle attacks.
-
 \textbf{TODO:} Maybe research questions here instead of in the literature review
 
 \section{PGP}
@@ -20,34 +12,4 @@ Each element of a PGP key is split into what is know as a 'packet'. The 'fingerp
 
 Each key pair is the exclusive-or of each key's fingerprint, this combined values is then broken down into 16-bit chunks and mapped to words via a pre-defined dictionary.
 
-\begin{figure}[h!]
-    \centering
-    $KeyFingerprint_{1} \oplus KeyFingerprint_{2} = TrustwordsFingerprint$
-    \caption{Creation of the combined Trustword fingerprint}
-\end{figure}
 
-\begin{wrapfigure}{r}{5cm}
-    \centering
-    \begin{BVerbatim}
-    [...]
-52127 ZYGOTE
-52128 ZYGOTIC
-52129 ZYMURGY
-52130 AACHEN
-52131 AARDVARK
-52132 AAREN
-    [...]
-    \end{BVerbatim}
-    \caption{Re-mapping position in Trustword dictionary}
-    \label{fig:remap}
-\end{wrapfigure}
-
-Due to the number of words required ($2^{16}$) alongside the design choice to exclude slang and profanities the english Trustword dictionary requires dual-mapping of a section of words. Approximately 13633/65536 (20.8\%) of words are re-mapped in the dictionary leaving 51903 unique words. The re-mapping is also done on a loop with it remaining alphabetical. Figure \ref{fig:remap} shows the position in the dictionary where this occurs. This predictability within the dictionary will be explored later in the paper.
-
-
-
-
-% Does this need explaining?
-\section{OpenCL}
-
-\section{Similarity metrics (Soundex etc)}

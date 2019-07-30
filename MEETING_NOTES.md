@@ -1,21 +1,5 @@
 # Meeting 23-07-2019
 
-## Work to show
-
-NYSIIS 2-static
-
-Original:
-```
-VOCATION BORE TANN ANTE
-```
-
-Actual:
-```
-VOCATION BARE TONE ANTE
-```
-
-## Questions
-
 ### Attack Length
 A new attack length for the MainExperiment. Bring along comparison documents and we can compare.
 
