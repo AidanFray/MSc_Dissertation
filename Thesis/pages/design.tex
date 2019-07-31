@@ -94,29 +94,47 @@ r                        6
 
     \caption{Soundex mappings of letters to numbers}
 \end{figure}
-\textbf{TODO: Turn into a table}
 
 Further steps are performed on the code, as the technical details do not add anything to the discussion, the steps of the algorithm can be found in Appendix TODO.
+
+\subsubsection{Soundex Issues}
 
 Due to the fixed length and limited digit set the initial concerns from this design is the limited number of combinations. There are a total of 5616 codes due to 26 initial letters and three digits of 6 values ($26 * 6^3$).
 The limited combinations will result in matches of a limited quality. This will require consideration later in the project.
 
+Further issues posed in \cite{patman2001soundex} are discussed below and show the further deficiencies of Soundex in a dictionary word matching context. 
+
+\begin{enumerate}
+    \item \textbf{Dependency on the first letter:} Soundex cannot match words together if their first letters are different, meaning for example the words "KORBIN" and "CORBIN" will never be matched.
+
+    \item \textbf{Silent consonants.} Soundex does not have logic embedded to deal with silent consonants within words.
+
+    \item \textbf{Poor precision.} Due to the previously discussed point of a small code resulting in lack of precision. \cite{patman2001soundex} re-iterates this point but in the context of name matching where Soundex's poor performance was demonstrated. Soundex only gained and overall accuracy 36.37\% when matching names within a database.
+\end{enumerate}
+
+
+However, even with Soundex's fallbacks its algorithmic simplicity and popularity allows it to still remain relevant in this application.
+
 \subsubsection{NYSIIS}
-The New York State Identification and Intelligence System (NYSIIS) Phonetic Code was created for use matching the phonetics of American names. However, due to it having embedded rules to handle word phonetics it would, again be applicable in this application. It allows for variable length codes and, thus, allows the applicability of the application to increase due to it not confronting the limited code issue of Soundex.
+The New York State Identification and Intelligence System (NYSIIS) phonetic code was created for use matching the phonetics of American names. It was created due to the presence of hispanic names in the American based databases (this was an aspect Soundex was known to have low accuracy with). However, due to it having embedded rules to handle word phonetics it would, again be applicable in this application.
+
+It also allows for variable length codes and, thus, allows the applicability of the application to increase due to it not confronting the limited code issue of Soundex. It was in use right up the end of 1998 within various US Government departments. Due to this prolific stature and proven track record it was deemed suitable as one of the selected similarity metrics.
 
 \subsubsection{Metaphone}
 Metaphone was invented by Lawrence Philips in 1990\cite{philips1990hanging} in response to the deficienies in Soundex. It improves on Soundex by including information around inconsistency and variation in English spelling in an attempt to create a more accurate phonetic representation. Metaphone is arguably on the same level of ubiquity as that of Soundex with it finding itself implemented in languages such as big examples like PHP\cite{php}. Further work would involve the implementation of newer versions of Metaphone. Double Metaphone (2000) and Metaphone 3 (2009) claim to improve over the original version due to further research performed by Philips. The original version was chosen due to its historical wide spread usage alongside the case of Metaphone 3 being proprietary code and, therefore, under a paid licence.
 
-\textbf{TODO: } Talk about why length of 10 was chosen.
+\subsubsection{Levenshtien Distance}
+Levenshtein distance is a string metric designed to measure the 'distance' between two strings. It is simply the number of single-character edits (insertions, deletions or substitutions) required to reach the other string. Edit distance is not technically designed as a phonetic algorithm, but due to similar-sounding words often being spelt in similar ways\cite{hettiarachchi2012sparcl} Levenshtien distance was deemed another suitable metric.
+
+An example distance between \verb|trace| and \verb|place| would be the substitutions of the first to letters, from \verb|tr| to \verb|pl| meaning the two strings have a Levenshtein distance of 2.
 
 
-\subsubsection{Levenshtien}
-\textbf{TODO}
+\subsubsection{Word Vectors}
 
 \textbf{TODO: } Do a sample conversions table
 
 % List of papers assessing algorithms
-%   - Analysis andComparative Study on Phonetic Matching Techniques
+%   - Analysis and Comparative Study on Phonetic Matching Techniques
 %   - Performance Evaluation of Phonetic Matching Algorithms on English Words and Street Names
 %   - Study Existing Various Phonetic Algorithms and Designing and Development of a working model for the New Developed Algorithmand Comparison by implementing it with Existing Algorithm(s)
 
