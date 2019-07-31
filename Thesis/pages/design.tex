@@ -128,21 +128,119 @@ Levenshtein distance is a string metric designed to measure the 'distance' betwe
 
 An example distance between \verb|trace| and \verb|place| would be the substitutions of the first to letters, from \verb|tr| to \verb|pl| meaning the two strings have a Levenshtein distance of 2.
 
+\subsubsection{Phonetic Vectors}
+Phonetic Vectors is the unique addition to the chosen set. Created by Allison Parrish in 2017\cite{parrish2017poetic}, Phonetic vectors is as the name suggests the vectorization of a words phonetics. This allows a words phonetics to be represented using a continuous number in vector space.
 
-\subsubsection{Word Vectors}
+Phonetic features are used in this work as a way to compare the similarity of the phonemes. Extensive prior work has gone into producing models of features that map to phonemes. \cite{chomsky1968sound}\cite{ladefoged1969measurement}\cite{bradlow2010perceptual}. Features, therefore, a newer attempt at mapping the varying and inconsistent rules around pronunciation of the English language. The vectors are created using lists phonemes from the CMU Pronouncing Dictionary. Phonemes are the phonetic elements that construct a word. For example the word "RING" translated into the phonemes \verb|/R IH NG/|. Using all words available and mapping all phonemes to phonetic features a list of unique features is created per-word.
+
+\begin{table}[!htb]
+    \tiny
+    \begin{minipage}{.33\linewidth}
+        \centering
+        \begin{tabular}{ll}
+            Phone & Features \\
+            \hline
+            AA & bck, low, unr, vwl \\
+            AE & fnt, low, unr, vwl \\
+            AH & cnt, mid, unr, vwl \\
+            AO & bck, lmd, rnd, vwl \\
+            AW & bck, cnt, low, rnd, smh, unr, vwl \\
+            AY & cnt, fnt, low, smh, unr, vwl \\
+            B & blb, stp, vcd \\
+            CH & alv, frc, stp, vls \\
+            D & alv, stp, vcd \\
+            DH & dnt, frc, vcd \\
+            EH & fnt, lmd, unr, vwl \\
+            ER & cnt, rzd, umd, vwl \\
+            EY & fnt, lmd, smh, unr, vwl
+        \end{tabular}
+    \end{minipage}%
+    \begin{minipage}{.33\linewidth}
+        \centering
+        \begin{tabular}{ll}
+            Phone & Features \\
+            \hline
+            F &  frc, lbd, vls \\
+            G &  stp, vcd, vel \\
+            HH & apr, glt \\
+            IH & fnt, smh, unr, vwl \\
+            IY & fnt, hgh, unr, vwl \\
+            JH & alv, frc, stp, vcd \\
+            K &  stp, vel, vls \\
+            L &  alv, lat \\
+            M &  blb, nas \\
+            N &  alv, nas \\
+            NG & nas, vel \\
+            OW & bck, rnd, smh, umd, vwl \\
+            OY & bck, fnt, lmd, rnd, smh, unr, vwl
+        \end{tabular}
+    \end{minipage} 
+    \begin{minipage}{.33\linewidth}
+        \centering
+        \begin{tabular}{ll}
+            Phone & Features \\
+            \hline
+            P & blb, stp, vls \\
+            R & alv, apr \\
+            S & alv, frc, vls \\
+            SH & frc, pla, vls \\
+            T & alv, stp, vls \\
+            TH & dnt, frc, vls \\
+            UH & bck, rnd, smh, vwl \\
+            UW & bck, hgh, rnd, vwl \\
+            V & frc, lbd, vcd \\
+            W & apr, lbv \\
+            Y & apr, pal \\
+            Z & alv, frc, vcd \\
+            ZH & frc, pla, vcd \\
+        \end{tabular}
+    \end{minipage} 
+    \caption{Phonemes to feature mapping table}
+    \label{tab:features}
+\end{table}
+
+Table \ref{tab:features} contains the mappings used in \cite{parrish2017poetic} to create the phonetic feature lists.
+Using this with all 133,852 entries in version 0.7b of the CMU Pronouncing Dictionary, 949 unique properties were produced overall. The author then performed principal components analysis\footnote{Details regarding this process is outside the scope of the project. Please, however, if interested please refer to this resource for more information: \url{http://setosa.io/ev/principal-component-analysis/}} on the unique properties to reduce them down to 50.
+
+This metric allows for a unique set of actions to be performed on the phonetic output. Not only does this metric allow the user to measure \textit{dissimilarity} (opposed to the similar-or-not method of the alternatives) the continuous nature of the value allows mathematical operations to be performed on the output. An example shown in \cite{parrish2017poetic} was the addition of word vectors.
+
+\begin{table}[!htb]
+    \centering
+    \begin{tabular}{cll}
+        No & Operation & Result \\
+        \hline
+        1  & $Vec(\verb|sub|) + Vec(\verb|marine|)$ & \verb|submarine| \\
+        2  & $Vec(\verb|miss|) + Vec(\verb|sieve|)$ & \verb|missive| \\
+        3  & $Vec(\verb|fizz|) + Vec(\verb|theology|)$ & \verb|physiology| \\
+    \end{tabular}
+    \caption{Examples of vector addition}
+    \label{tab:vectorAdd}
+\end{table}
+
+For example, the addition of vectors can be seen in Table \ref{tab:vectorAdd}. This works for any mathematical operation with multiplication allowing the 'tinting' words with a theme. 
+
+\textbf{TODO: } Explain why being vectors is useful and its appliactions
 
 \textbf{TODO: } Do a sample conversions table
 
-% List of papers assessing algorithms
-%   - Analysis and Comparative Study on Phonetic Matching Techniques
-%   - Performance Evaluation of Phonetic Matching Algorithms on English Words and Street Names
-%   - Study Existing Various Phonetic Algorithms and Designing and Development of a working model for the New Developed Algorithmand Comparison by implementing it with Existing Algorithm(s)
+\subsection{Alternative Similarity Metrics}
+
+\subsubsection{Match Rating Approach}
+Matching Rating Approach (MRA) is another algorithm designed to match names within a database, therefore, its operation can be grouped with that of NYSIIS and Soundex. MRA was discarded as an option. This is because of the lack of known utilization in any substantial real world use-cases alongside its similarity to more well established algorithms of Soundex and NYSIIS.
+
+Further work could include the comparison of this algorithm  to similar alternatives in phonetically matching of words to quantify performance. This will be discussed further in the evaluative sections of the report.
+
+\subsubsection{Caverphone}
+Another notable alternative solution is that of Caverphone that was designed in New Zealand. Caverphone as is the case with the vast majority of phonetic algorithms was designed for use with name matching. Caverphone was not chosen to similar reasons to that of MRA alongside its optimization for accents in location of New Zealand it was conceived in. Therefore, the low level of utilization alongside the unique design features that suggest it may not be suited for this application. This has, however, not be assessed empirically and thus would be a candidate for further work.
+
 
 % Other alternatives:
 % - Match Rating Approach
 %   - Couldn't find an algorithm??
 %
 % - Caverphone
+
+
 
 
 \textbf{TODO: } Need to justify why
