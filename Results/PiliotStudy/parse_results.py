@@ -4,18 +4,16 @@ import sys
 Parses the results from the Google Forms pilot study
 """
 
-NUM_OF_DEMOGRAPHIC_QUESTIONS = 4
+NUM_OF_DEMOGRAPHIC_QUESTIONS = 7
 
 # This is questions added after the first launch of the survery
 # Google Sheets does not try to maintain the order so new questions
 # are added to the end
 #       
-#   1. English proficiency
-#   2. Attension question "UNIVERSITY-UNIVERSITY"
-#   3. Attension question "DYNAMIC-DYNAMIC"
-#   4. Worder ID
-#   5. Consent
-NEWLY_ADDED_QUESTIONS = 6
+#   1. Attension question "UNIVERSITY-UNIVERSITY"
+#   2. Attension question "DYNAMIC-DYNAMIC"
+#   3. Random Average
+NEWLY_ADDED_QUESTIONS = 3
 
 SECTIONS = ["Soundex", "Metaphone", "Leven", "NYSIIS", "WordVec", "Random"]
 
