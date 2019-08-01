@@ -262,12 +262,12 @@ The tool should take two keys as parameters (Uncontrolled/Controlled) and a chos
 In order to answer some of the research questions empirical evidence is required and, thus, experiments are required. In this section the designs and considerations of the chosen experiments will be discussed.
 
 \subsection{Metric performance}
-In order to answer Research Question \ref{goal:bestMetrics} and reduce the number of metrics to asses in the later rounds, the performance of similarity metrics required comparison. The thinning out of metrics is required due to limited resources, further work could involve repeating this work with a much more varied selection of metrics. As explained in a previous section (See Section \ref{sec:metrics}) the chosen metrics up for assessment are Soundex, Metaphone, NYSIIS, Levenshtein and Phonetic vectors.
+In order to answer Research Question \ref{goal:bestMetrics} and reduce the number of metrics to asses in the later rounds, the performance of similarity metrics required comparison. The thinning out of metrics is required due to limited resources and, therefore, possible further work could involve repeating this work with a much more varied selection of metrics. As explained in a previous section (See Section \ref{sec:metrics}) the chosen metrics up for assessment are Soundex, Metaphone, NYSIIS, Levenshtein and Phonetic vectors.
 
-The design for the experiment involves assessing the quality of the metrics matches by matching them to human perception of similarity. 
+The design for the experiment involves assessing the quality of the metrics matches by having participants rate them on a scale of 1 to 5.
 
 \subsubsection{Matches}
-A match for each code based metric (Soundex, Metaphone and NYSIIS) is when the codes are identical. However, for the other cases where the difference is variable other ways of defining a match are required.
+A match for each code based metric (Soundex, Metaphone and NYSIIS) occurs when the codes are identical. However, for the other cases where the difference is variable other ways of defining a match are required.
 
 In the case of Levenshtein values of similarity are discrete due to it being the number of single character edits. Therefore, this requires less deliberation. Match size was used as a way to decide on a cut-off point.
 
@@ -287,7 +287,7 @@ In the case of Levenshtein values of similarity are discrete due to it being the
     \label{tab:matchSize}
 \end{table}
 
-As it can be seen from Table \ref{tab:matchSize} the number of matches for L2 is massively larger than all but Soundex. As the issues with Soundex have been discussed in previous sections (See Section \ref{sec:soundexIssues}) it can be excluded as an abnormally in this context as it is only included due to its historical significance. Therefore, due to the excessively high value for a L2, L1 was chosen as the Levenshtein cap for defining a match.
+As it can be seen from Table \ref{tab:matchSize} the number of matches for L2 is massively larger than all metrics excluding Soundex. As the issues with Soundex have been discussed in previous sections (See Section \ref{sec:soundexIssues}) it can be excluded as an abnormality in this context. Therefore, due to the excessively high value for a L2, L1 was chosen as the Levenshtein cap for defining a match.
 
 Match size was also used to define the cap for the phonetic vectors. This is less distinct that that of Levenshtein due to the continuous nature of the distance between two vectors, however the complexity was reduced by limiting it to increments of 0.5.
 
@@ -311,3 +311,108 @@ Match size was also used to define the cap for the phonetic vectors. This is les
 \end{table}
 
 Table \ref{tab:vectorMatchSize} contains the match size comparison for Phonetic vectors distance. Distance 4.5 was chosen as the suitable size due to the total matches fitting well within the other metrics. Distance 4.0 was the other alternative, this was discarded due to its small size. Any metric with a number of matches below 100,000 results in an inadequate number of possible near-collision keys later in the process, a lower number of matches may imply better quality but a balance is required between computational cost and attack quality. This will be discussed in more detail in later chapters.
+
+\newpage
+
+\subsubsection{Comparisons}
+Each participant is asked to rate the similarity of a match on a scale of 1 to 5. Figure \ref{fig:phoneticMatch} shows an example match and the connected scale. Users will complete 5 of these comparisons per metric.
+
+\begin{figure}[h!]
+    \centering
+    \fbox{
+        \includegraphics[scale=0.5]{experiment_match.png}
+    }
+    \caption{Example experiment question}
+    \label{fig:phoneticMatch}
+\end{figure}
+
+The experiment randomizes the order of these comparisons per session alongside a complete refreshing of matches once per submission. This makes sure selections from the samples are fair and consistent as each user will have a different selection of matches.
+
+\subsubsection{Quality control}
+As the study was being outsourced to Amazon's Mechanical Turk the requirement to check the quality of results is important. Therefore, a couple of additions were provided to check a result's validity.
+
+The first was the addition of 5 "Random matches" questions. These were two random words selected from the dictionary. Therefore, the overall rating of these words should be close to an average of 1. This allows a simple check to see if the user is providing valid results. If their average is too high, the results will also be discarded.
+
+\begin{figure}[h!]
+    \centering
+    \fbox{
+        \includegraphics[scale=0.5]{exact_experiment_match.png}
+    }
+    \caption{Exact experiment attention question}
+    \label{fig:exactMatch}
+\end{figure}
+
+Alongside this, was the addition of two questions comparing exactly the same word. As both words are the same the result should always be a full 5/5 rating, any results without a full rating will be discarded. Figure \ref{fig:exactMatch} contains one example of the attention questions used to filter inaccurate results.
+
+The final check to ensure the validity of results is a check for native 
+English fluency. Having non-native English speakers complete the 
+experiment has the possibility to introduce inconsistencies into the 
+data and, therefore, needs to remain controlled. To achieve this a 
+preliminary MTurk study will be run to ask users for their perceived 
+English fluency on a scale of 1 (Basic Understanding) to 5 (Native). 
+Workers with an answer of 5 will be provided with a 
+Qualification\footnote{\url{https://blog.mturk.com/tutorial-understanding-requirements-and-qualifications-99a26069fba2}} 
+that tags them as defining themselves as native speakers. This is then 
+added as a prerequisite when running the experiment. This will insure 
+only fully native speakers are being assessed. The possibility of the 
+worker falsy stating their level of fluency has also been considered. 
+However, as the worker does not know the purpose for this initial study,
+thereby providing inaccurate results has no real valid motive for the 
+worker.
+
+\subsubsection{Statistical}
+\textbf{TODO}
+
+\newpage
+
+\subsection{Trustword Attacks}
+
+The final experiment required to answer the Research Question \ref{goal:attackPercentage} will simulate attacks on participants. The user will be presented with the same design as presented in the \pep Android application (See Section \ref{sec:pep}).
+
+\begin{figure}[h!]
+    \centering
+    \fbox{
+        \includegraphics[width=\textwidth]{experiment/trustword_attack.png}
+    }
+    \caption{Experiment UI}
+    \label{fig:expID}
+\end{figure}
+
+Figure \ref{fig:expID} shows the design of the experiments front end. As can be seen by comparing it to Figure \ref{fig:trustwords} it has been designed to be a close as possible to the actual application. Users will click the blue button to simulate the authentication ceremony over the phone. A text-to-speech system will then read a set of words and the user should accept if they match and decline if they don't.
+
+\subsubsection{Design}
+
+Due to the scarcity of attacks in a real-world setting users will are often complacent about their occurrence. Therefore, in this experiment attacks only occur 30\% of the time. This is a much higher value than in a real-world setting, but it is a balance between resources and realistic design. Alongside, this the first 5 trials of a new experiment will always be benign. This is to ensure users are lulled into a level of complacency regarding the possibility for an attack.
+
+Certain keys have higher levels of near-collision possibilities than others due to how certain words are deemed similar by the chosen metric. Therefore, this presents the possibility to have keys with a very low number of similar matches. The distribution of these keys will be explained further in Chapter \ref{cha:Experiments}. Therefore, if random sets of words were chosen with no restraints there are attacks presented to the user that in a real setting would be infeasible in this context as they are close to a $2^{64}$ attack (4 Words * 16-bits). Therefore, the experiment will sample from a list of "vulnerable" keys. These are keys that have a number of combinations that allow an attack in a certain timeframe. Furthermore, certain levels of attacks are also simulated. Below are the list of possible attacks:
+
+\begin{itemize}
+    \item \textbf{Zero static words} - All words in the set can vary.
+    \item \textbf{One static word} - All but the first word can vary.
+    \item \textbf{Two static words} - All but the first and last word can vary.
+\end{itemize}
+
+These attacks are ascending in complexity. The timeframe for finding a match was decided as 7-days on with attack strengths of 1 GPU/day, 10 GPU/days and 100 GPU/days on a mid range GPU (AMD RX 480 was the example in experiments). 
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{lll}
+        GPU/days & No of combinations required & Attack Type \\
+        \hline
+        1       & 15250   & Zero static\\
+        10      & 1525    & One static\\
+        100     & 152     & Two static\\        
+    \end{tabular}
+    \caption{Summary of attack requirements}
+    \label{tab:attackReq}
+\end{table}
+
+Table \ref{tab:attackReq} contains a summary of the different level of attacks and their respective restrictions. More combinations makes the attack search quicker as there are more possibilities.
+
+Any key that exceeds this criteria is deemed as vulnerable is one of the three attack contexts. A list of these vulnerable keys are sampled from when an attack is simulated. The percentage of vulnerable keys will be explored in Chapter \ref{cha:Experiments}.
+
+\subsubsection{Quality control}
+\textbf{TODO}
+
+\subsubsection{Statistical}
+\textbf{TODO}
