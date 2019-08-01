@@ -50,7 +50,7 @@
 
 \RequirePackage[T1]{fontenc} % prevents < in text mode turning into
 \RequirePackage{textcomp}    % ?', etc
-\RequirePackage[osf]{mathpazo} % Palatino font
+% \RequirePackage[osf]{mathpazo} % Palatino font
 \RequirePackage{courier} % nicer typewriter-style fonts
 \RequirePackage[scaled]{helvet} % nice san serif fonts
 \RequirePackage{microtype} % micro-typographical extensions for
@@ -59,8 +59,8 @@
 \RequirePackage{ifthen}
 
 \usepackage[scaled]{helvet}
-\renewcommand\familydefault{\sfdefault} 
-\usepackage[T1]{fontenc}
+% \renewcommand\familydefault{\sfdefault} 
+% \renewcommand\familydefault{\rmdefault} 
 
 \pagestyle{headings}
 \renewcommand{\partpagestyle}{empty}
