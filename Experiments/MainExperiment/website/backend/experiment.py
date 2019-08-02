@@ -57,6 +57,9 @@ class Experiment:
     def is_attack(self):
         return self.AttackSchema[-1]
 
+    def check_if_round_started(self):
+        return len(self.VisualWords) == len(self.RoundStartTimes)
+
     def num_of_rounds(self):
         return len(self.Responses)
 

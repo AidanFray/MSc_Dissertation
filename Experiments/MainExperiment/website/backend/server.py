@@ -93,8 +93,10 @@ def get_words():
                 return "DONE"
 
             exp = Experiment.from_json(session[exp_id])
-            exp.record_round_start_time()
-            session[exp_id] = exp.to_json()
+
+            if not exp.check_if_round_started():
+                exp.record_round_start_time()
+                session[exp_id] = exp.to_json()
 
             return "  ".join(Experiment.from_json(session[exp_id]).get_current_wordlist())
 

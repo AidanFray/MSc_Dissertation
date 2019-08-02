@@ -1,0 +1,9 @@
+leven-0 157/100000
+leven-1 20/100000
+leven-2 0/100000
+metaphone-0 10202/100000
+metaphone-1 3043/100000
+metaphone-2 222/100000
+nysiis-0 1824/100000
+nysiis-1 412/100000
+nysiis-2 18/100000

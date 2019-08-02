@@ -29,6 +29,25 @@ export default class App extends Component {
 
   render() {
 
+    // Internet Explorer 6-11
+    const isIE = /*@cc_on!@*/false || !!document.documentMode;
+
+    // Edge 20+
+    const isEdge = !isIE && !!window.StyleMedia;
+    if (isEdge || isIE) {
+      return (
+        <div>
+          <div>
+            Experiment is not supported on Internet Explorer or Microsoft Edge.
+          </div>
+          <br/>
+          <div>
+            Please switch to Firefox or Chrome to complete this HIT
+          </div>
+        </div>
+      )
+    }
+
     if (areCookiesEnabled()) {
       return (
         <Router>
@@ -45,8 +64,9 @@ export default class App extends Component {
       return (
         <div>
           <div>
-            This experiment cannot be completed with cookied deactivated.           
+            This experiment cannot be completed with cookies deactivated.           
           </div>
+          <br/>
           <div>
             Please enable cookies and reload the page.
           </div>

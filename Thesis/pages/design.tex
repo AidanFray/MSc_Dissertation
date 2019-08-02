@@ -8,9 +8,9 @@ This chapter will discuss and overview of the proposed attack and the elements t
 The attack on Trustwords involves generating "near-collision" keys. 
 This will attempt to provide the base to answer Research Questions \ref{goal:numberOfTrustwords}, \ref{goal:complexity} and \ref{goal:hardwareRequired}.
 
-Near-collision keys are keys that are deemed a match by the phonetic similar metric (More on this aspect in the following sections). A similarity metric is an algorithm designed to determine if two words are phonetically a match. For example, the words "THEIR" and "THERE" will be phonetically be a match whereas the words "DARK" and "PRINCIPLE" are not phonetically matching.
+Near-collision keys are keys that are deemed a match by the phonetic similarity metric (More on this aspect in the following sections). A similarity metric is an algorithm designed to determine if two words are phonetically a match. For example, the words "THEIR" and "THERE" will be a match whereas the words "DARK" and "PRINCIPLE" are not phonetically matching.
 
-As each combined key in Trustwords is an exclusive-or of both sides public key (Figure \ref{fig:xor_trustwords} shows this process) the attack is target to a single pair of users and will require recomputation for every attack instance, this will be considered when discussing the attack feasibility. Each pair is also split into a "Uncontrolled" and "Controlled" key. Uncontrolled is the reciever of the communication, and, thus, we cannot control their key. The Controlled key is the one we are attempting to impersonate, and it is assumed that we have the ability to replace the Controlled key with our malicious option. These descriptions will be the terminology used throughout the paper. However, it should also be considered that the uncontrolled and controlled can be swapped around with the ability to compute both directions. Thus, resulting in the possibility to intercept both directions of communication. This, however, will require performing the attack separately for both directions.
+As each combined key in Trustwords is an exclusive-or of both sides public key (Figure \ref{fig:xor_trustwords} shows this process) the attack is target to a single pair of users and will require recomputation for every attack target. This will be considered when discussing the attack feasibility. Each pair is also split into a "Uncontrolled" and "Controlled" key. Uncontrolled is the reciever of the communication, and, thus, we cannot control their key. The Controlled key is the one we are attempting to impersonate, and it is assumed that we have the ability to replace the Controlled key with our malicious option. These descriptions will be the terminology used throughout the paper. However, it should also be considered that the uncontrolled and controlled can be swapped around with the ability to compute both directions. Thus, resulting in the possibility to intercept both directions of communication. This, however, will require performing the attack separately for both directions.
 
 \begin{figure}[h!]
     \centering
@@ -78,7 +78,7 @@ In summary the, attack steps are:
 
 \section{Similarity metrics}
 \label{sec:metrics}
-One of the first requirements for the attack is quantifying "phonetic similarity". This section is looking to provide an answer for the Research Question \ref{goal:phoneticSimilarity}. There are many algorithms currently available to provide this functionality. This section will describe algorithms alongside the reasons they were selected for assessment later in the project. 
+One of the first requirements for the attack is quantifying "phonetic similarity". This section is looking to provide an answer for the Research Question \ref{goal:phoneticSimilarity}. There are many algorithms currently available to provide this functionality. This section will describe algorithms alongside the reasons they were selected for assessment later in the project.
 
 \subsection{Soundex}
 One of the earliest example of a phonetic algorithm is known as Soundex. It is one of the most famous algorithm due in part to its implementation into major database clients like MySQL\cite{mysql_soundex}, Oracle\cite{moved_2005} and PostgreSQL\cite{postgresql}. Originally designed for indexing names by phonetics alongside spelling mistakes due to transpositions in letters. Therefore, due to it being based on the phonetic features, it is highly suitable for this project's use-case. 
@@ -127,7 +127,7 @@ It also allows for variable length codes and, thus, allows the applicability of 
 \subsection{Metaphone}
 Metaphone was invented by Lawrence Philips in 1990\cite{philips1990hanging} in response to the deficiencies in Soundex. It improves on Soundex by including information around inconsistency and variation in English spelling in an attempt to create a more accurate phonetic representation. Metaphone is arguably on the same level of ubiquity as that of Soundex with it finding itself implemented in languages such as PHP\cite{php}. 
 
-Further work would involve the implementation of newer versions of Metaphone. Double Metaphone (2000) and Metaphone 3 (2009) claim to improve over the original version due to further research performed by Philips. The original version was chosen due to its historical widespread usage.
+Further work would involve the implementation of newer versions of Metaphone. Double Metaphone (2000) and Metaphone 3 (2009) that claim to improve over the original version due to further research performed by Philips. The original version was chosen due to its historical and widespread usage.
 
 \subsection{Levenshtien Distance}
 Levenshtein distance is a string metric designed to measure the 'distance' between two strings. It is simply the number of single-character edits (insertions, deletions or substitutions) required to reach the other string. Edit distance is not technically designed as a phonetic algorithm, but due to similar-sounding words often being spelt in similar ways\cite{hettiarachchi2012sparcl} Levenshtien distance was deemed another suitable metric.
@@ -137,7 +137,9 @@ An example distance between \verb|trace| and \verb|place| would be the substitut
 \subsection{Phonetic Vectors}
 Phonetic Vectors is the unique addition to the chosen set. Created by Allison Parrish in 2017\cite{parrish2017poetic}, Phonetic vectors is as the name suggests the vectorization of a words phonetics. This allows a words phonetics to be represented in vector space.
 
-Phonetic features are used in this work as a way to compare the similarity of a words phonemes. Phonemes are the phonetic elements that construct a word. For example the word "RING" translated into the phonemes \verb|/R IH NG/|. Extensive prior work has gone into producing models of features that map to phonemes. \cite{chomsky1968sound}\cite{ladefoged1969measurement}\cite{bradlow2010perceptual}. Features, therefore, are an attempt at mapping the varying and inconsistent rules around pronunciation of the English language. The vectors are created using lists phonemes from the CMU Pronouncing Dictionary. Using all words available in the CMU Dictionary and mapping all phonemes to phonetic features produces a list of unique features.
+Phonetic features are used in this work as a way to compare the similarity of a words phonemes. Phonemes are the phonetic elements that construct a word. For example the word "RING" translated into the phonemes \verb|/R IH NG/|. 
+
+Extensive prior work has gone into producing models of features that map to phonemes. \cite{chomsky1968sound}\cite{ladefoged1969measurement}\cite{bradlow2010perceptual}. Features, therefore, are an attempt at mapping the varying and inconsistent rules around pronunciation of the English language. The vectors were created using lists phonemes from the CMU Pronouncing Dictionary and mapping them to possible features.
 
 \begin{table}[!htb]
     \tiny
@@ -331,7 +333,7 @@ The experiment randomizes the order of these comparisons per session alongside a
 \subsubsection{Quality control}
 As the study was being outsourced to Amazon's Mechanical Turk the requirement to check the quality of results is important. Therefore, a couple of additions were provided to check a result's validity.
 
-The first was the addition of 5 "Random matches" questions. These were two random words selected from the dictionary. Therefore, the overall rating of these words should be close to an average of 1. This allows a simple check to see if the user is providing valid results. If their average is too high, the results will also be discarded.
+The first was the addition of 5 "Random matches" questions. These were two random words selected from the dictionary. Therefore, the overall rating of these words should be close to an average of 1. This allows a simple check to see if the user is providing valid results. If their average is too high, the results will be discarded.
 
 \begin{figure}[h!]
     \centering
@@ -392,7 +394,24 @@ Certain keys have higher levels of near-collision possibilities than others due 
     \item \textbf{Two static words} - All but the first and last word can vary.
 \end{itemize}
 
-\textbf{TODO: } Explain why the attacks are designed like this. Use heatmap study as justification as why the ends are prioritised.
+The start and ends were chosen as the highest priority words to keep static. This is due to research highlighting on the common habit of users to only check the start and end of a checksum. \cite{cherubini2018towards} shows this by measuring user eye movement and displaying it as a heat map.
+
+\begin{figure}[h!]
+    \centering
+    \fbox{
+        \parbox{\textwidth}{
+            \includegraphics[width=\textwidth]{checksum_check.png}
+
+            \includegraphics[width=\textwidth]{checksum_check_2.png}
+        }
+    }
+    \caption{Failed verification of an incorrect checksum\cite{cherubini2018towards}}
+    \label{fig:heatMap}
+\end{figure}
+
+Figure \ref{fig:heatMap} shows the results of a eye tracking experiment where the user failed to detect a mismatching digest. As it can be clearly seen the users never compared the center of the digest. 
+
+However, this may not be applicable in this context due to the user being linearly fed an audio stream that they cannot skip to the start or end. However, we believe that attention will also play a part in defining the most important areas of comparison as the hypothesis is that the users attention will be lower in the middle sections of comparison where it peak at the start and end. All these aspects, however, will require empirical evidence to arrive at a conclusion. Therefore, this consideration will need to be made when assessing the results of the experiment.
 
 These attacks are ascending in complexity. The timeframe for finding a match was decided as 7-days on with attack strengths of 1 GPU/day, 10 GPU/days and 100 GPU/days on a mid range GPU (AMD RX 480 was the example in experiments). 
 
