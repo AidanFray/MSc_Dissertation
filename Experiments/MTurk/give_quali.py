@@ -1,42 +1,10 @@
 import sys
 
+from MTurk import *
+
 """
 Script that edits MTurk .csv files depending on the result from the study
 """
-
-
-def load(filePath):
-
-    data = []
-    newData = []
-    with open(filePath) as file:
-        data = file.readlines()
-
-    newData.append(data[0].strip().split(","))
-    headerLength = len(newData[0])
-
-    for d in data[1:]:
-        d = d.replace("\n", "")
-        temp = d.split(",")
-
-        while len(temp) < headerLength:
-            temp.append("")
-
-        newData.append(temp)
-
-    return newData
-
-def save(filePath, data):
-
-    with open(filePath, "w") as file:
-
-        for d in data:
-            file.write(",".join(d) + "\n")
-
-def usage():
-    print(f"Usage: ./{__name__} <MAIN_WORKER_FILE> <HIT_WORKER_FILE>")
-    exit()
-
 
 if __name__ == "__main__":
     

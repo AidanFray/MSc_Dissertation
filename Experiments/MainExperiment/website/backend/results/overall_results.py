@@ -29,7 +29,7 @@ for file in os.listdir("."):
                         trick_attacks[attack_id] = 1
                     else:
                         trick_attacks[attack_id] += 1
-                
+
 print("[*] Successful attacks (%): ")
 for attackID in trick_attacks:
-    print("\t", attackID, round(trick_attacks[attackID] / all_attacks[attackID], 2))
+    print("\t", attackID, round(trick_attacks[attackID] / all_attacks[attackID] * 100, 2))
