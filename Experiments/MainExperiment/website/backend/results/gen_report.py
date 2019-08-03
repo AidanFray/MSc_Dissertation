@@ -4,7 +4,7 @@ import sys; sys.path.insert(0, "..")
 import experiment
 
 def usage():
-    print(f"Usage: python {__name__} <OUTPUT_FILE_NAME>")
+    print(f"Usage: python {__name__} <TARGET_DIR>")
     exit()
 
 # Printing out FP
@@ -27,6 +27,24 @@ def findSuccessfulAttacks(exp):
 
     return attacks
 
+def findFalsePositives(exp):
+    fp = []
+    for i, e in enumerate(exp.Responses):
+
+        # Counts errors in the experiment
+        if exp.AttackSchema[i] == None and e == "False":
+            attacks.append("\t" + str(exp.AttackSchema[i]))
+
+    return fp
+
+def checkForHighSpeed(exp):
+    
+    # If done quicker than 5 minutes
+    if getExperimentSpeed(exp) < 200:
+        return True
+    else:
+        return False
+
 def checkAudioClicks(exp):
 
     missedCount = 0
@@ -39,40 +57,65 @@ def checkAudioClicks(exp):
     else:
         return False
 
+def getExperimentSpeed(exp):
+
+    start   = float(exp.StartTime)
+    end     = float(exp.EndTime)
+
+    return end - start
+
 if __name__ == "__main__":
 
     if len(sys.argv) != 2:
         usage()
 
-    outputFileName = sys.argv[1]
+    target_dir = sys.argv[1]
 
-    for file in os.listdir("."):
-        if file.endswith(".pkl"):
+    for f in os.listdir(f"{target_dir}"):
 
-            exp = pickle.load(open(file, "rb"))
-            print(f"-------------------- {file} --------------------")
+        path = target_dir + f
+
+        if f.endswith(".pkl"):
+
+            exp = pickle.load(open(path, "rb"))
+            print(f"-------------------- {f} --------------------")
 
             if checkAudioClicks(exp):
-                print("#####################################")
-                print("!! Possible click-through detected !!")
-                print("#####################################")
                 print()
+                print("\t           Click-through detected      ")
+                print()
+                break
 
-            # User-agent
-            print("## User-agent ##: \n")
-            print("\t", exp.UserAgent)
-            print()
+            if checkForHighSpeed(exp):
+                print(f"!! User was very quick: {round(getExperimentSpeed(exp))} seconds !!")
+                print()
 
             # Successfull attacks
             attacks = findSuccessfulAttacks(exp)
 
             if len(attacks) > 1:
-                print("## Successfull attacks ##:\n")
+                print("-- Successfull attacks --\n")
                 for a in attacks:
                     print(a)
+                print()
             else:
-                print("## No attacks ##\n")
+                print("-- No attacks --")
+
+
+            fp = findFalsePositives(exp)
+
+            if len(fp) > 1:
+                print("-- False positives -- : \n")
+                for f in fp:
+                    print(f)
+            else:
+                print("-- No false positives --")
+            
                 
+            # User-agent
+            print("-- UserAgent -- \n")
+            print("\t", exp.UserAgent[:50], "...")
+            print()
 
             print("\n\n")
 
