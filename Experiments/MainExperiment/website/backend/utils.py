@@ -33,7 +33,7 @@ def gen_new_words(wordlist):
     exp_id = session.get("exp_id")
     exp = Experiment.from_json(session[exp_id])
 
-    if exp.get_round_number () >= GRACE_ROUNDS:
+    if exp.get_round_number() >= GRACE_ROUNDS:
         # # Determines if their is an attack
         attack_schema = attack.decision()
     else:

@@ -5,11 +5,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Loader from 'react-loader-spinner'
 
+import AudioButton from '../Experiment/AudioButton.jsx'
+
 var trustword_top = require("../../images/trustwords_top.jpg");
 var trustword_filler = require("../../images/trustwords_filler.jpg");
 
 var URL_BASE = "https://afray.pythonanywhere.com"
 // var URL_BASE = "http://localhost:5000" //DEBUG
+
+const loadingAnimation = <Loader type="ThreeDots" color="#00BFFF" height="14"	width="20"/>
 
 let styles = StyleSheet.create({
   top: {
@@ -27,13 +31,15 @@ export default class TrustwordSimulation extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      words: [],
+      words: loadingAnimation,
       audio_url: [],
-      controls_disabled: false,
+      controls_disabled: true,
       audio_button_visibility: "visible",
     }
 
     this.setup_experiment();
+
+    this.toggleButtons = this.toggleButtons.bind(this)
   }
 
   experiment_finished(response_text) {
@@ -70,7 +76,7 @@ export default class TrustwordSimulation extends Component {
 
   setup_experiment() {
     this.show_word_loading()
-    fetch(URL_BASE + '/new_experiment?similar=TODO')
+    fetch(URL_BASE + '/new_experiment')
       .then((r) => r.text())
       .then(() => this.refresh_words())
   }
@@ -94,8 +100,16 @@ export default class TrustwordSimulation extends Component {
   show_word_loading() {
     this.setState(
       { 
-        words: <Loader type="ThreeDots" color="#00BFFF" height="14"	width="20"/>,
+        words: loadingAnimation,
         controls_disabled: true
+      }
+    )
+  }
+
+  toggleButtons() {
+    this.setState(
+      {
+        controls_disabled: !this.state.controls_disabled
       }
     )
   }
@@ -130,6 +144,14 @@ export default class TrustwordSimulation extends Component {
           source={trustword_filler}
           style={styles.filler}
         />
+
+        <AudioButton 
+          text="Authenticate with partner over the phone"
+          color="#0000aa"
+          disabled={this.state.controls_disabled}
+          toggleButtonCallback={this.toggleButtons}
+        />
+
         <ToastContainer 
           hideProgressBar={true} 
           autoClose={1000} 

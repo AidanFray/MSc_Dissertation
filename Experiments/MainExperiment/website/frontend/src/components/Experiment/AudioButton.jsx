@@ -16,8 +16,12 @@ export default class AudioButton extends Component {
             loading: false,
             playing: false,
             loadingText: LOADING_TEXT,
-            id: 0
+            id: this.randomNumber()
         }
+    }
+
+    randomNumber() {
+        return Math.random()
     }
 
     _play_audio() {
@@ -25,6 +29,9 @@ export default class AudioButton extends Component {
         var text = LOADING_TEXT
         if (this.state.playing) {
             text = PLAYING_TEXT
+        }
+        else {
+            this.props.toggleButtonCallback()
         }
 
         this.setState({
@@ -40,18 +47,27 @@ export default class AudioButton extends Component {
                 loading: false
             })
         }
+        this.props.toggleButtonCallback()
     }
 
     handleSongFinishedPlaying() {
         this.setState({
             playing: false,
             loading: false,
-            id: this.state.id += 1
+            id: this.randomNumber()
         })
+        // this.props.toggleButtonCallback()
     }
 
 
     render() {
+
+        var buttonTextColor = "#ffffff"
+
+        if (this.props.disabled) {
+            buttonTextColor = "#222222"
+        }
+
         return (
             <LoadingOverlay
                 active={this.state.loading}
@@ -61,9 +77,10 @@ export default class AudioButton extends Component {
                 style={{
                     alignItems: "center",
                     width: "200px",
-                    color: "#ffffff",
+                    color: buttonTextColor,
                     backgroundColor: this.props.color,
                 }}
+                disabled={this.props.disabled}
                 onClick={() => this._play_audio()}>
                     <br/>
                     <Phone size={250} />

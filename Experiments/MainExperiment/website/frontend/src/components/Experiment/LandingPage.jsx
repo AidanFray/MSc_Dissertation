@@ -77,19 +77,7 @@ export default class LandingPage extends Component {
                         </style>
                         <Device name="iphone-8" color='black' url="/bd65600d-8669-4903-8a14-af88203add38" />
                     </div>
-                    
-                    <div style={{
-                        height: "100%",
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: "column"
-                    }}>
-                        <div>
-                            <AudioButton text="Authenticate with partner over the phone" color="#0000aa"/>
-                        </div>
-                    </div>
+                
                     
                 </SplitterLayout>
         );
