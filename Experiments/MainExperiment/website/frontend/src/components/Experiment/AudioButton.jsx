@@ -30,10 +30,7 @@ export default class AudioButton extends Component {
         if (this.state.playing) {
             text = PLAYING_TEXT
         }
-        else {
-            this.props.toggleButtonCallback()
-        }
-
+        
         this.setState({
             playing: true,
             loading: true,
@@ -56,7 +53,7 @@ export default class AudioButton extends Component {
             loading: false,
             id: this.randomNumber()
         })
-        // this.props.toggleButtonCallback()
+        this.props.toggleButtonCallback()
     }
 
 
