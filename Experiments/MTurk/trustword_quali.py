@@ -8,7 +8,6 @@ if __name__ == "__main__":
 
     mainWorkerData = load(sys.argv[1])
     hitWorkerData = load(sys.argv[2])
-    print(len(hitWorkerData))
 
     qualiHeaderPosition = mainWorkerData[0].index('UPDATE-Trustwords')
 
