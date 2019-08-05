@@ -34,8 +34,10 @@ export default class AudioButton extends Component {
         this.setState({
             playing: true,
             loading: true,
-            loadingText: text
+            loadingText: text,
+            disabled: true
         })
+        this.props.toggleButtonCallback()
     }
 
     handleSongLoaded(sound) {
@@ -51,17 +53,19 @@ export default class AudioButton extends Component {
         this.setState({
             playing: false,
             loading: false,
-            id: this.randomNumber()
+            id: this.randomNumber(),
+            disabled: false
         })
-        this.props.toggleButtonCallback()
+        // this.props.toggleButtonCallback()
     }
 
 
     render() {
 
+        // Makes the button look disabled
         var buttonTextColor = "#ffffff"
 
-        if (this.props.disabled) {
+        if (this.props.disabled || this.state.disabled) {
             buttonTextColor = "#222222"
         }
 
@@ -77,7 +81,7 @@ export default class AudioButton extends Component {
                     color: buttonTextColor,
                     backgroundColor: this.props.color,
                 }}
-                disabled={this.props.disabled}
+                disabled={this.props.disabled || this.state.disabled}
                 onClick={() => this._play_audio()}>
                     <br/>
                     <Phone size={250} />
