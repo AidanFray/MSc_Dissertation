@@ -4,9 +4,8 @@
 \section{Scallion vs GreenOnion}
 % Show that the bloom filter blows Scallion out of the water
 
-\section{Experiment 1}
-% Demographic
-
+\section{Metric Performance - Results}
+As discussed in Section \ref{exp:metric} the goal of the experiment was the cull the number of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results
 
 \begin{table}[h!]
     \centering
@@ -33,8 +32,39 @@
 
     \end{tabular}
     \caption{Participant demographics}
-    \label{}
+    \label{tab:exp1_demo}
 \end{table}
+\textbf{TODO: } Create some graphs off this data and put them in the appendix.
+
+\begin{wrapfigure}{l}{6cm}
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        Metric & Average Rating \\
+        \hline
+        Leven     & 3.66 \\
+        NYSIIS    & 2.92 \\
+        Metaphone & 2.56 \\
+        Phonetic Vec & 2.50 \\
+        Soundex & 2.08 \\
+        \hline
+        Random  & 1.16 \\
+        \hline
+    \end{tabular}
+    \caption{Average metric performance}
+    \label{tab:exp1_results}
+\end{wrapfigure}
+
+Table \ref{tab:exp1_demo} contains the geographical breakdown of the participants assessed. As it can be seen over 60\% of participants can be considered highly educated (Bachelor’s and up). This is not fully reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US, this again requires consideration due to the large range of dialects present, that may bias the results. Further work could investigate the affect of location on these results.
+
+Figure \ref{tab:exp1_results} shows the average results for the metrics
+
+
+
+% 22 Missed values
+
+
+
 
 
 % Results
@@ -43,3 +73,5 @@
 % Methodology
 % Demographic
 % Results
+
+\section{Distribution of keys permutations (Vuln-keys)}

@@ -6,14 +6,22 @@
 \usepackage{tikz}
 \usepackage{wrapfig}
 \usepackage{fancyvrb}
-
+\usepackage{tikz}
+\usepackage{filecontents}
+\usepackage{pgfplots, pgfplotstable}
 
 \usepackage{charter}
+
 % \usepackage{newcent}
 % \usepackage{fourier}
 % \usepackage{mathpazo}% Palatino
 
+\usepgfplotslibrary{statistics}
+
+\usetikzlibrary{shapes.geometric}
 \usetikzlibrary{calc}
+
+
 \graphicspath{{images/}}
 
 \newcommand{\pep}{p\texorpdfstring{$\equiv$}{E}p~}
@@ -30,13 +38,14 @@
 
 % \dedication{To all students everywhere}
 
-\acknowledgements{
-  TODO
-}
+% \acknowledgements{
+%   TODO
+% }
 
 % More definitions & declarations in example.ldf
 
 \begin{document}
+
   \pagenumbering{roman}
   \maketitle
   \listoffigures
@@ -44,14 +53,16 @@
   %\renewcommand*{\lstlistlistingname}{List of Listings}
   %\lstlistoflistings
 
-  \input{pages/introduction.tex}
-  \input{pages/lit_review.tex}
-  \input{pages/research_question.tex}
-  \input{pages/design.tex}
-  \input{pages/implementation.tex}
-  \input{pages/experiments.tex}
-  \input{pages/conclusion.tex}
-  \input{pages/appendix.tex}
+  \input{diagrams/graphs/soundex.tex}
+
+  % \input{pages/introduction.tex}
+  % \input{pages/lit_review.tex}
+  % \input{pages/research_question.tex}
+  % \input{pages/design.tex}
+  % \input{pages/implementation.tex}
+  % \input{pages/experiments.tex}
+  % \input{pages/conclusion.tex}
+  % \input{pages/appendix.tex}
 
   \printbibliography
 
