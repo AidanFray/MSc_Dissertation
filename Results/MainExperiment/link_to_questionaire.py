@@ -71,5 +71,6 @@ if __name__ == "__main__":
                         print(f"GUID: {g}: WorkerID: {wID} has an English comprehension of: {englishComp}")
         except:
             print(f"GUID: {g} does not have a corresponding worker")
-
-
+            print("Moving to a separate directory...")
+            #os.system(f"mkdir {target_dir}/NoWorker")
+            os.system(f"mv {target_dir}{g}.pkl {target_dir}/NoWorker")
