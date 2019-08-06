@@ -296,7 +296,8 @@
 			"Code/WordVectors/computation/trustwords/reduced_05.dat": true,
 			"Code/WordVectors/computation/peerio/values.dat": true,
 			"Code/TrustwordUtil/vuln_keys/*": true,
-			"**/*.out.ps": true
+			"**/*.out.ps": true,
+			"Thesis/*.csv": true
 		},
 		"git.ignoreLimitWarning": true
 	}

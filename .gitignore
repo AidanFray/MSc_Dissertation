@@ -26,6 +26,7 @@ build
 website.zip
 Experiments/MainExperiment/website/backend/audio/generated/*
 Experiments/MainExperiment/website/backend/results/*.pkl
+Thesis/*.csv
 
 Code/WordVectors/computation/dictionary_popular/values.dat
 Code/WordVectors/computation/trustwords/values.dat

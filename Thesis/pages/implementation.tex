@@ -6,17 +6,19 @@
 \section{GreenOnion}
 
 \subsubsection{General design}
-This section will discuss the overall technical implementation of GreenOnion alongside a deeper discussion into the unique aspect of the tool.
+This section will briefly discuss the overall technical implementation of GreenOnion alongside a deeper discussion into the unique aspect of the tool.
 
-The tool starts by generating a 2048-bit RSA key through GPG\footnote{GNU Privacy Guard}. This key is then used to create a hash of all but the final block of the key. The final block of the key is left un-hashed due to the presence of the exponent ($e$). This exponent is incremented by one to provide a new key. This is the aspect provides rapid generation of unique key as work for the GPU. This prevents issues in such as entropy starvation when generating a large number of valid RSA keys. This produces valid keys but with abnormally large exponents, this was deemed as suitable due to the short term use-case for these keys. 3 bytes are used to represent the exponent giving the potential to create $2^{24} - 1$ extra keys for one expensive key generation.
 
-All keys plus the intermediate hash are loaded on the GPU via an OpenCL kernel. This kernel is designed with hashing the final block, obtaining the final fingerprint and checking if the fingerprint is present in the provided list.
+GreenOnion is written in C++. This languages was chosen due to its efficiency bonuses over other alternative languages.
+The tool begins by generating a 2048-bit RSA key through GPG\footnote{GNU Privacy Guard}. This key is then used to create a hash of all but the final 512-bit block of the key. The final block of the key is left un-hashed due to the presence of the exponent ($e$). This exponent is incremented to create a new unique key. This is the aspect provides rapid generation of new keys due to the reduction in expensive large prime generation. This prevents issues in such as entropy starvation when generating a large number of valid RSA keys. This produces valid keys but with abnormally large exponents, this was deemed as suitable due to the short term use-case for these keys. 3 bytes are used to represent the exponent giving the potential to create $2^{24} - 1$ extra keys for a single expensive key generation.
+
+All keys plus the intermediate hash are loaded on the GPU via an OpenCL kernel. This kernel is designed to hash the final block, obtain the final fingerprint and checking if the fingerprint is present in the provided list.
 
 \subsubsection{Bloom filter}
 
-Mass checking of fingerprints is the tools main functionality as it allows for millions of keys to be checked with a very small amount of overhead. This is achieved through the use of a bloom filter. A bloom filter is a probabilistic data structure that allows efficient checking for present of an element in a set. It is effectively a very large array of booleans that state wether an element is present. A position in the array is decided by a hashing algorithm. This is repeated a number of times with a number of hashing algorithms ($k$) to populate the array of length ($m$). This then means checking the presence of an element in the set will just mean hashing the target and checking the elements returned. This data structure therefore has a complexity of $O(k)$ regardless of the number of elements in the set.
+Mass checking of fingerprints is the tools main abilities as it allows for millions of keys to be checked with a very small amount of overhead. This is achieved through the use of a bloom filter. A bloom filter is a probabilistic data structure that allows efficient checking for present of an element in a set. It is effectively a very large array of booleans that state wether an element is present. A position in the array is decided by a hashing algorithm. This is repeated a number of times with a number of hashing algorithms ($k$) to populate the array of length ($m$). This then means checking the presence of an element in the set will just mean hashing the target and checking the elements returned. This data structure therefore has a complexity of $O(k)$ regardless of the number of elements in the set. This is the only data structure that provides this characteristic.
 
-However, due to the random distribution of the hashing algorithms commonly there is the possibility for collisions and, thus, the possibility of false-positives. The data structure also does not produce any false-negatives. This is fully suited to this use-case as any fingerprints tagged as ``possibility'' being present in the bloom filter can be followed up with a more expensive hash-table check to determine the actual presence. Therefore, if the levels of false-positives are controlled (by altering $k$ and $m$) the tool can search through huge number of potential keys without any decrease in speed.
+However, due to the random distribution of the hashing algorithms, there is the possibility for collisions and, thus, the possibility of false-positives. The data structure, however, does not produce any false-negatives. This, therefore, makes it fully suited to this use-case as any fingerprints tagged as ``possibility'' being present in the bloom filter can be followed up with a more expensive hash-table check to determine their actual presence. Therefore, if the levels of false-positives are controlled (by altering $k$ and $m$) the tool can search through huge number of potential keys without any decrease in speed.
 
 \begin{figure}[h!]
     \centering
@@ -25,7 +27,7 @@ However, due to the random distribution of the hashing algorithms commonly there
     \label{fig:bloom}
 \end{figure}
 
-Figure \ref{fig:bloom} shows the operation of a simple bloom filter. As it can be seen the element $n$ definitely does not exist in the set due to both array indices not being set. The performance boost when comparing large numbers of keys is substantial when compared to the similar tool Scallion mentioned in Section \ref{sec:greenDesign}. The results from the comparison will be quantified in Chapter \ref{cha:Experiments}.
+Figure \ref{fig:bloom} shows the operation of a simple bloom filter. As it can be seen the element $n$ definitely does not exist in the set due to both array indices not being set. The performance boost when comparing large numbers of keys is substantial when compared to the similar tool Scallion (See Section \ref{sec:greenDesign}.) The results from the comparison will be quantified in Chapter \ref{cha:Experiments}.
 
 \section{First Experiment}
 Explain how Google App Script was used?
