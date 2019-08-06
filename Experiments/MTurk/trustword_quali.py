@@ -28,7 +28,3 @@ if __name__ == "__main__":
             pass
             
     save("User.csv", mainWorkerData)
-    save("Batch.csv", hitWorkerData)
-
-
-

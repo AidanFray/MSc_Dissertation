@@ -5,7 +5,7 @@
 % Show that the bloom filter blows Scallion out of the water
 
 \section{Metric Performance - Results}
-As discussed in Section \ref{exp:metric} the goal of the experiment was the cull the number of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results
+As discussed in Section \ref{exp:metric} the goal of the experiment was the cull the number of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results.
 
 \begin{table}[h!]
     \centering
@@ -34,9 +34,8 @@ As discussed in Section \ref{exp:metric} the goal of the experiment was the cull
     \caption{Participant demographics}
     \label{tab:exp1_demo}
 \end{table}
-\textbf{TODO: } Create some graphs off this data and put them in the appendix.
 
-\begin{wrapfigure}{l}{6cm}
+\begin{wrapfigure}[10]{l}{6cm}
     \centering
     \begin{tabular}{|l|l|}
         \hline
@@ -55,15 +54,19 @@ As discussed in Section \ref{exp:metric} the goal of the experiment was the cull
     \label{tab:exp1_results}
 \end{wrapfigure}
 
-Table \ref{tab:exp1_demo} contains the geographical breakdown of the participants assessed. As it can be seen over 60\% of participants can be considered highly educated (Bachelor’s and up). This is not fully reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US, this again requires consideration due to the large range of dialects present, that may bias the results. Further work could investigate the affect of location on these results.
+Table \ref{tab:exp1_demo} contains the demographical breakdown of the participants assessed. As it can be seen over 60\% of participants can be considered highly educated (Bachelor’s and up). This is not fully reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US, this again requires consideration due to the large range of dialects present that may bias the results. Further work could investigate the affect of location and dialect on similar results. 
 
-Figure \ref{tab:exp1_results} shows the average results for the metrics
+Overall, 104 participants were assessed in this study. Five results were discarded from the set due to either failing the attention questions (See in Section \ref{sec:exp1_qualitycontrol}) or having having too low of a fluency rating. This was a necessary process to improve the health of the results. 
 
+Figure \ref{tab:exp1_results} shows the average results for the metrics. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much larger proportion of 4 and 5 ratings than the alternatives alongside a very low level of low ratings. This performance may, however, be due to the visual way the comparisons are being performed. (Discussed in detail in Section \ref{sec:exp1_considerations}). 
+
+The visual comparison will be the first point of contact between the question and the participant, then followed by the mental comparison of the phonetics. Therefore, this initial visual contact has the potential to bias the results of the study. This would affect Levenshtein due to the matches never being more than one character different, therefore, resulting in very similar looking words.
+The alternative is to run the study with only audio based comparisons between words, this will force the user to compare just the phonetics of the words and not be influenced by the visuals of the pair. This, however, adds cost onto the time and execution of the study. Therefore, even with the discussed issues, the aim of the experiment was to promptly reduce the number of metrics for use later in the project due to a lack of project resources. This experiment, therefore, has achieved that goal of providing three metrics for the subsequent experiment while balancing between accuracy and expenditure. Further work could aim to reproduce this study with the proposed audio based design.
+
+\input{diagrams/graphs/experiment_one/graph.tex}
 
 
 % 22 Missed values
-
-
 
 
 

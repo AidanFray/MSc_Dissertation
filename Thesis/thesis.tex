@@ -9,6 +9,7 @@
 \usepackage{tikz}
 \usepackage{filecontents}
 \usepackage{pgfplots, pgfplotstable}
+\usepackage{float}
 
 \usepackage{charter}
 
@@ -44,6 +45,26 @@
 
 % More definitions & declarations in example.ldf
 
+% Used to display graphs for experiment one
+\newcommand{\tally}[1]{%
+\begin{tikzpicture}
+  \begin{axis}[
+    ymin=0,
+    ymax=200,
+    xtick={1,2,3,4,5},
+    width=1\textwidth,
+    grid
+  ]
+    \addplot[ybar, fill=blue] table[ 
+        col sep=comma,
+        y=occurrence, 
+        x=rating] 
+    {#1};
+  \end{axis}
+\end{tikzpicture}
+}
+
+
 \begin{document}
 
   \pagenumbering{roman}
@@ -53,16 +74,15 @@
   %\renewcommand*{\lstlistlistingname}{List of Listings}
   %\lstlistoflistings
 
-  \input{diagrams/graphs/soundex.tex}
 
-  % \input{pages/introduction.tex}
-  % \input{pages/lit_review.tex}
-  % \input{pages/research_question.tex}
-  % \input{pages/design.tex}
-  % \input{pages/implementation.tex}
-  % \input{pages/experiments.tex}
-  % \input{pages/conclusion.tex}
-  % \input{pages/appendix.tex}
+  \input{pages/introduction.tex}
+  \input{pages/lit_review.tex}
+  \input{pages/research_question.tex}
+  \input{pages/design.tex}
+  \input{pages/implementation.tex}
+  \input{pages/experiments.tex}
+  \input{pages/conclusion.tex}
+  \input{pages/appendix.tex}
 
   \printbibliography
 

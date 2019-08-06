@@ -333,6 +333,7 @@ Each participant is asked to rate the similarity of a match on a scale of 1 to 5
 The experiment randomizes the order of these comparisons per session alongside a complete refreshing of matches once per submission. This makes sure selections from the samples are fair and consistent as each user will have a different selection of matches.
 
 \subsubsection{Quality control}
+\label{sec:exp1_qualitycontrol}
 As the study was being outsourced to Amazon's Mechanical Turk the requirement to check the quality of results is important. Therefore, a couple of additions were provided to check a result's validity.
 
 The first was the addition of 5 "Random matches" questions. These were two random words selected from the dictionary. Therefore, the overall rating of these words should be close to an average of 1. This allows a simple check to see if the user is providing valid results. If their average is too high, the results will be discarded.
@@ -368,6 +369,7 @@ worker.
 \textbf{TODO}
 
 \subsubsection{Considerations}
+\label{sec:exp1_considerations}
 This section will discuss the considerations required when interpreting the results of the study.
 
 The first consideration is the way the words are compared. Due to the channel of authentication being phone based the comparison of words will be a mixture of auditory and textual. This is because a user needs to match a words sound to the one displayed on their device. In the case of this experiment the users are asked to compare the sound of two word that are visually displayed to them. Therefore, this experiment does not fully capture the targeted scenario. This was decided partly to aforementioned lack of resources. The main design of the experiment was to provide a simple way to cull the large number of metrics. The initial choice of five metrics discussed in Section \ref{sec:metrics} was to be followed by a more empirical decision. Further work, therefore, could improve by producing more conclusive results on the performance of the metrics.
