@@ -18,7 +18,27 @@ def load(filePath):
     return data
 
 
-workers = {}
+workers = {
+    # Round 2
+    "bc86a512-dbc4-423b-8bf5-cfb4b9b9a0f5" : "A3AY0315YWWNXY",
+    "2def8ef3-d256-49ef-b7fd-dfb37dc5503a" : "A1E8PIR82KIJEP",
+
+    # Round 3
+    "1d22f1c4-343c-414e-a88e-e18d1e1018d4" : "A2K5S80NT1PKK4",
+    "4b4cec4c-1135-4865-8f8b-ed757672d1ee" : "A186MBH9JN8ED9",
+
+    # Round 4
+    "465499ac-b1df-429c-adde-7bfb7934df54" : "APY5858P6BTDY",
+    "f77211f3-e3a0-48a5-b8a1-1fb82bdb2ca8" : "AJTLLYV8O5FQU",
+    "c4f0dd4b-8e83-41d7-bd22-3f9fee8d2b4c" : "A371H3PQPR2Z8J",
+    "0d7ad13b-dc78-4221-87b5-09c04f70a76d" : "A2N825X4R5H7EK",
+    "a7bb25d9-e396-430a-a6d3-245b0a71a79e" : "AYUZGGAGNM9FT",
+    "60b6c3f3-f009-432e-89d3-811aa4b87261" : "A1F1BIPJR11LSR",
+    "09253673-edd7-41ff-8d6e-18647d439f7b" : "A32W24TWSWXW",
+    "f16d526d-0568-4a83-b70a-efdf92a40791" : "A2XRTITADBPWK6",
+    "f1368329-c7a5-4511-9326-decdbe16a10b" : "A192MH226Q1NT4",
+    "2b669056-64e6-4b73-bf70-73e0b4a8086a" : "A2J84AUK1GVTEA",
+}
 
 if __name__ == "__main__":
     
@@ -70,7 +90,6 @@ if __name__ == "__main__":
                     if int(englishComp) < 5:
                         print(f"GUID: {g}: WorkerID: {wID} has an English comprehension of: {englishComp}")
         except:
-            print(f"GUID: {g} does not have a corresponding worker")
+            print(f"GUID: {g} does not have a corresponding worker. ", end="")
             print("Moving to a separate directory...")
-            #os.system(f"mkdir {target_dir}/NoWorker")
             os.system(f"mv {target_dir}{g}.pkl {target_dir}/NoWorker")
