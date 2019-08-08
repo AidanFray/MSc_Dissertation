@@ -1,4 +1,5 @@
 import sys
+import statistics
 
 """
 Parses the results from the Google Forms pilot study
@@ -70,13 +71,18 @@ if __name__ == "__main__":
 
         sect_results = RESULTS[sect]
 
+        all_results = []
+        for s in sect_results:
+            all_results += s
+
+        all_results = list(filter("".__ne__, all_results))
+        all_results = list(map(int, all_results))
+
         total = 0
         num_of_values = 0
         missed = 0
 
-        for response in sect_results:
-
-            for value in response:
+        for value in all_results:
 
                 if value != "":
                     total += int(value)
@@ -85,7 +91,8 @@ if __name__ == "__main__":
                     missed += 1
 
         print(sect)
-        print(f"[!] Average : {round(total/num_of_values, 2)}")
+        print(f"[!] Average : {round(sum(all_results)/len(all_results), 2)}")
+        print(f"[!] Standard Dev: {round(statistics.stdev(all_results), 2)}")
         print(f"[!] Missed  : {missed}")
         print()
 

@@ -1,6 +1,7 @@
 import httpagentparser
 import experiment
 import matplotlib.pyplot as plt
+import statistics
 import operator
 import pickle
 import csv
@@ -88,22 +89,49 @@ def user_agent_parsing(experiments):
 
     print("[!] UserAgent Parsing\n")
 
-    operatingSystems = {}
+    # operatingSystems = {}
+    # for e in experiments:
+    #     user_agent = httpagentparser.detect(e.UserAgent)
+
+    #     platformName = user_agent['platform']['name'].strip()
+    #     version = user_agent['platform']['version']
+
+    #     if not platformName in operatingSystems:
+    #         operatingSystems.update({platformName: [version]})
+    #     else:
+    #         operatingSystems[platformName].append(version)
+
+    # for os in operatingSystems:
+    #     print("\t", os, len(operatingSystems[os]))
+    # print("\n\t Total:", len(experiments))
+
+    operating_systems = {}
+    browsers = {}
     for e in experiments:
-        user_agent = httpagentparser.detect(e.UserAgent)
+        user_agent = httpagentparser.simple_detect(e.UserAgent)
 
-        platformName = user_agent['platform']['name'].strip()
-        version = user_agent['platform']['version']
+        platform = user_agent[0]
 
-        if not platformName in operatingSystems:
-            operatingSystems.update({platformName: [version]})
+        browser = user_agent[1].split(" ")[0]
+
+        if not platform in operating_systems:
+            operating_systems.update({platform: 1})
         else:
-            operatingSystems[platformName].append(version)
+            operating_systems[platform] += 1
 
-    for os in operatingSystems:
-        print("\t", os, len(operatingSystems[os]))
+        if not browser in browsers:
+            browsers.update({browser: 1})
+        else:
+            browsers[browser] += 1
 
-    print("\n\t Total:", len(experiments))
+    print("\t [*] Operating systems")
+    for os in operating_systems:
+        print(f"\t   {os}: {operating_systems[os]} -- {round(operating_systems[os] / len(experiments) * 100, 2)}%")
+
+    print()
+    print("\t [*] Browswers: ")
+    for b in browsers:
+        print(f"\t   {b}: {browsers[b]}")
 
 def average_completion_time(experiments):
     
@@ -240,6 +268,8 @@ def demographical_stats(workerData, experiments):
         "PhD": 0
     }
 
+    AGES = []
+
     for e in experiments:
 
         ID = e.ExperimentID
@@ -264,6 +294,8 @@ def demographical_stats(workerData, experiments):
                     AGE_RANGES[a] += 1
                     break
 
+            AGES.append(age)
+
         except KeyError:
             print(f"\t Worker did not fill out the questionaire for {ID}")
 
@@ -275,10 +307,50 @@ def demographical_stats(workerData, experiments):
     for a in AGE_RANGES:
         print("\t  ", f"{a[0]}-{a[-1]} - {round(AGE_RANGES[a] / len(experiments) * 100, 2)}%")
 
+    print(f"\t  Average: {round(sum(AGES)/len(AGES), 2)}")
+    print(f"\t  Standard Deviation : {round(statistics.stdev(AGES), 2)}")
+
     print("\n\t [*] Highest Education: \n")
     for e in EDUCATION_TALLY:
         print(f"\t  {e}: \n\t   {round(EDUCATION_TALLY[e] / len(experiments) * 100, 2)}%\n")
-        
+
+def education_and_attack_link(workerData, experiments):
+
+    print("[!] Education and number of attacks: ")
+
+    educationAndAttack = {}
+
+    for e in experiments:
+
+        ID = e.ExperimentID
+
+        try:
+            data = workerData[ID]
+            education = data[2]
+
+
+            totalAttack = 0
+            successfullAttack = 0
+            for i, a in enumerate(e.AttackSchema):
+
+                if a != None:
+                    totalAttack += 1
+
+                    if e.Responses[i] == "True":
+                        successfullAttack += 1
+
+            if not education in educationAndAttack:
+                educationAndAttack.update({education: [successfullAttack, totalAttack]})
+            else:
+                educationAndAttack[education][0] += successfullAttack
+                educationAndAttack[education][1] += totalAttack
+        except KeyError:
+            pass
+
+
+    for ea in educationAndAttack:
+        percentage = round(educationAndAttack[ea][0] / educationAndAttack[ea][1] * 100, 2)
+        print("\t   ", ea, educationAndAttack[ea], f"{percentage}%")
 
 
 if __name__ == "__main__":
@@ -311,4 +383,6 @@ if __name__ == "__main__":
     false_positive_rate(experiments)
     demographical_stats(workerData, experiments)
     user_agent_parsing(experiments)
+    
+    education_and_attack_link(workerData, experiments)
 

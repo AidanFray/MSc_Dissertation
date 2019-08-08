@@ -3,6 +3,7 @@
 
 \section{Scallion vs GreenOnion}
 % Show that the bloom filter blows Scallion out of the water
+\textbf{TODO}
 
 \section{Metric Performance - Results}
 As discussed in Section \ref{exp:metric} the goal of the experiment was the cull the number of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results.
@@ -23,11 +24,12 @@ As discussed in Section \ref{exp:metric} the goal of the experiment was the cull
                & 70-79: & 1.0\% \\ 
                
         \hline
-        Highest Education:  & Bachelor's degree:    & 51.0\% \\
-                            & A-Level/O-Level:      & 18.3\% \\
-                            & GCSE:                 & 15.4\%  \\
-                            & Master's degree:      & 13.5\% \\ 
-                            & PhD:                  & 1.9\% \\
+        Highest Education:  
+        & GCSE:                 & 15.4\%  \\
+        & A-Level/O-Level:      & 18.3\% \\
+        & Bachelor's degree:    & 51.0\% \\
+        & Master's degree:      & 13.5\% \\ 
+        & PhD:                  & 1.9\% \\
         \hline
 
     \end{tabular}
@@ -35,24 +37,24 @@ As discussed in Section \ref{exp:metric} the goal of the experiment was the cull
     \label{tab:exp1_demo}
 \end{table}
 
-\begin{wrapfigure}[10]{l}{6cm}
+\begin{table}[h!]
     \centering
-    \begin{tabular}{|l|l|}
+    \begin{tabular}{|l|l|l|}
         \hline
-        Metric & Average Rating \\
+        Metric & Average Rating  & $\sigma$\\
         \hline
-        Leven     & 3.66 \\
-        NYSIIS    & 2.92 \\
-        Metaphone & 2.56 \\
-        Phonetic Vec & 2.50 \\
-        Soundex & 2.08 \\
+        Leven     & 3.66  & 1.15\\
+        NYSIIS    & 2.92 & 1.31\\
+        Metaphone & 2.56 & 1.32\\
+        Phonetic Vec & 2.50 & 1.35\\
+        Soundex & 2.08 & 1.12 \\
         \hline
-        Random  & 1.16 \\
+        Random  & 1.16 & 0.46\\
         \hline
     \end{tabular}
     \caption{Average metric performance}
     \label{tab:exp1_results}
-\end{wrapfigure}
+\end{table}
 
 Table \ref{tab:exp1_demo} contains the demographical breakdown of the participants assessed. As it can be seen over 60\% of participants can be considered highly educated (Bachelor’s and up). This is not fully reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US, this again requires consideration due to the large range of dialects present that may bias the results. Further work could investigate the affect of location and dialect on similar results. 
 
@@ -60,21 +62,214 @@ Overall, 104 participants were assessed in this study. Five results were discard
 
 Figure \ref{tab:exp1_results} shows the average results for the metrics. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much larger proportion of 4 and 5 ratings than the alternatives alongside a very low level of low ratings. This performance may, however, be due to the visual way the comparisons are being performed. (Discussed in detail in Section \ref{sec:exp1_considerations}). 
 
+Due to the averages of Metaphone and Phonetic Vectors being so close standard deviation was used as the final decider. As it can be seen Megaphone has a slightly lower $\sigma$ value of that of Phonetic vectors, thus, contributing to the decision to select Metaphone to be carried over to the next experiment.
+
+\subsection{Limitations}
+
 The visual comparison will be the first point of contact between the question and the participant, then followed by the mental comparison of the phonetics. Therefore, this initial visual contact has the potential to bias the results of the study. This would affect Levenshtein due to the matches never being more than one character different, therefore, resulting in very similar looking words.
 The alternative is to run the study with only audio based comparisons between words, this will force the user to compare just the phonetics of the words and not be influenced by the visuals of the pair. This, however, adds cost onto the time and execution of the study. Therefore, even with the discussed issues, the aim of the experiment was to promptly reduce the number of metrics for use later in the project due to a lack of project resources. This experiment, therefore, has achieved that goal of providing three metrics for the subsequent experiment while balancing between accuracy and expenditure. Further work could aim to reproduce this study with the proposed audio based design.
 
 \input{diagrams/graphs/experiment_one/graph.tex}
 
-
-% 22 Missed values
-
-
-
-% Results
+\newpage
 
 \section{Experiment 2}
-% Methodology
 % Demographic
 % Results
 
+\subsection*{Demographics}
+Overall, 435 paid participants recruited via Amazon's MTurk were assessed in this experiment. We excluded 66 results; 7 due to being non-native speakers and 59 were discarded for failing the attention metrics (Discussed in Section \ref{sec:exp2_quality}).
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|ll|}
+        \hline
+        Gender & Male: & 50.41\% \\
+               & Female: & 49.59\% \\
+        \hline
+        Age:   & 18-24: & 12.74\% \\ 
+               & 25-29: & 18.16\% \\ 
+               & 30-39: & 37.4\% \\ 
+               & 40-49: & 17.89\% \\ 
+               & 50-59: & 8.67\% \\ 
+               & 60-69: & 4.34\% \\ 
+               & 70-79: & 0.81\% \\ 
+
+        \hline
+        Highest Education:  
+        & GCSE:                 & 13.82\%  \\
+        & A-Level/O-Level:      & 24.12\% \\
+        & Bachelor's degree:    & 51.49\% \\
+        & Master's degree:      & 8.4\% \\ 
+        & PhD:                  & 2.17\% \\
+        \hline
+
+    \end{tabular}
+    \caption{Participant demographics}
+    \label{tab:exp2_demo}
+\end{table}
+
+The reduced set of 369 participants had an average age of 36.63 ($\sigma = 11.35$) and consisted of an almost equal split of Male (50.41\%) to Female (49.59\%). Around 62\% of participants had completed a single stage of university (Bachelor and up). This makes this set of participants more educated that the general population. All participants were also sourced from the USA and have rated themselves as fully native English speakers.
+% \begin{table}[!h]
+%     \centering
+%     \begin{tabular}{|l|l|}
+%         \hline
+%         Browser & Percentage \\
+%         \hline
+%         Chrome & 85.09\% \\
+%         Firefox & 12.20\% \\
+%         Safari & 1.90\% \\
+%         Other & 0.81\% \\
+%         \hline
+%     \end{tabular}
+%     \caption{Internet Browser breakdown}
+%     \label{tab:exp2_browser}
+%     \begin{tabular}{|l|l|}
+%         \hline
+%         Operating System & Percentage \\
+%         \hline
+        
+%         \hline
+%         Windows (All) & 74.26\% \\
+%         ~~~~\textit{Windows 7} & ~~~12.74\% \\
+%         ~~~~\textit{Windows 8} & ~~~4.07\% \\
+%         ~~~~\textit{Windows 10} & ~~~57.45\% \\
+%         MacOS X	 & 13.82\% \\
+%         ChromeOS & 3.79\% \\
+%         Android	& 4.34\% \\
+%         iPhone	& 1.08\% \\
+%         iPad	& 0.54\% \\
+%         Linux	& 2.17\% \\
+%         \hline
+%     \end{tabular}
+%     \caption{Operating System breakdown}
+%     \label{tab:exp2_os}
+% \end{table}
+    
+As user-agent strings were collected for each participant collations of OS and internet browser versions was made possible. Tables \ref{tab:exp2_browser} and \ref{tab:exp2_os} contain the browser and OS breakdowns respectively. Chrome and Windows 10 seem to dominate the proportion of their respective domains alongside the surprisingly large proportion of workers utilizing older versions of Windows such as 7 or 8 (15.81\%).
+
+\newpage
+
+\subsection*{Results}
+Table \ref{tab:exp2_attacks} contains the break down of results for the experiment. It can be seen that the best metric out of the set was Levenshtein with an overall success of 19.80\%. The best performer when regarding attack strength, as expected is the 2 static words. Levenshtein's 2 static attack performed the best overall with a success rate of 32.05\%. The worst performer was Metaphone with an average of 16.88\% over its three levels of attacks. When comparing the performance of the metrics to the previous experiment the ordering remains the same with Levenshtein, NYSIIS and Metaphone all ranking in the exactly same order.
+
+\begin{table}
+    \centering
+    \begin{tabular}{|ll|l|l|l|}
+        \hline
+        \textbf{Metric} & & \textbf{Successful Attacks} & \textbf{Total Attacks} & \textbf{Success Rate} \\
+        \hline
+        Levenshtein && 218 & 1101 & 19.80\% \\
+        \hline
+        & 0 static   & 34  & 358  & ~9.50\% \\
+        & 1 static   & 59  & 353  & 16.71\% \\
+        & 2 static   & 125  & 390  & 32.05\% \\
+        \hline\hline
+        Metaphone &&  181 & 1072 & 16.88\% \\
+        \hline
+        & 0 static   & 38 & 345 & 11.01\% \\
+        & 1 static   & 57 & 375 & 15.20\% \\
+        & 2 static   & 86 & 352 & 24.43\% \\
+        \hline\hline
+        NYSIIS &&  209 & 1114 & 18.76\% \\
+        \hline
+        & 0 static   & 36 & 385 & ~9.35\% \\
+        & 1 static   & 72 & 375 & 19.20\% \\
+        & 2 static   & 101 & 354 & 28.53\% \\
+        \hline\hline
+        \textbf{Overall} & & 608 & 3287 & 18.50\% \\
+        \hline\hline
+    \end{tabular}
+    \caption{Success rates for simulated attacks}
+    \label{tab:exp2_attacks}
+\end{table}
+
+As previously mentioned, the set of recruited participants are more highly educated than the general population. This combined with the low average age contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skillful interaction with computer based systems, this, therefore, with the previous assumption in mind results in the results of this experiment being a best case scenario as the attacks would be expected to be more successful with less able users. This, however, requires further research and possible empirical data to determine the validity of the assumption.
+
+\subsection*{Limitations}
+Due to multiple attacks occurring for one participant the rate of success cannot be 
+
+
+\subsection{Comparison to alternative literature}
+% # Usability and Security of Out-Of-Band Channels in Secure Device Pairing Protocols
+
+% Set of 4 words compared from a dictionary of 1024 words (10-bits per word) 
+
+% 	- Near matches differ by a single word (No measure of similarity) randomly decided word
+
+
+% 	- FP (Security faliure)
+% 	- FN (Non-security faliure) 
+
+% 	Total: 3.3% (FP) - 16.7% (FN)
+
+% 	Only 30 participants
+
+
+% # Unicorns
+
+% 	- 16 words long
+
+% 	"Our participants were recruited from MTurk, which is not
+% 	representative of the general U.S. population; MTurk workers
+% 	have been found to be younger and better educated [15]."
+
+% 	14% missed the simulated attacks
+
+
 \section{Distribution of keys permutations (Vuln-keys)}
+
+\newpage 
+
+\section{Generation of keys}
+To demonstrate that the the generation of the near collision keys is not only theoretical actual generation of keys was performed using GreenOnion. A random metric was selected from the three carried forward from the first experiment. Alongside this a random uncontrolled key was generated as the simulated attack target (See Appendix \ref{appendix:uncontrolled_key} for the armor public key). Then for each attack level (0 static, 1 static, 2 static) a key was computed. NYSIIS was chosen as the selected metric. To expedite the process an initial search was performed for controlled keys that had the highest number of permutations, this was due to the demonstration of the actual generation of keys. Producing near-matching keys that have a very small number of potential matches, therefore, adds very little to this demonstration with a large computation cost.
+
+\begin{table}[h!]
+    \begin{tabular}{|l|l|}
+        \hline
+        Potential near-collision keys & 142,296 \\
+        Hashing speed & 4000 MH/s \\
+        Estimated computation time & 9 hours \\
+        Actual computation & 6.41 hours \\
+        GPU Days & 0.52 \\
+        \hline
+        Original Trustwords & BELL GRIND ALGERIA ANNULI \\
+        Actual Trustwords   & BOIL GRAND ALGER ANNUL \\
+        \hline
+    \end{tabular}
+    \caption{NYSIIS - 0 static}
+    \label{tab:nysiis0}
+
+    \begin{tabular}{|l|l|}
+        \hline
+        Potential near-collision keys & 133,200 \\
+        Hashing speed & 8000 MH/s \\
+        Estimated computation time & 4.2 hours \\
+        Actual computation & 5.12 hours \\
+        GPU Days & 0.853 \\
+        \hline
+        Original Trustwords & ASSUMING SONOMA DENS KEENER \\
+        Actual Trustwords   & ASSUMING SUMMON DENNI CONNOR \\
+        \hline
+    \end{tabular}
+    \caption{NYSIIS - 1 static}
+    \label{tab:nysiis1}
+
+    \begin{tabular}{|l|l|}
+        \hline
+        Potential near-collision keys & 16,464 \\
+        Hashing speed & 6000 MH/s \\
+        Estimated computation time & 2.16 days \\
+        Actual computation & 23.44 hours \\
+        GPU Days & 2.93 \\
+        \hline
+        Original Trustwords & VOCATION BORE TANN ANTE \\
+        Actual Trustwords   & VOCATION BARE TONE ANTE \\
+        \hline
+    \end{tabular}
+    \caption{NYSIIS - 2 static}
+
+    \label{tab:nysiis2}
+\end{table}
+
+Tables \ref{tab:nysiis0}, \ref{tab:nysiis1} and \ref{tab:nysiis2} contain the parameters and results on the computation. Due to varying availability of resources each computation has a varying hashing speed. This, however, has been normalized by the introduction of the "GPU Day" metric. This is simply the computation time required to reach the same conclusion on a single 2000 MH/s GPU.

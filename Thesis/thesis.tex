@@ -10,6 +10,7 @@
 \usepackage{filecontents}
 \usepackage{pgfplots, pgfplotstable}
 \usepackage{float}
+\usepackage{listings}
 
 \usepackage{charter}
 
@@ -52,7 +53,9 @@
     ymax=200,
     xtick={1,2,3,4,5},
     width=1\textwidth,
-    grid
+    grid,
+    xlabel={Phonetic raiting},
+    ylabel={Oucurrance}
   ]
     \addplot[ybar, fill=blue] table[ 
         col sep=comma,
@@ -63,6 +66,12 @@
 \end{tikzpicture}
 }
 
+% Settings for lstlisting env
+\lstset{
+  basicstyle=\small\ttfamily,
+  columns=flexible,
+  breaklines=false
+}
 
 \begin{document}
 
