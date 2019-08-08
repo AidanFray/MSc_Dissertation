@@ -248,7 +248,7 @@ Timestamp,Worker ID,Gender,Age,Highest Education,English comprehension
 05/08/2019 13:20:45,A37DTVGS7RX6AG,Female,68,A-Level / O-Level,5
 05/08/2019 13:20:55,A1WPCMXFU9NH9G,Male,62,GCSE,5
 05/08/2019 13:22:26,A3BLJ6QSDTZC9U,Female,34,Bachelor's degree,5
-05/08/2019 13:24:50,AP4FDDWBJW470,Female,54,Bachelor's degree,5
+05/08/2019 13:24:50,AP4FDDWBJW47O,Female,54,Bachelor's degree,5
 05/08/2019 13:26:17,A2F5AZQ55LXHKT,Female,49,Master's degree,5
 05/08/2019 13:26:25,A3KHKFLJZN00QI,Female,29,Bachelor's degree,5
 05/08/2019 13:26:56,A2105HE3NI2TQ5,Female,26,Bachelor's degree,5
@@ -296,7 +296,7 @@ Timestamp,Worker ID,Gender,Age,Highest Education,English comprehension
 05/08/2019 14:28:43,A3DNYS7B0V1FQF,Female,39,Bachelor's degree,5
 05/08/2019 14:30:38,AVK1TZJ6OT9HY,Female,54,Bachelor's degree,5
 05/08/2019 14:33:02,A11BLQKVW1951L,Female,33,Bachelor's degree,5
-05/08/2019 14:46:55,a1c1rjjbukxql5,Male,34,Master's degree,5
+05/08/2019 14:46:55,A1C1RJJBUKXQL5,Male,34,Master's degree,5
 05/08/2019 14:50:54,A3ZFS92VR4I2H,Male,37,Bachelor's degree,5
 05/08/2019 14:52:18,AB1O66FQ805EG,Male,28,Bachelor's degree,5
 05/08/2019 15:06:25,A2JM1IVEZCXX3U,Male,30,A-Level / O-Level,5
@@ -354,7 +354,7 @@ Timestamp,Worker ID,Gender,Age,Highest Education,English comprehension
 06/08/2019 11:39:31,ASVSNMYG44JT5,Male,18,GCSE,5
 06/08/2019 11:39:41,A3BOYAHBPSMN3I,Male,27,Master's degree,5
 06/08/2019 11:39:50,A2HWV497VIPO4I,Male,27,Master's degree,5
-06/08/2019 11:39:50,COPIEDA1CLUVEWDVQXDR,Male,32,Bachelor's degree,5
+06/08/2019 11:39:50,A1CLUVEWDVQXDR,Male,32,Bachelor's degree,5
 06/08/2019 11:40:10,A1DK0O56F7GXKB,Male,27,Master's degree,5
 06/08/2019 11:40:39,A334WE408DZOTI,Male,30,PhD,5
 06/08/2019 11:41:15,ABAPBC3ZHN8B1,Male,23,Bachelor's degree,5
@@ -413,7 +413,7 @@ Timestamp,Worker ID,Gender,Age,Highest Education,English comprehension
 06/08/2019 13:22:11,A2NVZLOJZTXBLH,Female,19,A-Level / O-Level,5
 06/08/2019 13:22:46,A3B7YF9RP3SYBU,Female,29,Bachelor's degree,5
 06/08/2019 13:24:40,A1XD0KRD03U1QA,Male,25,Bachelor's degree,5
-06/08/2019 13:26:44,COPIEDA280TEDG2D0I1D,Female,38,Bachelor's degree,5
+06/08/2019 13:26:44,A280TEDG2D0I1D,Female,38,Bachelor's degree,5
 06/08/2019 13:28:56,A15PQEKFJZTB0,Female,24,Bachelor's degree,5
 06/08/2019 13:30:03,A2WY7Z0CNXUMVX,Female,35,Master's degree,5
 06/08/2019 13:30:49,A3EN7ZQXN53ZJD,Female,27,A-Level / O-Level,5
@@ -432,7 +432,7 @@ Timestamp,Worker ID,Gender,Age,Highest Education,English comprehension
 06/08/2019 13:44:21,A1UGZWT6HTKN0T,Male,21,Bachelor's degree,5
 06/08/2019 13:44:46,A15PQEKFJZTB0,Female,24,Bachelor's degree,5
 06/08/2019 13:44:53,A3J9SHZJJXCYJ,Female,19,GCSE,5
-06/08/2019 13:45:27, COPIEDA31FJU5XX3DTB0,Male,20,Bachelor's degree,3
+06/08/2019 13:45:27,A31FJU5XX3DTB0,Male,20,Bachelor's degree,3
 06/08/2019 13:45:42,A3SGZ4IG7HUT88,Female,22,A-Level / O-Level,5
 06/08/2019 13:45:59,AZP2B9SVTAWPN,Female,30,PhD,5
 06/08/2019 13:48:01,A114QMK46LJGUB ,Female,23,GCSE,5
@@ -441,7 +441,7 @@ Timestamp,Worker ID,Gender,Age,Highest Education,English comprehension
 06/08/2019 13:55:13,A1KMYV3H43LTPS,Female,66,Bachelor's degree,5
 06/08/2019 13:55:34,ARI1EMAHUA9PO,Male,41,Bachelor's degree,5
 06/08/2019 13:55:52,A1XWLODXABC39N,Male,34,Master's degree,5
-06/08/2019 13:56:08, COPIEDAMMC353RPISVB,Male,35,GCSE,4
+06/08/2019 13:56:08,AMMC353RPISVB,Male,35,GCSE,4
 06/08/2019 13:57:06,A1XWLODXABC39N,Male,34,Master's degree,5
 06/08/2019 13:58:30,A1XLKWRHLEAJUS,Male,26,Bachelor's degree,5
 06/08/2019 14:01:03,A3CKDFCICNB074,Male,36,Bachelor's degree,5
@@ -508,7 +508,7 @@ Timestamp,Worker ID,Gender,Age,Highest Education,English comprehension
 06/08/2019 15:31:38,A1SN21FSJN22AR,Male,27,Bachelor's degree,5
 06/08/2019 15:31:46,A1ZR710QUGFM2Z,Female,21,Bachelor's degree,5
 06/08/2019 15:32:20,A15VY1E6KQV4IY,Male,21,Bachelor's degree,5
-06/08/2019 15:32:26,COPIEDADLEZDMCDVOV6,Female,23,Bachelor's degree,5
+06/08/2019 15:32:26,ADLEZDMCDVOV6,Female,23,Bachelor's degree,5
 06/08/2019 15:32:51,A187JU0YYYM8VC,Male,26,Bachelor's degree,5
 06/08/2019 15:33:00,A3QSEKNS4HGECL,Male,23,A-Level / O-Level,5
 06/08/2019 15:33:35,A1GUWDME13K9YX,Male,23,Bachelor's degree,5
@@ -701,3 +701,20 @@ Timestamp,Worker ID,Gender,Age,Highest Education,English comprehension
 07/08/2019 15:21:41,A279HK0GY9PIJ0,Female,24,Bachelor's degree,5
 07/08/2019 15:51:21,A1GKD3NG1NNHRP,Female,59,A-Level / O-Level,5
 07/08/2019 15:51:33,A2BXQ8SZLFQF4D,Female,57,Bachelor's degree,5
+07/08/2019 16:21:56,A30UE6DWFNUCWX,Female,30,Bachelor's degree,5
+07/08/2019 19:59:15,A2I2M82BJGHZ04,Male,32,Bachelor's degree,5
+07/08/2019 20:09:52,A2EJOI2VIRMIR,Male,21,Bachelor's degree,5
+07/08/2019 20:31:05,AGRKG3YT3KMD8,Male,33,Bachelor's degree,5
+07/08/2019 20:36:46,A3MYPYBVHX7FQ2,Male,48,Bachelor's degree,5
+07/08/2019 20:39:19,ACAJFF4MF5S5X,Female,41,A-Level / O-Level,5
+07/08/2019 20:40:45,A3MHKFOJIXO7QN,Male,25,Bachelor's degree,5
+07/08/2019 21:13:46,A7YK2E0G9N9HC,Male,30,Bachelor's degree,4
+07/08/2019 21:15:44,A7YK2E0G9N9HC,Male,30,Bachelor's degree,4
+07/08/2019 21:29:44,ALKQPW0O9C98N,Female,46,Bachelor's degree,5
+07/08/2019 21:35:45,A2A8SIW7CX1PGJ,Male,22,Bachelor's degree,5
+07/08/2019 21:40:40,A2G7DTL156PTKA,Female,35,Bachelor's degree,5
+07/08/2019 22:06:11,ASWUMQF7O1GW5,Male,51,Bachelor's degree,5
+07/08/2019 22:07:30,A37VBAMFEQKJO4,Male,53,A-Level / O-Level,5
+08/08/2019 09:31:02,AKW57KYG90X61,Male,24,Bachelor's degree,5
+08/08/2019 09:31:50,A4T50ODN6SGNR,Male,38,Bachelor's degree,5
+08/08/2019 09:36:34,APL2VQM32UG4X,Male,31,A-Level / O-Level,5

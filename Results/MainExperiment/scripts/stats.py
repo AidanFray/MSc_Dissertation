@@ -7,7 +7,15 @@ import csv
 import sys
 import os
 
-
+AGE_RANGES = {
+    range(18, 25): 0,
+    range(25, 30): 0,
+    range(30, 40): 0,
+    range(40, 50): 0,
+    range(50, 60): 0,
+    range(60, 70): 0,
+    range(70, 80): 0
+}
 
 def usage():
     print(f"Usage: python {__name__} <TARGET_DIR> <HIT_DATA> <DEMOGRAPHIC_DATA>")
@@ -63,7 +71,7 @@ def parse_demographic_data(demoData, workerToGuid):
     worker_data = {}
     for d in demoData[1:]:
         
-        ID = d[workerId_index]
+        ID = d[workerId_index].strip()
 
         del d[workerId_index]
         del d[timestamp_index]
@@ -151,7 +159,7 @@ def false_positive_rate(experiments):
             if e.Responses[i] == "False" and a == None:
                 false_positives += 1
 
-    print(f"\n\tOccurrence: {round((false_positives/non_attacks) * 100, 2)}%")
+    print(f"\n\tOccurrence in non-attack rounds: \n\t  {round((false_positives/non_attacks) * 100, 2)}%")
 
 def attack_breakdown(experiments):
     print("\n[!] Attack stats: \n")
@@ -217,14 +225,61 @@ def attack_breakdown(experiments):
 
 def demographical_stats(workerData, experiments):
 
+    print("\n[!] Demographical Data: ")
+
+    GENDER_TALLY = {
+        "Male": 0, 
+        "Female": 0
+    }
+
+    EDUCATION_TALLY = {
+        "GCSE": 0,
+        "A-Level / O-Level": 0,
+        "Bachelor's degree": 0,
+        "Master's degree": 0, 
+        "PhD": 0
+    }
+
     for e in experiments:
 
         ID = e.ExperimentID
 
         try:
-            workerData[ID]
+
+            data = workerData[ID]
+
+            gender = data[0]
+            age = int(data[1])
+            education = data[2]
+
+            # Gender
+            GENDER_TALLY[gender] += 1
+
+            # Education
+            EDUCATION_TALLY[education] += 1
+
+            # Tallies the ages
+            for a in AGE_RANGES:
+                if age in a:
+                    AGE_RANGES[a] += 1
+                    break
+
         except KeyError:
-            print(f"No worker for {ID} ???")
+            print(f"\t Worker did not fill out the questionaire for {ID}")
+
+    print("\n\t [*] Gender: \n")
+    for g in GENDER_TALLY:
+        print(f"\t  {g} - {round(GENDER_TALLY[g] / len(experiments) * 100, 2)}%")
+
+    print("\n\t [*] Ages: \n")
+    for a in AGE_RANGES:
+        print("\t  ", f"{a[0]}-{a[-1]} - {round(AGE_RANGES[a] / len(experiments) * 100, 2)}%")
+
+    print("\n\t [*] Highest Education: \n")
+    for e in EDUCATION_TALLY:
+        print(f"\t  {e}: \n\t   {round(EDUCATION_TALLY[e] / len(experiments) * 100, 2)}%\n")
+        
+
 
 if __name__ == "__main__":
     
@@ -251,9 +306,9 @@ if __name__ == "__main__":
 
     print(f"[!] Number of participants: {len(experiments)}")
 
-    user_agent_parsing(experiments)
+    attack_breakdown(experiments)
     average_completion_time(experiments)
     false_positive_rate(experiments)
-    attack_breakdown(experiments)
     demographical_stats(workerData, experiments)
+    user_agent_parsing(experiments)
 
