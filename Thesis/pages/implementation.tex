@@ -1,7 +1,7 @@
 \chapter{Implementation}
 \label{cha:Implementation}
 
-\textbf{TODO: } Talk here about the interesting and challenges that were overcome
+\todo{Talk here about the interesting and challenges that were overcome}
 
 \section{GreenOnion}
 
@@ -30,8 +30,59 @@ However, due to the random distribution of the hashing algorithms, there is the 
 Figure \ref{fig:bloom} shows the operation of a simple bloom filter. As it can be seen the element $n$ definitely does not exist in the set due to both array indices not being set. The performance boost when comparing large numbers of keys is substantial when compared to the similar tool Scallion (See Section \ref{sec:greenDesign}.) The results from the comparison will be quantified in Chapter \ref{cha:Experiments}.
 
 \section{First Experiment}
-Explain how Google App Script was used?
+In order to assess and collect data from users for the first experiment (See Section \ref{exp:metric}) Google Forms\footnote{\url{https://www.google.com/forms}} was used as the application. It provided functionality to easily present questions and record their responses. However, as the design requirement of renewing sample from the matches of each metric was not part of the main applications functionality other solution was required. This was solved by Google's  App Script\footnote{\url{https://developers.google.com/apps-script/}} service that allows a user to programmatically interact with the Form. This allowed the re-sampling of matches each time a user submitted a response.
+
+\begin{figure}[!h]
+\begin{lstlisting}[frame=single, language=Javascript]
+var ALGOS = ["Soundex", "Metaphone", ...];
+var ALGO_SIZES = [763777, 412916, ...];
+
+function updateForm(ss, form) {
+
+  // Obtains a list of the items present on the form
+  formItems = form.getItems();
+  
+  // Updates the new values
+  var algo_index = 0;
+  var scale_index = 0;
+  for (var i = 0; i < formItems.length; i++)
+  {
+    if (formItems[i].getType() == "SCALE")
+    {
+      var rnd_index = Math.floor(Math.random() * 
+      ALGO_SIZES[algo_index]) + 1;    
+      
+      // Obtains the Google Sheets object
+      var sheetname = ALGOS[algo_index];
+      var sheet = ss.getSheetByName(sheetname);
+      var range = sheet.getRange(rnd_index, 1)
+      var values = range.getValues();
+           
+      // Re-samples from the connected Google Sheets
+      _updateScaleTitle(formItems[i], values[0]);
+      
+      scale_index++;
+      
+      // Moves on to the next metric when a group size is
+      // been completed
+      if (scale_index != 0)
+      {
+        if (scale_index % QUESTION_PER_ALGO == 0) {
+            algo_index++;
+        }
+      }
+    }
+  }
+}
+\end{lstlisting}
+\caption{Section of code from the First Experiment's Google App Script}
+\label{fig:GoogleAppScript}
+\end{figure}
+
+Figure \ref{fig:GoogleAppScript} contains an interesting snippet from the script used in the experiment. Each time a user submitted their response the \verb|updateForm()| endpoint was called, that subsequently updated the questions for the next user. This aimed to keep the samplings fair as they are equality likely to appear when attacking the system alongside an ample exploration of the overall match quality.
 
 \section{MainExperiment}
-Design of the application etc
+In order to asses users in a similar scenario to ones experienced when utilizing \pep in the real-world a custom application was required. 
+
+\todo{What interesting aspects do I want to talk about here?}
 

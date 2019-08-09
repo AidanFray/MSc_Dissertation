@@ -1,4 +1,5 @@
 \documentclass{UoYCSproject}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{mathptmx}
 \usepackage{booktabs}
 \usepackage{gensymb}
@@ -11,7 +12,9 @@
 \usepackage{pgfplots, pgfplotstable}
 \usepackage{float}
 \usepackage{listings}
+\usepackage{graphicx}
 
+% Text font
 \usepackage{charter}
 
 % \usepackage{newcent}
@@ -45,6 +48,10 @@
 % }
 
 
+\newcommand{\todo}[1]{
+  \textit{\color{ForestGreen}\textbf{TODO: } #1}
+}
+
 % Used to display graphs for experiment one
 \newcommand{\tally}[1]{%
 \begin{tikzpicture}
@@ -66,6 +73,21 @@
 \end{tikzpicture}
 }
 
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
 % Settings for lstlisting env
 \lstset{
   basicstyle=\small\ttfamily,
@@ -74,6 +96,8 @@
 }
 
 \begin{document}
+
+
 
   \pagenumbering{roman}
   \maketitle
@@ -89,6 +113,7 @@
   \input{pages/design.tex}
   \input{pages/implementation.tex}
   \input{pages/experiments.tex}
+  \input{pages/evaluation.tex}
   \input{pages/conclusion.tex}
   \input{pages/appendix.tex}
 
