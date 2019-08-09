@@ -83,6 +83,7 @@ This experiment, therefore, has achieved that goal of providing three metrics fo
 \newpage
 
 \section{Experiment 2}
+\label{sec:exp2}
 % Demographic
 % Results
 
@@ -193,40 +194,25 @@ Table \ref{tab:exp2_attacks} contains the break down of results for the experime
     \label{tab:exp2_attacks}
 \end{table}
 
-As previously mentioned, the set of recruited participants are more highly educated than the general population. This combined with the low average age contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skillful interaction with computer based systems, this, therefore, with the previous assumption in mind results in the results of this experiment being a best case scenario as the attacks would be expected to be more successful with less able users. This, however, requires further research and possible empirical data to determine the validity of the assumption.
+As previously mentioned, the set of recruited participants are more highly educated than the general population. This combined with the low average age contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skillful interaction with computer based systems, this, therefore, with the previous assumption in mind results in the results of this experiment being a best case scenario as the attacks would be expected to be more successful with less able users. This, however, requires further research and possible empirical data to determine the validity of the assumption. 
 
 \subsection*{Limitations}
-Due to multiple attacks occurring for one participant the rate of success cannot be 
+During this study the main task was to perform the authentication ceremony a large number of times. In the real-world the ceremony is a secondary task due to it not strictly being required. This alongside the potential for users to downplay the possibility of attack leads to the conclusion that these results have limited applicability in a real-world setting. The assumption is that these results display the success rate for extremely attentive user where they will make sure to double check with their participant and not just aim to complete the task as quickly as possible. This, therefore, means in a real-world setting the success rates could be even higher.
 
+\todo{Include email example of user assuming error over attack}.
 
 \subsection{Comparison to alternative literature}
-\todo{Compare to the other similar papers, is this higher or lower than other papers?}
+This section will aim to compare the results of the experiment to similar literature.
 
-% # Usability and Security of Out-Of-Band Channels in Secure Device Pairing Protocols
+Work by Kainda \textit{et al.}\cite{kainda2009usability} (previous discussed in Chapter \ref{cha:LiteratureReview}) is the most comparable to this experiment. They were the only study to use exactly 4 words, but differed on the size of dictionary (1024 words) and how a near-match was calculated. Near-matches were a difference in a single word, but without the consideration for similarity, this is the unique aspect considered with this experiment.
 
-% Set of 4 words compared from a dictionary of 1024 words (10-bits per word) 
+However, with those aspect in mind Words received an overall success rating of 3.3\%, considerably lower than that of this study. The results presented in this experiment in the worst case presented almost 3 times as many successful attacks.
 
-% 	- Near matches differ by a single word (No measure of similarity) randomly decided word
+Other relevant work by Dechand \textit{el al.}\cite{dechand2016empirical} also discussed in Chapter \ref{cha:LiteratureReview} assess the success rate of attacks on words. This is less similar to the experiment as 14 words per attack were assessed with each participant, where the comparison was performed visually. However, the success for the PGP Word list was 8.78\%. As 10/14 words were kept static more comparable to comparable the results to the highest attack strength ``2 static''. Therefore, the results presented in this section are substantially higher than this paper, where again the success rate is almost 3 times higher.
 
+The final relevant paper to compare is that of Tan \textit{et al.}. This paper had the highest number of words assessed with 16 overall. With it assessing the same wordlist and attack strength as the work by Dechand \textit{et al.}. The attack success was 14\% overall, this again compared to the highest attack assessed in the experiment results in a sizeable difference between the attack successes.
 
-% 	- FP (Security faliure)
-% 	- FN (Non-security faliure) 
-
-% 	Total: 3.3% (FP) - 16.7% (FN)
-
-% 	Only 30 participants
-
-
-% # Unicorns
-
-% 	- 16 words long
-
-% 	"Our participants were recruited from MTurk, which is not
-% 	representative of the general U.S. population; MTurk workers
-% 	have been found to be younger and better educated [15]."
-
-% 	14% missed the simulated attacks
-
+In conclusion, all similar literature had much lower attack success rates that the results presented in this experiment. With all papers using similarly designed words lists it highly suggests that the deficiencies in Trustwords are the cause for the substantial increase in attack success. Furthermore, the consideration for similarity of words that the other papers have not considered could have also resulted in the higher attack success rates.
 
 \section{Generation of keys}
 To demonstrate that the the generation of the near collision keys is not only theoretical actual generation of keys was performed using GreenOnion. A random metric was selected from the three carried forward from the first experiment. Alongside this a random uncontrolled key was generated as the simulated attack target (See Appendix \ref{appendix:uncontrolled_key} for the armor public key). Then for each attack level (0 static, 1 static, 2 static) a key was computed. NYSIIS was chosen as the selected metric. To expedite the process an initial search was performed for controlled keys that had the highest number of permutations, this was due to the demonstration of the actual generation of keys. Producing near-matching keys that have a very small number of potential matches, therefore, adds very little to this demonstration with a large computation cost.
@@ -279,4 +265,6 @@ To demonstrate that the the generation of the near collision keys is not only th
     \label{tab:nysiis2}
 \end{table}
 
-Tables \ref{tab:nysiis0}, \ref{tab:nysiis1} and \ref{tab:nysiis2} contain the parameters and results on the computation. Due to varying availability of resources each computation has a varying hashing speed. This, however, has been normalized by the introduction of the "GPU Day" metric. This is simply the computation time required to reach the same conclusion on a single 2000 MH/s GPU.
+Tables \ref{tab:nysiis0}, \ref{tab:nysiis1} and \ref{tab:nysiis2} contain the parameters and results on the computation. Due to varying availability of resources each computation has a varying hashing speed. This, however, has been normalized by the introduction of the "GPU Day" metric. This is simply the computation time required to reach the same conclusion on a single 2000 MH/s GPU. As it can be seen most notable from Table \ref{tab:nysiis2} the generation of the actual Trustwords differs in only 3 characters making it arguably very similar. 
+
+When linking this generated key to results of the second experiment (See Section \ref{sec:exp2}) computation of 2.53 days on a single mid-range GPU is able to achieve around a 28\% success rate when assessed against actual users. Even with the least restricted attack type presented in Table \ref{tab:nysiis0} the computation of half a day can provide almost a 10\% success rate when attacking users. This means any user with a single commodity GPU could compute enough keys in less than a week to have a very high probability of fooling an actual user assuming the success rate is consistent across all keys.
