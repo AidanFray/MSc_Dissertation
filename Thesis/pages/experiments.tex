@@ -91,7 +91,7 @@ As discussed in Section \ref{exp:metric} the goal of the experiment was the cull
     \centering
     \begin{tabular}{|l|l|l|}
         \hline
-        Metric & Average Rating  & $\sigma$\\
+        \textbf{Metric} & \textbf{Average Rating}  & \textbf{$\sigma$}\\
         \hline
         Leven     & 3.66  & 1.15\\
         NYSIIS    & 2.92 & 1.31\\
@@ -114,22 +114,19 @@ Figure \ref{tab:exp1_results} shows the average results for the metrics. It can 
 
 Due to the averages of Metaphone and Phonetic Vectors being so close standard deviation was used as the final decider. As it can be seen Megaphone has a slightly lower $\sigma$ value of that of Phonetic vectors, thus, contributing to the decision to select Metaphone to be carried over to the next experiment.
 
-\subsection{Limitations}
+\subsection*{Considerations}
+As discussed in Section \ref{sec:exp1_considerations} compromises were made in order to fullfil all requirement with a minimized cost. Levenshtein's abnormal performance further backs up concerns around the visual aspect biasing the performance of the metric. This will have to be considered when interpreting the results. 
 
-\textbf{TODO: } Reference back to the decisions made in the design section.
-
-Therefore, even with the discussed issues, the aim of the experiment was to promptly reduce the number of metrics for use later in the project due to a lack of project resources.
-
-This experiment, therefore, has achieved that goal of providing three metrics for the subsequent experiment while balancing between accuracy and expenditure. Further work could aim to reproduce this study with the proposed audio based design.
+Even with the discussed issues, the aim of the experiment was to promptly reduce the number of metrics for use later in the project. This experiment, therefore, has achieved that goal of providing three metrics for the subsequent experiment while balancing between accuracy and expenditure. The results are also an improvement over informal ad-hoc methods. Further work could aim to reproduce this study with the proposed audio based design.
 
 \input{diagrams/graphs/experiment_one/graph.tex}
 
 \newpage
 
-\section{Experiment 2 - Simulated attacks}
+\section{Experiment 2 - Trustword attacks}
 \label{sec:exp2}
-% Demographic
-% Results
+
+Section \ref{sec:exp2_design} explains the design of the experiment. This section will present and discuss the results of the experiment alongside a comparison to relevant literature.
 
 \subsection*{Demographics}
 Overall, 435 paid participants recruited via Amazon's MTurk were assessed in this experiment. We excluded 66 results; 7 due to being non-native speakers and 59 were discarded for failing the attention metrics (Discussed in Section \ref{sec:exp2_quality}).
@@ -236,25 +233,23 @@ Table \ref{tab:exp2_attacks} contains the break down of results for the experime
     \label{tab:exp2_attacks}
 \end{table}
 
-As previously mentioned, the set of recruited participants are more highly educated than the general population. This combined with the low average age contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skillful interaction with computer based systems, this, therefore, with the previous assumption in mind results in the results of this experiment being a best case scenario as the attacks would be expected to be more successful with less able users. This, however, requires further research and possible empirical data to determine the validity of the assumption. 
+\subsection*{Considerations}
+As previously mentioned, the set of recruited participants are more highly educated than the general population. This combined with the low average age contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skillful interaction with computer based systems, this, therefore, with the previous assumption in mind means the results of this experiment being a `best case' scenario. The attacks, therefore, would be expected to be more successful on less technical users. This, however, requires further research and possible empirical data to determine the validity of the assumption. 
 
-\subsection*{Limitations}
-During this study the main task was to perform the authentication ceremony a large number of times. In the real-world the ceremony is a secondary task due to it not strictly being required. This alongside the potential for users to downplay the possibility of attack leads to the conclusion that these results have limited applicability in a real-world setting. The assumption is that these results display the success rate for extremely attentive user where they will make sure to double check with their participant and not just aim to complete the task as quickly as possible. This, therefore, means in a real-world setting the success rates could be even higher.
+During this study the main task was to perform the authentication ceremony a large number of times. In the real-world the ceremony is a secondary task due to it not strictly being required. This alongside the potential for users to downplay the possibility of attack leads to the conclusion that the success rates could be much higher in a real-world setting. The assumption is that these results display the success rate for extremely attentive user where they will make sure to double check with their authentication partner multiple times. This is opposed to the assumption that the majority of users will aim to complete the task as quickly as possible. 
 
-\todo{Include email example of user assuming error over attack}.
-
-\subsection{Comparison to alternative literature}
+\subsection*{Comparison to alternative literature}
 This section will aim to compare the results of the experiment to similar literature.
 
-Work by Kainda \textit{et al.}\cite{kainda2009usability} (previous discussed in Chapter \ref{cha:LiteratureReview}) is the most comparable to this experiment. They were the only study to use exactly 4 words, but differed on the size of dictionary (1024 words) and how a near-match was calculated. Near-matches were a difference in a single word, but without the consideration for similarity, this is the unique aspect considered with this experiment.
+Work by Kainda \textit{et al.}\cite{kainda2009usability} (previous discussed in Chapter \ref{cha:LiteratureReview}) is the most comparable to this experiment. They were the only study to use exactly 4 words, but differed on the size of dictionary (1024 words) and how a near-match was calculated. Near-matches were a difference in a single word but without the consideration for similarity, this is the unique aspect considered with this experiment.
 
-However, with those aspect in mind Words received an overall success rating of 3.3\%, considerably lower than that of this study. The results presented in this experiment in the worst case presented almost 3 times as many successful attacks.
+However, with those aspect in mind attacks on words encoding received an overall success rating of 3.3\%, considerably lower than that of this study. In the worst case our simulated attacks achieved almost 3 times as many successes compared to this study.
 
-Other relevant work by Dechand \textit{el al.}\cite{dechand2016empirical} also discussed in Chapter \ref{cha:LiteratureReview} assess the success rate of attacks on words. This is less similar to the experiment as 14 words per attack were assessed with each participant, where the comparison was performed visually. However, the success for the PGP Word list was 8.78\%. As 10/14 words were kept static more comparable to comparable the results to the highest attack strength ``2 static''. Therefore, the results presented in this section are substantially higher than this paper, where again the success rate is almost 3 times higher.
+Other relevant work by Dechand \textit{el al.}\cite{dechand2016empirical} also discussed in Chapter \ref{cha:LiteratureReview} assess the success rate of attacks on words. This is less similar to the experiment as 14 words per attack were assessed with each participant, where the comparison was performed visually. However, the success for the PGP Word list was 8.78\%. As 10/14 words were kept static more comparable to comparable the results to the highest attack strength ``2 static''. Therefore, there is another 3 fold improvement in the success rates of our simulated attacks. 
 
-The final relevant paper to compare is that of Tan \textit{et al.}. This paper had the highest number of words assessed with 16 overall. With it assessing the same wordlist and attack strength as the work by Dechand \textit{et al.}. The attack success was 14\% overall, this again compared to the highest attack assessed in the experiment results in a sizeable difference between the attack successes.
+The final relevant paper to compare is that of Tan \textit{et al.}. This paper had the highest number of words assessed with 16 overall. With it assessing the same wordlist and attack strength as the work by Dechand \textit{et al.}. The attack success was 14\% overall, this again compared to the highest attack assessed in the experiment results in a sizeable difference.
 
-In conclusion, all similar literature had much lower attack success rates that the results presented in this experiment. With all papers using similarly designed words lists it highly suggests that the deficiencies in Trustwords are the cause for the substantial increase in attack success. Furthermore, the consideration for similarity of words that the other papers have not considered could have also resulted in the higher attack success rates.
+In conclusion, all similar literature had much lower attack success rates that the results presented in this experiment. With all papers using similarly designed words lists it highly suggests that the deficiencies in Trustwords are the cause for the substantial increase in attack success. Alongside this, the consideration for similarity when calculating near-collisions could have also resulted in the higher attack success rates. This aspect is also a unique consideration compared to available literature.
 
 
 \section{Average number of near-collision keys for each metric}
@@ -264,7 +259,7 @@ In order to predict the effectiveness of the attack over a wide variety of keys 
     \centering
     \begin{tabular}{|lllll|}
         \hline
-        \textbf{Metric} & \textbf{Attack Type} & \textbf{Mean permuations} & \textbf{$\sigma$} & \textbf{Compute Time} \\
+        \textbf{Metric} & & \textbf{Mean matches} & \textbf{$\sigma$} & \textbf{Compute Time} \\
         \hline
         NYSIIS &&&& \\
         \hline
@@ -277,7 +272,7 @@ In order to predict the effectiveness of the attack over a wide variety of keys 
         \hline
         & 0 static & 27138.78 & 529229.35 & ~~~~1.97 days \\
         & 1 static & 2822.74 & 23932.39 & ~~18.91 days \\
-        & 2 static & 339.84 & 1730.97 & ~~15.45 days \\
+        & 2 static & 339.84 & 1730.97 & 157.45 days \\
         \hline
 
         Levenshtein &&&& \\
@@ -292,10 +287,10 @@ In order to predict the effectiveness of the attack over a wide variety of keys 
     \label{tab:average_perm}
 \end{table}
 
-As it can be seen metrics like Levenshtein have a low overall average and would require much more attacker resources to become feasible. However, metaphone has attacks that could be computed on average in under 2 days
+As it can be seen metrics like Levenshtein have a low overall average and would require much more attacker resources to become feasible. On the other hand, Metaphone has attacks that could be computed on average in under 2 days. The success rate for this attack type in the second experiment was 11.01\% on average. This means on comity hardware commonly found in the home, an attacker could compute a key in less than two days that could succeed more than 10\% of the time. This is substantial and highlights on weaknesses in the Trustword system.
 
 \section{Distribution of vulnerable keys}
-As discussed in the design of the second experiment (See Section \ref{sec:exp2}) the attacks sampled from a list of `vulnerable keys'. These vulnerable keys were created using real keys extracted from PGP key servers. These keys were then randomly sampled and used to create the combined key as discussed in Section \ref{sec:pep}. 100,000 random key pair were as the total sample, and any vulnerable keys for each attack level were recorded.
+As discussed in the design of the second experiment (See Section \ref{sec:exp2}) the attacks sampled from a list of `vulnerable keys'. These vulnerable keys were created using real keys extracted from PGP key servers. These keys were then randomly sampled and used to create the combined key as discussed in Section \ref{sec:pep}. 100,000 random key pair were created and used as the sample. Any vulnerable keys in this set were recorded and used in the experiment.
 
 \todo{Reference David's work}
 
@@ -322,12 +317,13 @@ As discussed in the design of the second experiment (See Section \ref{sec:exp2})
         \hline
     \end{tabular}
     \caption{Number of vulnerable keys per metric}
+    \label{tab:vulnkeys}
 \end{table}
 
-
+Table \ref{tab:vulnkeys} contains the breakdown of the number of vulnerable keys. The takeaways from this table is the extremely low values for Levenshtein in the higher attacks. This is due to the low number of overall matches produced by Levenshtein. This means Levenshtein will not be effective in the vast majority of cases. However, the standout metric is Metaphone with a good proportion of vulnerable keys, it was the worst performer when assessed against real users but only by as little as 2\%. If you take into consideration the number of vulnerable keys detected in the set alongside the average amount near-collision matches in Table \ref{tab:average_perm} Metaphone appears to be the most usable metric overall.
 
 \section{Generation of keys}
-To demonstrate that the the generation of the near collision keys is not only theoretical actual generation of keys was performed using GreenOnion. A random metric was selected from the three carried forward from the first experiment. Alongside this a random uncontrolled key was generated as the simulated attack target (See Appendix \ref{appendix:uncontrolled_key} for the armor public key). Then for each attack level (0 static, 1 static, 2 static) a key was computed. NYSIIS was chosen as the selected metric. To expedite the process an initial search was performed for controlled keys that had the highest number of near-collision keys, this was due to the demonstration of the actual generation of keys. Producing near-matching keys that have a very small number of potential matches, therefore, adds very little to this demonstration with a large computation cost.
+To demonstrate that the the generation of the near collision keys is not only theoretical actual generation of keys was performed using GreenOnion. A random metric was selected from the three carried forward from the first experiment. Alongside this a random uncontrolled key was generated as the simulated attack target (See Appendix \ref{appendix:uncontrolled_key} for the armor public key). Then for each attack level (0 static, 1 static, 2 static) a key was computed. NYSIIS was chosen as the selected metric. To expedite the process an initial search was performed for controlled keys that had the highest number of near-collision keys, this was due to the demonstrative purpose of this experiment. Producing near-matching keys from key pairs with a very small number of potential matches, adds very little to this demonstration.
 
 \begin{table}[h!]
     \begin{tabular}{|l|l|}
@@ -377,6 +373,6 @@ To demonstrate that the the generation of the near collision keys is not only th
     \label{tab:nysiis2}
 \end{table}
 
-Tables \ref{tab:nysiis0}, \ref{tab:nysiis1} and \ref{tab:nysiis2} contain the parameters and results on the computation. Due to varying availability of resources each computation has a varying hashing speed. This, however, has been normalized by the introduction of the "GPU Day" metric. This is simply the computation time required to reach the same conclusion on a single 2000 MH/s GPU. As it can be seen most notable from Table \ref{tab:nysiis2} the generation of the actual Trustwords differs in only 3 characters making it arguably very similar. 
+Tables \ref{tab:nysiis0}, \ref{tab:nysiis1} and \ref{tab:nysiis2} contain the parameters and results on the computation. Due to varying availability of resources each computation has a varying hashing speed. This, however, has been normalized by the introduction of the "GPU Day" metric. This is simply the computation time required to reach the same conclusion on a single 2000 MH/s GPU. 
 
-When linking this generated key to results of the second experiment (See Section \ref{sec:exp2}) computation of 2.53 days on a single mid-range GPU is able to achieve around a 28\% success rate when assessed against actual users. Even with the least restricted attack type presented in Table \ref{tab:nysiis0} the computation of half a day can provide almost a 10\% success rate when attacking users. This means any user with a single commodity GPU could compute enough keys in less than a week to have a very high probability of fooling an actual user assuming the success rate is consistent across all keys.
+As it can be seen most notable from Table \ref{tab:nysiis2} the generation of the actual Trustwords differs in only 3 characters making it arguably very similar. When linking this generated key to results of the second experiment (See Section \ref{sec:exp2}) computation of 2.53 days on a single mid-range GPU is able to achieve around a 28\% success rate when assessed against actual users. Even with the least restricted attack type presented in Table \ref{tab:nysiis0} the computation of half a day can provide almost a 10\% success rate when attacking users. This means any user with a single commodity GPU could compute enough keys in less than a week to have a very high probability of fooling an actual user.

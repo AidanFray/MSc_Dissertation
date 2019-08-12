@@ -5,13 +5,13 @@ The increasing use of public key cryptography by instant messaging and secure em
 
 One of the most significant risks to the security of the communication channel is a Man-in-the-middle (MiTM) attack. A MiTM attack involves an attacker impersonating one or both sides of a connection. MiTM attacks can fully circumvent the encryption as it allows an attacker to read all of the encrypted data. 
 
-A countermeasure for this is the verification of each parties' key fingerprint. A fingerprint is a small string of characters that is unique to each key pair. Therefore, it can be used as as a way of identification. 
+A countermeasure for this is the verification of each parties' key fingerprint. A fingerprint is a small string of characters that is unique to each key pair. Therefore, it can be used as a way of identification. 
 
-Fingerprints can come in a number of different encodings such as hexadecimal, words and even procedurally generated avatars. Previous research has shown that the average human can only hold around 7-digits worth of data in their working memory\cite{miller1956magical}, alongside this the involvement of human based verification makes the designing the scheme to be user friendly is a task of upmost importance.
+Fingerprints can come in a number of different encodings such as hexadecimal, words and even procedurally generated avatars. Previous research has shown that the average human can only hold around 7-digits worth of data in their working memory\cite{miller1956magical}, alongside this the involvement of human based verification makes the designing of user friendly schemes a task of upmost importance.
 
-Humans have long been known as the most vulnerable part of any system. To combat this issue, solutions have been proposed to remove the manual verification with examples such as PGP's web-of-trust\cite{callas1998openpgp} and Namecoin\cite{kalodner2015empirical}. However, these suffer from user adoption due to perceived complexity. This leaves manual verification in the current position of being a difficult problem, where the proposed solutions need to sacrifice one of usability or security. Therefore, research into improving or creating new fingerprint encodings that work well with users remains massively relevant.
+Humans have long been known as the most vulnerable part of any system. To combat this issue, solutions have been proposed to remove the manual verification with examples such as PGP's web-of-trust\cite{callas1998openpgp} and Namecoin\cite{kalodner2015empirical}. However, these suffer from user adoption due to perceived complexity. This leaves manual verification in a difficult position, due the proposed solutions needing to sacrifice either usability or security. Therefore, research into improving or creating secure fingerprint encodings that work well with users remains massively relevant.
 
-The report will asses the security and feasibility of attacking a fingerprint encoding known as ``Trustwords'' as it claims at this point have been unsubstantiated. 
+The report will asses the security and feasibility of attacking a fingerprint encoding known as ``Trustwords'' as justification for various design choices have been unsubstantiated. 
 
 The report will be structured as follows:
 
@@ -19,7 +19,7 @@ The report will be structured as follows:
 
 \textbf{Chapter 3} formally defines the aim of this report alongside the research questions the project aims to answer.
 
-\textbf{Chapter 4} documents the prosed designs required to answer the research questions proposed in Chapter 3.
+\textbf{Chapter 4} documents the proposed designs required to answer the research questions proposed in Chapter 3.
 
 \textbf{Chapter 5} discusses the significant implementation details of the designs formalized in Chapter 4.
 
@@ -27,4 +27,4 @@ The report will be structured as follows:
 
 \textbf{Chapter 7} evaluates the success of the project alongside a discussion into relevant further work. The research aims proposed earlier in Chapter 3 will be used as evaluative metrics.
 
-\textbf{Chapter 8} concludes the project with a culmination of the papers findings alongside the any conclusions that can be drawn from the research.
+\textbf{Chapter 8} concludes the project with a culmination of the papers findings alongside any conclusions that can be drawn from the research.

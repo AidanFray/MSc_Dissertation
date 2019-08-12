@@ -1,7 +1,7 @@
 \chapter{Design}
 \label{cha:Design}
 
-This chapter will discuss and overview of the proposed designs for elements required to answer the research questions. Alternative designs are explained when relevant and design choices are justified
+This chapter will discuss and overview of the proposed designs for elements required to answer the research questions. Alternative solutions are explained when relevant alongside a justification of design choices.
 
 \section{Overall attack design}
 
@@ -10,7 +10,7 @@ This will attempt to provide the base to answer Research Questions \ref{goal:num
 
 Near-collision keys are keys that are deemed a match by the phonetic similarity metric (More on this aspect in the following sections). A similarity metric is an algorithm designed to determine if two words are phonetically a match. For example, the words "THEIR" and "THERE" will be a match whereas the words "DARK" and "PRINCIPLE" are not phonetically matching.
 
-As each combined key in Trustwords is an exclusive-or of both sides public key (Figure \ref{fig:xor_trustwords} shows this process) the attack is target to a single pair of users and will require recomputation for every attack target. This will be considered when discussing the attack feasibility. Each pair is also split into a "Uncontrolled" and "Controlled" key. Uncontrolled is the reciever of the communication, and, thus, we cannot control their key. The Controlled key is the one we are attempting to impersonate, and it is assumed that we have the ability to replace the Controlled key with our malicious option. These descriptions will be the terminology used throughout the paper. However, it should also be considered that the uncontrolled and controlled can be swapped around with the ability to compute both directions. Thus, resulting in the possibility to intercept both directions of communication. This, however, will require performing the attack separately for both directions.
+As each combined key in Trustwords is an exclusive-or of both sides' public key (Figure \ref{fig:xor_trustwords} shows this process) the attack is designed to target a single pair of users and will require recomputation for every attack target. This will be considered when discussing the attack feasibility. Each pair is also split into an "Uncontrolled" or "Controlled" key. Uncontrolled is the receiver of the communication, and, thus, we cannot control their key. The Controlled key is the one we are attempting to impersonate, and it is assumed that we have the ability to replace the Controlled key with our malicious option. These descriptions will be the terminology used throughout the paper. However, it should also be considered that the uncontrolled and controlled can be swapped around with the ability to compute both directions. Thus, resulting in the possibility to intercept both directions of communication. This, however, will require performing the attack separately for both directions.
 
 \begin{figure}[h!]
     \centering
@@ -21,7 +21,7 @@ As each combined key in Trustwords is an exclusive-or of both sides public key (
 
 When attacking the respective similarity metric will be used to compute a list of possibilities for each position in the combined fingerprint.
 
-Figure \ref{fig:nearMatch} shows the process of generating a sub section of the combinations. A list of each words matches are generated and then the total number of permutations are generated overall.
+Figure \ref{fig:nearMatch} shows the process of generating a subsection of the combinations. A list of each words' matches is generated, followed by the generation of the total number of near-collision keys.
 
 \begin{figure}[h!]
     \centering
@@ -61,9 +61,9 @@ Figure \ref{fig:nearMatch} shows the process of generating a sub section of the 
     \label{fig:nearMatch}
 \end{figure}
 
-To generate an actual list of fingerprints to search for, the near collision words are converted back into hexadecimal and XORed with the uncontrolled key. The provides the impersonated key that will produce the desired combined near-collision. Completing this for all of the near-collision permutations will produce a list of fingerprints that can be inserted into a tool designed to hash keys and search for targets. This aspect of using a large list to search for keys massively reduces the complexity of the search.
+In order to generate an actual list of fingerprints to search for, the near-collision words are converted back into hexadecimal and XORed with the uncontrolled key. This provides the impersonated key that will produce the desired Trustwords. Completing this for all of the near-collision permutations will produce a list of fingerprints that can be inserted into a tool designed to hash keys and search for targets. This aspect of using a large list to search for keys massively reduces the complexity of the search.
 
-In summary the, attack steps are:
+In summary, the attack steps are:
 
 \begin{enumerate}
     \item Compute all possible matches using a similarity metric on all words in a dictionary (Only needs performing once).
@@ -72,16 +72,16 @@ In summary the, attack steps are:
     
     \item Calculate all permutations of near-collisions for the key pair and produce a list of similar key fingerprints.
     
-    \item Use list of similar keys in mass computation of keys to find near-collision keys.
+    \item Use a list of similar keys in the mass computation of keys to find near-collision keys.
 
 \end{enumerate}
 
 \section{Similarity metrics}
 \label{sec:metrics}
-One of the first requirements for the attack is quantifying "phonetic similarity". This section is looking to provide an answer for the Research Question \ref{goal:phoneticSimilarity}. There are many algorithms currently available to provide this functionality. This section will describe algorithms alongside the reasons they were selected for assessment later in the project.
+One of the first requirements for the attack is quantifying "phonetic similarity." This section is looking to provide an answer for Research Question \ref{goal:phoneticSimilarity}. There are many algorithms currently available to provide this functionality. This section will describe algorithms alongside the reasons they were selected for assessment later in the project.
 
 \subsection{Soundex}
-One of the earliest example of a phonetic algorithm is known as Soundex. It is one of the most famous algorithm due in part to its implementation into major database clients like MySQL\cite{mysql_soundex}, Oracle\cite{moved_2005} and PostgreSQL\cite{postgresql}. Originally designed for indexing names by phonetics alongside spelling mistakes due to transpositions in letters. Therefore, due to it being based on the phonetic features, it is highly suitable for this project's use-case. 
+One of the earliest examples of a phonetic algorithm is known as Soundex. It is one of the most famous algorithm due in part to its implementation into major database clients like MySQL\cite{mysql_soundex}, Oracle\cite{moved_2005} and PostgreSQL\cite{postgresql}. Originally designed for indexing names by phonetics alongside spelling mistakes due to transpositions in letters. Therefore, due to it being based on the phonetic features, it is highly suitable for this project's use-case. 
 
 Soundex produces a four digit code for each word assessed.
 The first letter of the word is retained alongside the removal of all of a, e, i, o, u, y, h and w. The remaining letters are then mapped to numbers\footnote{Further steps are performed on the code, as the technical details do not add anything to the discussion, the steps of the algorithm can be found in Appendix TODO.}. These mappings are displayed in Figure \ref{fig:soundexMap}.
@@ -114,7 +114,7 @@ Further issues posed in \cite{patman2001soundex} are discussed below and show th
 
     \item \textbf{Silent consonants.} Soundex does not have logic embedded to deal with silent consonants.
 
-    \item \textbf{Poor precision.} Due to the previously discussed point of a small code space. \cite{patman2001soundex} re-iterates this point but in the context of name matching where Soundex's poor performance was demonstrated. Soundex only gained and overall accuracy 36.37\% when matching names within a provided database.
+    \item \textbf{Poor precision.} Due to the previously discussed point of a small code space. \cite{patman2001soundex} re-iterates this point but in the context of name matching where Soundex's poor performance was demonstrated. Soundex only gained and overall accuracy of 36.37\% when matching names within a provided database.
 \end{enumerate}
 
 However, even with Soundex's fallbacks its algorithmic simplicity and popularity allows it to still remain relevant in this application.
@@ -137,7 +137,7 @@ Levenshtein distance is a string metric designed to measure the 'distance' betwe
 An example distance between \verb|trace| and \verb|place| would be the substitutions of the first to letters, from \verb|tr| to \verb|pl| meaning the two strings have a Levenshtein distance of 2.
 
 \subsection{Phonetic Vectors}
-Phonetic Vectors is the unique addition to the chosen set. Created by Allison Parrish in 2017\cite{parrish2017poetic}, Phonetic vectors is as the name suggests the vectorization of a words phonetics. This allows a words phonetics to be represented in vector space.
+Phonetic Vectors is the unique addition to the chosen set. Created by Allison Parrish in 2017\cite{parrish2017poetic}, Phonetic vectors is as the name suggests the vectorization of a words phonetics. This phonetical representation in vector space.
 
 Phonetic features are used in this work as a way to compare the similarity of a words phonemes. Phonemes are the phonetic elements that construct a word. For example the word "RING" translated into the phonemes \verb|/R IH NG/|. 
 
@@ -239,7 +239,7 @@ Matching Rating Approach (MRA) is another algorithm designed to match names with
 Further work could include the comparison of this algorithm  to similar alternatives in phonetically matching of words to quantify performance. This will be discussed further in the evaluative sections of the report.
 
 \subsection{Caverphone}
-Another notable alternative solution is that of Caverphone that was designed in New Zealand. Caverphone as is the case with the vast majority of phonetic algorithms was designed for use with name matching. Caverphone was not chosen to similar reasons to that of MRA alongside its optimization for accents in location of New Zealand it was conceived in. Therefore, the low level of utilization alongside the unique design features that suggest it may not be suited for this application. This has, however, not be assessed empirically and thus would be a candidate for further work.
+Another notable alternative solution is that of Caverphone that was designed in New Zealand. Caverphone as is the case with the vast majority of phonetic algorithms was designed for use with name matching. Caverphone was not chosen to similar reasons to that of MRA alongside its optimization for the New Zealand accent. Therefore, the low level of utilization alongside the unique design features that suggests it may not be suited for this application. This has, however, not be assessed empirically and thus would be a candidate for further work.
 
 \begin{table}[h!]
     \centering
@@ -261,14 +261,14 @@ To answer Research Questions \ref{goal:complexity} and \ref{goal:hardwareRequire
 
 Inspiration of the design of this tool was taken from a tool called Scallion\footnote{\url{https://github.com/lachesis/scallion}}. Scallion was designed by Richard Klafter and Eric Swanson and used to demonstrate that 32-bit PGP key ids were insufficient. Keeping with the onion-based theme the proposed tool is known as GreenOnion and is a re-write of the tools structure in C++. This language was chosen due to the well understood efficiency benefits. The proposed tool differs from Scallion most notably in its ability to concurrently search for a large number of keys, GreenOnion improves on this substantially. More implementation and experimental details will be discussed in later chapters.
 
-The tool should take two keys as parameters (Uncontrolled/Controlled) and a chosen similarity metric and produce a list of target keys fingerprints. This list is then used as a search criteria when hashing a checking a large number of keys. In order to utilise the high parallel nature of the GPU to compute the hash of a large number of keys the tool will utilise a GPGPU (General-purpose computing on graphics processing units) framework. The chosen framework was OpenCL due to its support for the chosen language (C++) and platform (Linux). OpenCL allows the creation of code chunks refereed to as "kernels" to be executed concurrently, this will provide a massive speed increase compare to the sequential nature of the CPU. Technical details will be explained further in Chapter \ref{cha:Implementation}.
+The tool should take two keys as parameters (Uncontrolled/Controlled) and a chosen similarity metric and produce a list of target keys fingerprints. This list is then used as a search criteria when hashing a checking a large number of keys. In order to utilise the high parallel nature of the GPU to compute the hash of a large number of keys the tool will utilise a GPGPU (General-purpose computing on graphics processing units) framework. The chosen framework was OpenCL due to its support for the chosen language (C++) and platform (Linux). OpenCL allows the creation of code chunks referred to as "kernels" to be executed concurrently, this will provide a massive speed increase compare to the sequential nature of the CPU. Technical details will be explained further in Chapter \ref{cha:Implementation}.
 
 \section{Experiment Design}
 In order to answer some of the research questions empirical evidence is required and, thus, experiments are required. In this section the designs and considerations of the chosen experiments will be discussed.
 
 \subsection{Metric performance}
 \label{exp:metric}
-In order to answer Research Question \ref{goal:bestMetrics} and reduce the number of metrics to asses in the later rounds, the performance of similarity metrics required comparison. The thinning out of metrics is required due to limited resources and, therefore, possible further work could involve repeating this work with a much more varied selection of metrics. As explained in a previous section (See Section \ref{sec:metrics}) the chosen metrics up for assessment are Soundex, Metaphone, NYSIIS, Levenshtein and Phonetic vectors.
+In order to answer Research Question \ref{goal:bestMetrics} and reduce the number of metrics to assess in the later rounds, the performance of similarity metrics required comparison. The thinning out of metrics is required due to limited resources and, therefore, possible further work could involve repeating this work with a much more varied selection of metrics. As explained in a previous section (See Section \ref{sec:metrics}) the chosen metrics up for assessment are Soundex, Metaphone, NYSIIS, Levenshtein and Phonetic vectors.
 
 The design for the experiment involves assessing the quality of the metrics matches by having participants rate them on a scale of 1 to 5.
 
@@ -318,7 +318,7 @@ Match size was also used to define the cap for the phonetic vectors. This is les
 
 Table \ref{tab:vectorMatchSize} contains the match size comparison for Phonetic vectors distance. Distance 4.5 was chosen as the suitable size due to the total matches fitting well within the other metrics. Distance 4.0 was the other alternative, this was discarded due to its small size. Any metric with a number of matches below 100,000 results in an inadequate number of possible near-collision keys later in the process, a lower number of matches may imply better quality but a balance is required between computational cost and attack quality. This will be discussed in more detail in later chapters.
 
-\newpage
+\todo{Link the less than 100,000 point to experiment data}
 
 \subsubsection{Comparisons}
 Each participant is asked to rate the similarity of a match on a scale of 1 to 5. Figure \ref{fig:phoneticMatch} shows an example match and the connected scale. Users will complete five of these comparisons per metric.
@@ -361,7 +361,7 @@ Qualification\footnote{\url{https://blog.mturk.com/tutorial-understanding-requir
 that tags them as defining themselves as native speakers. This is then 
 added as a prerequisite when running the experiment. This will insure 
 only fully native speakers are being assessed. The possibility of the 
-worker falsy stating their level of fluency has also been considered. 
+worker falsely stating their level of fluency has also been considered. 
 However, as the worker does not know the purpose for this initial study,
 thereby providing inaccurate results has no real valid motive for the 
 worker.
@@ -369,11 +369,14 @@ worker.
 \subsubsection{Considerations}
 \label{sec:exp1_considerations}
 
-The first consideration is the way the words are compared. Due to the channel of authentication being phone based the comparison of words will be a mixture of auditory and textual. This is because a user needs to match a words sound to the one displayed on their device. In the case of this experiment the users are asked to compare the sound of two word that are visually displayed to them. This visual aspect is the first point of contact between the participant and the question, followed by mental comparison of the phonetics of the word. Therefore, this initial visual contact has the potential to bias the results of the study. This has the potential to affect Levenshtein due to the matches never being more than one character different, therefore, resulting in very similar looking words. The alternative method of running this experiment is to get users to compare audio samples of words, this will force the user to compare just the phonetics of the words and not be influenced by the visual aspects of the pair. This, however, adds a substantial cost onto the operation of the study. Due to the aforementioned lack of resources the chosen design was decided as most feasible as it is a balance between cost and accuracy. Further work, therefore, could improve by producing more conclusive results on the performance of the metrics by implementing the more accurate but costly alternative.
+The first consideration is the way the words are compared. Due to the channel of authentication being phone based the comparison of words will be a mixture of auditory and textual. This is because a user needs to match a words sound to the one displayed on their device. In the case of this experiment the users are asked to compare the sound of two word that are visually displayed to them. 
+
+This visual aspect is the first point of contact between the participant and the question, followed by mental comparison of the phonetics of the word. Therefore, this initial visual contact has the potential to bias the results of the study. Levenshtein has the potential to be most affected by this due to the matches never being more than one character different, therefore, resulting in very similar looking words. The alternative method of running this experiment is to get users to compare audio samples of words, this will force the user to compare just the phonetics of the words and not be influenced by the visual aspects of the pair. This, however, adds a substantial cost onto the operation of the study. Due to the aforementioned lack of resources the chosen design was decided as most feasible as it is a balance between cost and accuracy. Further work, therefore, could improve by producing more conclusive results on the performance of the metrics by implementing the more accurate but costly alternative.
 
 Another consideration is the demographics of people accessible on Mechanical Turk. A comprehensive and still active survey run by D Difallah \textit{et al.} \cite{difallah2018demographics} shows that MTurk workers are younger and have a larger household income than that of the US population. This has to be taken into consideration when interpreting the results because it will inherently introduce a bias. This is due to the assumptions that an increase in age provides a better understanding of more obscure words, and, therefore, a better representation of the metrics performance over the entire dictionary.
 
 \subsection{Trustword Attacks}
+\label{sec:exp2_design}
 
 The final experiment required to answer the Research Question \ref{goal:attackPercentage} will simulate attacks on participants. The user will be presented with the same design as presented in the \pep Android application (See Section \ref{sec:pep}).
 
@@ -392,7 +395,7 @@ Figure \ref{fig:expID} shows the design of the experiments front end. As can be 
 
 Due to the scarcity of attacks in a real-world setting users will are often complacent about their occurrence. Therefore, in this experiment attacks only occur 30\% of the time. This is a much higher value than in a real-world setting, but it is a balance between resources and realistic design. Alongside, this the first 5 trials of a new experiment will always be benign. This is to ensure users are lulled into a level of complacency regarding the possibility for an attack.
 
-Certain keys have higher levels of near-collision possibilities than others due to how certain words are deemed similar by the chosen metric. Therefore, this presents the possibility to have keys with a very low number of similar matches. The distribution of these keys will be explained further in Chapter \ref{cha:Experiments}. Therefore, if random sets of words were chosen with no restraints there are attacks presented to the user that in a real setting would be infeasible in this context as they are close to a $2^{64}$ attack (4 Words * 16-bits). Therefore, the experiment will sample from a list of "vulnerable" keys. These are keys that have a number of combinations that allow an attack in a certain timeframe. Furthermore, certain levels of attacks are also simulated. Below are the list of possible attacks:
+Certain keys have higher levels of near-collision possibilities than others due to how certain words are deemed similar by the chosen metric. Therefore, this presents the possibility to have keys with a very low number of similar matches. The distribution of these keys will be explained further in Chapter \ref{cha:Experiments}. Therefore, if random sets of words were chosen with no restraints there are attacks presented to the user that in a real setting would be infeasible as they are close to a $2^{64}$ attack (4 Words * 16-bits). Therefore, the experiment will sample from a list of "vulnerable" keys. These are keys that have a number of combinations that allow an attack in a certain timeframe. Furthermore, certain levels of attacks are also simulated. Below are the list of possible attacks:
 
 \begin{itemize}
     \item \textbf{Zero static words} - All words in the set can vary.
@@ -417,9 +420,9 @@ The start and ends were chosen as the highest priority words to keep static. Thi
 
 Figure \ref{fig:heatMap} shows the results of a eye tracking experiment where the user failed to detect a mismatching digest. As it can be clearly seen the users never compared the center of the digest. 
 
-However, this may not be applicable in this context due to the user being linearly fed an audio stream that they cannot skip to the start or end. We believe, however, that attention will also play a part in defining the most important areas of comparison as the hypothesis is that the users attention will be lower in the middle sections of comparison where it peak at the start and end. All these aspects will require empirical evidence to arrive at a conclusion. Therefore, this consideration will need to be made when assessing the results of the experiment.
+However, this may not be applicable in this context due to the user being linearly fed an audio stream that they cannot skip to the start or end. We believe, however, that attention will also play a part in defining the most important areas of comparison. The hypothesis is that the users attention will be lower in the middle sections of comparison where it peak at the start and end. All these aspects will require empirical evidence to arrive at a conclusion. Therefore, this consideration will need to be made when assessing the results of the experiment.
 
-These attacks are ascending in complexity. The timeframe for finding a match was decided as 7-days on with attack strengths of 1 GPU/day, 10 GPU/days and 100 GPU/days on a mid range GPU (AMD RX 480 was the example in experiments). Due to the long life time of PGP keys, 7 days was chosen as a reasonable length of attack, attackers can just leave the tool and have it compute potential keys for the target without any need for user engagement. This is also a maximum time, these attacks also include keys that have a shorter average computation time.
+These attacks are ascending in complexity. The timeframe for finding a match was decided as 7-days with attack strengths of 1 GPU/day, 10 GPU/days and 100 GPU/days on a mid range GPU (AMD RX 480 was the example in experiments). Due to the long life time of PGP keys, 7 days was chosen as a reasonable length of attack, attackers can just leave the tool and have it compute potential keys for the target without any need for user engagement. This is also a maximum time, these attacks also include keys that have a shorter average computation time.
 
 
 \begin{table}[h!]
@@ -437,13 +440,11 @@ These attacks are ascending in complexity. The timeframe for finding a match was
 
 Table \ref{tab:attackReq} contains a summary of the different level of attacks and their respective restrictions. More combinations makes the attack search quicker as there are more possibilities. Any key that exceeds this criteria is deemed as vulnerable is one of the three attack contexts. A list of these vulnerable keys are sampled from when an attack is simulated. The percentage of vulnerable keys will be explored in Chapter \ref{cha:Experiments}.
 
-\todo{Talk here about the sampling of vuln keys from keys harvested from PGP key servers.}
-
 \subsubsection{Quality control}
 \label{sec:exp2_quality}
 As the previous experiment, participants will be sourced from MTurk. Therefore, again, quality control is and aspect that requires consideration. As with the previous study, initially screened native speakers will be used. The same process will be performed to recruit suitable workers. Two metrics will be used to detect invalid results. Audio button clicks and overall time taken. 
 
-Audio buttons clicks is the number of times the blue \textit{"Authenticate with partner over the phone"} button in Figure \ref{fig:expID}. If there are rounds without button clicks, this is a sign of non-attentive users. The design choice was made to keep this as a result filter, as preventing non-clicks would be a trivial task. This provides a way to detect and discard click-throughs\footnote{Workers that aim to complete the task as fast as possible, with no regard for the quality of responses}. 
+Audio buttons clicks is the number of times the blue \textit{"Authenticate with partner over the phone"} button in Figure \ref{fig:expID} is clicked. If there are rounds without button clicks, this is a sign of non-attentiveness. The design choice was made to keep this as a result filter, as preventing non-clicks would be a trivial task. This provides a way to detect and discard click-throughs\footnote{Workers that aim to complete the task as fast as possible, with no regard for the quality of responses}. 
 
 Overall time taken is as the name suggest a recording of the time taken to complete the entire experiment. If users complete the experiment in an abnormally small amount of time it can be used as another detection for invalid responses. Anything below a certain threshold will be discarded.
 
