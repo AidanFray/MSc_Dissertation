@@ -57,6 +57,13 @@ By entering a list of keys and a value for the number of perms required to be vu
 python trustword_util.py --vuln-keys <KEY_LIST_PATH> <NUM_OF_PERMS> <STATIC_WORDS> (0-2) -s <SIMILAR_LIST>
 ```
 
+### Plot key server PGP 
+Plots the average permuations of a list of keys
+
+```
+python trustword_util.py --plot <KEY_LIST_PATH> <STATIC_WORDS> (0-2) -s <SIMILAR_LIST>
+```
+
 ### Options
 
 **Similar list (`-s`)**

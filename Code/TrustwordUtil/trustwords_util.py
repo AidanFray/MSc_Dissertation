@@ -22,6 +22,7 @@ import modes.average_perms as AP
 import modes.words_from_keys as WK
 import modes.create_actual_key as CK
 import modes.perms_from_words as PW
+import modes.plot_keys_perms as PK
 
 from util.load import load_mappings, load_similar_mappings
 
@@ -116,6 +117,7 @@ def args():
     parser.add_argument("-p", "--perms-for-words", dest="perms", nargs=1, action="store")
     parser.add_argument("--vuln-keys", dest="vuln", nargs=3, action="store")
     parser.add_argument("--static-words", dest="static", nargs=1, action="store")
+    parser.add_argument("--plot", dest="plot", nargs=2, action="store")
     
     arg = parser.parse_args()
 
@@ -193,6 +195,13 @@ def args():
         static_words_val = int(arg.vuln[2])
 
         VK.find_vuln_keys(key_list_path, num_of_perms, static_words_val, mapping)    
+        exit()
+
+    if arg.plot:
+        key_list_path = arg.plot[0]
+        static_words_val = int(arg.plot[1])
+
+        PK.plot(key_list_path, static_words_val, mapping)
         exit()
 
     combined_fingerprint = XOR_fingerprints(CONTROLLABLE_FINGERPRINT, UNCONTROLLED_FINGERPRINT)

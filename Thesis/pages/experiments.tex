@@ -2,16 +2,60 @@
 \label{cha:Experiments}
 
 \section{Scallion vs GreenOnion}
-% Show that the bloom filter blows Scallion out of the water
-\textbf{TODO}
+This section will compare Scallion and the newly designed GreenOnion ability to search for a large number of potential keys.
 
-\section{Distribution of vulnerable keys}
-\textbf{TODO}
+Table \ref{tab:scallion_speed} shows the speed decline as the number of keys increase. Any number of keys over 45 resulted in a crash to the program.
 
-\section{Average number of permutations for each metric}
-\textbf{TODO}
+\todo{Add screenshot of the exception}
 
-\section{Metric Performance - Results}
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|ll|}
+        \hline
+        \textbf{Scallion} & \\
+        \hline
+        OS & Windows 10 (May 2019) \\
+        Version & Scallion-2.0\footnote{\url{https://github.com/lachesis/scallion/raw/binaries/scallion-v2.0.zip}} \\
+        \hline
+        \textbf{GreenOnion} & \\
+        \hline
+        OS & Linux Mint (Version: TODO) \\ 
+        \hline
+        \textbf{Hardware} & \\
+        \hline
+        GPU & GTX 750 Ti  \\
+        CPU & AMD FX-6300 \\
+        \hline
+    \end{tabular}
+    \caption{Testing environment}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|ll|}
+        \hline
+        \textbf{Number of keys} & \textbf{Speed} \\
+        \hline
+        1 & 1001.3 MH/s \\
+        5 & 784.3 MH/s \\
+        10 & 707.9 MH/s \\
+        15 & 628.2 MH/s \\
+        20 & 526.5 MH/s \\
+        25 & 503.8 MH/s \\
+        30 & 473.1 MH/s \\
+        35 & 432.6 MH/s \\
+        40 & 404.9 MH/s \\
+        45+ & \textit{N/A} \\
+        \hline
+    \end{tabular}
+    \caption{Scallion's speed decline}
+    \label{tab:scallion_speed}
+\end{table}
+\todo{Plot scallion speed decline}
+
+\todo{Show the maximum number of keys the tool can achive}
+
+\section{Experiment 1 - Metric performance}
 As discussed in Section \ref{exp:metric} the goal of the experiment was the cull the number of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results.
 
 \begin{table}[h!]
@@ -82,7 +126,7 @@ This experiment, therefore, has achieved that goal of providing three metrics fo
 
 \newpage
 
-\section{Experiment 2}
+\section{Experiment 2 - Simulated attacks}
 \label{sec:exp2}
 % Demographic
 % Results
@@ -158,8 +202,6 @@ The reduced set of 369 participants had an average age of 36.63 ($\sigma = 11.35
     
 As user-agent strings were collected for each participant collations of OS and internet browser versions was made possible. Tables \ref{tab:exp2_browser} and \ref{tab:exp2_os} contain the browser and OS breakdowns respectively. Chrome and Windows 10 seem to dominate the proportion of their respective domains alongside the surprisingly large proportion of workers utilizing older versions of Windows such as 7 or 8 (15.81\%).
 
-\newpage
-
 \subsection*{Results}
 Table \ref{tab:exp2_attacks} contains the break down of results for the experiment. It can be seen that the best metric out of the set was Levenshtein with an overall success of 19.80\%. The best performer when regarding attack strength, as expected is the 2 static words. Levenshtein's 2 static attack performed the best overall with a success rate of 32.05\%. The worst performer was Metaphone with an average of 16.88\% over its three levels of attacks. When comparing the performance of the metrics to the previous experiment the ordering remains the same with Levenshtein, NYSIIS and Metaphone all ranking in the exactly same order.
 
@@ -214,8 +256,78 @@ The final relevant paper to compare is that of Tan \textit{et al.}. This paper h
 
 In conclusion, all similar literature had much lower attack success rates that the results presented in this experiment. With all papers using similarly designed words lists it highly suggests that the deficiencies in Trustwords are the cause for the substantial increase in attack success. Furthermore, the consideration for similarity of words that the other papers have not considered could have also resulted in the higher attack success rates.
 
+
+\section{Average number of near-collision keys for each metric}
+In order to predict the effectiveness of the attack over a wide variety of keys the number of average near-matches requires computation. Table \ref{tab:average_perm} shows the average keys for each metric. The ``Compute Time'' is the computation time required for a single mid range (2000MH/s) GPU.
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|lllll|}
+        \hline
+        \textbf{Metric} & \textbf{Attack Type} & \textbf{Mean permuations} & \textbf{$\sigma$} & \textbf{Compute Time} \\
+        \hline
+        NYSIIS &&&& \\
+        \hline
+        & 0 static & 1963.07 & 24769.48 & ~~27.19 days \\
+        & 1 static & 448.37 & 4316.57 & 119.14 days \\
+        & 2 static & 98.07 & 550.44 & ~~~~1.49 years \\
+        \hline
+
+        Metaphone &&&& \\
+        \hline
+        & 0 static & 27138.78 & 529229.35 & ~~~~1.97 days \\
+        & 1 static & 2822.74 & 23932.39 & ~~18.91 days \\
+        & 2 static & 339.84 & 1730.97 & ~~15.45 days \\
+        \hline
+
+        Levenshtein &&&& \\
+        \hline
+        & 0 static & 293.92 & 2158.24 & 182.17 days \\
+        & 1 static & 102.75 & 719.28 & ~~~~1.43 years \\
+        & 2 static & 35.53 & 120.71 & ~~~~4.18 years \\
+        \hline
+
+    \end{tabular}
+    \caption{Each metric's average near-collision keys}
+    \label{tab:average_perm}
+\end{table}
+
+As it can be seen metrics like Levenshtein have a low overall average and would require much more attacker resources to become feasible. However, metaphone has attacks that could be computed on average in under 2 days
+
+\section{Distribution of vulnerable keys}
+As discussed in the design of the second experiment (See Section \ref{sec:exp2}) the attacks sampled from a list of `vulnerable keys'. These vulnerable keys were created using real keys extracted from PGP key servers. These keys were then randomly sampled and used to create the combined key as discussed in Section \ref{sec:pep}. 100,000 random key pair were as the total sample, and any vulnerable keys for each attack level were recorded.
+
+\todo{Reference David's work}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|lll|}
+        \hline
+        \textbf{Attack Type} & \textbf{Metric} & \textbf{Vulnerable \%} \\
+        \hline 
+        2 static (152) && \\ 
+        & Levenshtein & ~~4.295\% \\
+        & Metaphone & 24.095\% \\
+        & NYSIIS & 10.441\% \\
+        \hline
+        1 static (1525) && \\ 
+        & Levenshtein & ~~0.827\% \\
+        & Metaphone & 15.569\% \\
+        & NYSIIS & ~~4.341\% \\
+        \hline
+        0 static (15250) && \\ 
+        & Levenshtein & ~~0.157\% \\
+        & Metaphone & 10.202\% \\
+        & NYSIIS & ~~1.824\% \\
+        \hline
+    \end{tabular}
+    \caption{Number of vulnerable keys per metric}
+\end{table}
+
+
+
 \section{Generation of keys}
-To demonstrate that the the generation of the near collision keys is not only theoretical actual generation of keys was performed using GreenOnion. A random metric was selected from the three carried forward from the first experiment. Alongside this a random uncontrolled key was generated as the simulated attack target (See Appendix \ref{appendix:uncontrolled_key} for the armor public key). Then for each attack level (0 static, 1 static, 2 static) a key was computed. NYSIIS was chosen as the selected metric. To expedite the process an initial search was performed for controlled keys that had the highest number of permutations, this was due to the demonstration of the actual generation of keys. Producing near-matching keys that have a very small number of potential matches, therefore, adds very little to this demonstration with a large computation cost.
+To demonstrate that the the generation of the near collision keys is not only theoretical actual generation of keys was performed using GreenOnion. A random metric was selected from the three carried forward from the first experiment. Alongside this a random uncontrolled key was generated as the simulated attack target (See Appendix \ref{appendix:uncontrolled_key} for the armor public key). Then for each attack level (0 static, 1 static, 2 static) a key was computed. NYSIIS was chosen as the selected metric. To expedite the process an initial search was performed for controlled keys that had the highest number of near-collision keys, this was due to the demonstration of the actual generation of keys. Producing near-matching keys that have a very small number of potential matches, therefore, adds very little to this demonstration with a large computation cost.
 
 \begin{table}[h!]
     \begin{tabular}{|l|l|}

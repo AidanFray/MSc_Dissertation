@@ -15,7 +15,7 @@ length_in_chars = float(sys.argv[1])
 hashspeed = int(sys.argv[2]) * 1000000
 permutations = float(sys.argv[3])
 
-top = (2**(4 * length_in_chars))
+top = (2**(4 * length_in_chars - 1))
 time_seconds = top / hashspeed / permutations
 time_days = time_seconds / 3600 / 24
 
