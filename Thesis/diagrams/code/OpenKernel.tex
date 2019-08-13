@@ -1,0 +1,47 @@
+
+\begin{adjustbox}{width=\textwidth,height=15cm,keepaspectratio}
+  \centering
+  \begin{OpenCLCode}
+  ___kernel void key_hash(__global uint* finalBlock, 
+                       __global uint* currentDigest, 
+                       __global bool* bitVector, 
+                       __global long* bitVectorSize, 
+                       __global uint* outResult)
+  {
+    uint W[16];
+    uint H[5];
+
+    W = finalBlock;
+    H = currentDigest;
+
+    // <EXPONENT_INCREMENTING_CODE>
+  
+    // Hashes the final block
+    sha1_block(W, H)
+  
+    // Checks against the bloom filter
+    bool match = true;
+    for(int n = 0; n < 2; n++)
+    {		
+      uint l = MurmurHash3_x86_32(H[0], n) %
+              bitVectorSize[0];
+
+      uint r = MurmurHash3_x86_32(H[1], n) % 
+              bitVectorSize[0];
+  
+      if(!bitVector[l] || !bitVector[r])
+      {
+        match = false;
+        break;
+      }
+    }
+  
+    // Returns parts needed to recreate the key
+    if(match)
+    {
+      outResult[0] = 0x12345678;
+      outResult[1] = newExponent;
+    }
+  }
+  \end{OpenCLCode}
+\end{adjustbox}

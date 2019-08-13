@@ -1,0 +1,45 @@
+
+\begin{adjustbox}{width=\textwidth,keepaspectratio}
+  \begin{JavascriptCode}
+vvar ALGOS = ["Soundex", "Metaphone", ...];
+var ALGO_SIZES = [763777, 412916, ...];
+
+function updateForm(ss, form) {
+
+  // Obtains a list of the items present on the form
+  formItems = form.getItems();
+  
+  // Updates the new values
+  var algo_index = 0;
+  var scale_index = 0;
+  for (var i = 0; i < formItems.length; i++)
+  {
+    if (formItems[i].getType() == "SCALE")
+    {
+      var rnd_index = Math.floor(Math.random() * 
+      ALGO_SIZES[algo_index]) + 1;    
+      
+      // Obtains the Google Sheets object
+      var sheetname = ALGOS[algo_index];
+      var sheet = ss.getSheetByName(sheetname);
+      var range = sheet.getRange(rnd_index, 1)
+      var values = range.getValues();
+            
+      // Re-samples from the connected Google Sheets
+      _updateScaleTitle(formItems[i], values[0]);
+      
+      scale_index++;
+      
+      // Moves on to the next metric when a group size 
+      // has been completed
+      if (scale_index != 0)
+      {
+        if (scale_index % QUESTION_PER_ALGO == 0) {
+            algo_index++;
+        }
+      }
+    }
+  }
+}
+  \end{JavascriptCode}
+\end{adjustbox}

@@ -99,7 +99,6 @@ void sha1_test()
     queue.enqueueTask(kernel);
     queue.enqueueReadBuffer(valueBuf, CL_TRUE, 0, sizeof(openclHash), openclHash);
 
-    // Prints out the hash
     std::cout << "OpenCL: ";
     print_hash(openclHash, 5);
 
@@ -108,7 +107,6 @@ void sha1_test()
 
     SHA1((unsigned char*)ibuf, strlen(ibuf), obuf);
 
-    //Prints the has
     std::cout << "Local:  ";
     for (int i = 0; i < 20; ++i) {
         printf("%02x", obuf[i]);
@@ -259,12 +257,6 @@ void compute()
     auto program = BuildProgram(kernel_file_path, context);
     cl::Kernel kernel(program, "key_hash");
 
-    cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR ,(sizeof(bool) * BLOOM_SIZE), bf.m_bits, &err);
-    if (err != 0) opencl_handle_error(err, "bit_vector");
-
-    cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), bloom_bit_vector_size, &err);
-    if (err != 0) opencl_handle_error(err, "bit_vector_size");
-
     while (true)
     {
 
@@ -281,7 +273,11 @@ void compute()
         cl::Buffer buf_currentHash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(uint) * 5, work.CurrentHash, &err);
         if (err != 0) opencl_handle_error(err, "current_hash");
 
-        
+        cl::Buffer buf_bitVector(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR ,(sizeof(bool) * BLOOM_SIZE), bf.m_bits, &err);
+        if (err != 0) opencl_handle_error(err, "bit_vector");
+
+        cl::Buffer buf_bitVectorSize(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(long), bloom_bit_vector_size, &err);
+        if (err != 0) opencl_handle_error(err, "bit_vector_size");
         
         cl::Buffer buf_out_result(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultSize);
 

@@ -144,10 +144,10 @@
 \let\oldtitle\title
 \renewcommand{\title}[1]{\oldtitle{ \vspace{-64pt} #1}}
 
-%\let\old@abstract\abstract
-%\let\endold@abstract\endabstract
-%\renewcommand{\abstract}[1]{\newcommand{\UoYCSP@abstract}{#1}}
-%\renewcommand{\endabstract}{}
+\let\old@abstract\abstract
+\let\endold@abstract\endabstract
+\renewcommand{\abstract}[1]{\newcommand{\UoYCSP@abstract}{#1}}
+\renewcommand{\endabstract}{}
 
 \let\old@dedication\dedication
 \newcommand*{\UoYCSP@dedication}{}
@@ -185,19 +185,26 @@
   {\equal{\UoYCSP@dedication}{\@empty}
          \and\equal{\UoYCSP@acknowledgements}{\@empty}}
   {}{
-    \cleardoublepage%
-    \thispagestyle{empty}
-    \vspace*{\fill}%
-    %
-    \ifthenelse{\equal{\UoYCSP@dedication}{\@empty}}%
-    {}%
-    { \begin{center}%
-        \large\UoYCSP@dedication%
+    % \cleardoublepage%
+    % \thispagestyle{empty}
+    % \vspace*{\fill}%
+    % %
+    % \ifthenelse{\equal{\UoYCSP@dedication}{\@empty}}%
+    % {}%
+    % { \begin{center}%
+    %     \large\UoYCSP@dedication%
+    %   \end{center}%
+    % }%
+    % %
+    {
+      \normalsize%
+      \begin{center}%
+        \large\itshape\bfseries Abstract%
       \end{center}%
+      {\itshape\UoYCSP@abstract}%
     }%
-    %
     \ifacknowledgements%
-    { \vfill%
+    { %
       \normalsize%
       \begin{center}%
         \large\bfseries Acknowledgements%
@@ -205,7 +212,6 @@
       \UoYCSP@acknowledgements%
     }%
     \fi%
-    \vspace*{\fill}%
   }%
   \cleardoublepage%
   \microtypesetup{protrusion=false}%

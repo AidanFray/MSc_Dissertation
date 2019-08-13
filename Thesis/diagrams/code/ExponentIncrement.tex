@@ -1,0 +1,33 @@
+\begin{adjustbox}{width=\textwidth,height=15cm,keepaspectratio}
+\begin{OpenCLCode}
+///The exponent is split across two words
+// i.e
+//
+// W[3] = XX EE EE EE
+// W[4] = EE XX XX XX
+//
+int newExponent = get_global_id(0) + \
+                    ORIGINAL_EXPONENT_VALUE;
+
+// Moves the value to the right i.e. 0x01ffff -> 0x0001ff
+// Diving by "0x100" moves the hex value 3 digits
+// to the right
+int exponentMaskLeft = ((int)(ORIGINAL_EXPONENT_VALUE / 0x100)) ^ ((int)(newExponent / 0x100));
+
+W[3] = W[3] ^ exponentMaskLeft;
+
+// Grabs the last byte of each exponent to apply to 
+// the next word
+int lastByte = (int)(ORIGINAL_EXPONENT_VALUE / 0x100) *
+    0x100 ^ ORIGINAL_EXPONENT_VALUE;
+
+int lastByteNew = (int)(newExponent / 0x100) * 0x100 ^ newExponent;
+
+// Moves it into position as the MSB of a 32-bit integer 
+// i.e 0xff -> 0xff000000
+int exponenetMaskRight = (lastByte * 0x1000000) ^ 
+    (lastByteNew * 0x1000000);
+
+W[4] = W[4] ^ exponenetMaskRight;
+\end{OpenCLCode}
+\end{adjustbox}

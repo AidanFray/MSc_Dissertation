@@ -84,7 +84,7 @@ One of the first requirements for the attack is quantifying "phonetic similarity
 One of the earliest examples of a phonetic algorithm is known as Soundex. It is one of the most famous algorithm due in part to its implementation into major database clients like MySQL\cite{mysql_soundex}, Oracle\cite{moved_2005} and PostgreSQL\cite{postgresql}. Originally designed for indexing names by phonetics alongside spelling mistakes due to transpositions in letters. Therefore, due to it being based on the phonetic features, it is highly suitable for this project's use-case. 
 
 Soundex produces a four digit code for each word assessed.
-The first letter of the word is retained alongside the removal of all of a, e, i, o, u, y, h and w. The remaining letters are then mapped to numbers\footnote{Further steps are performed on the code, as the technical details do not add anything to the discussion, the steps of the algorithm can be found in Appendix TODO.}. These mappings are displayed in Figure \ref{fig:soundexMap}.
+The first letter of the word is retained alongside the removal of all of a, e, i, o, u, y, h and w. The remaining letters are then mapped to numbers. These mappings are displayed in Figure \ref{fig:soundexMap}.
 
 \begin{figure}[h!]
     \centering
@@ -101,7 +101,7 @@ r                        6
     \label{fig:soundexMap}
 \end{figure}
 
-\subsection{Soundex Issues}
+\subsection*{Soundex Issues}
 \label{sec:soundexIssues}
 
 Due to the fixed length and limited digit set the initial concerns from this design is the limited number of combinations. There are a total of 5616 codes due to 26 initial letters and three digits of 6 values ($26 * 6^3$).
@@ -126,8 +126,6 @@ It also allows for variable length codes and, thus, allows the applicability of 
 
 \subsection{Metaphone}
 Metaphone was invented by Lawrence Philips in 1990\cite{philips1990hanging} in response to the deficiencies in Soundex. It improves on Soundex by including information around inconsistency and variation in English spelling in an attempt to create a more accurate phonetic representation. Metaphone is arguably on the same level of ubiquity as that of Soundex with it finding itself implemented in languages such as PHP\cite{php}. Metaphone was chosen due to similar reasons to that of Soundex and NYSIIS. 
-
-\textbf{TODO} Better argument needed?
 
 Further work would involve the implementation of newer versions of Metaphone. Double Metaphone (2000) and Metaphone 3 (2009) that claim to improve over the original version due to further research performed by Philips. 
 
