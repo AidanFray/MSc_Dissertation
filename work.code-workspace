@@ -297,7 +297,9 @@
 			"Code/WordVectors/computation/peerio/values.dat": true,
 			"Code/TrustwordUtil/vuln_keys/*": true,
 			"**/*.out.ps": true,
-			"Thesis/*.csv": true
+			"Thesis/*.csv": true,
+			"**/*.lol": true,
+			"**/*.listing": true
 		},
 		"git.ignoreLimitWarning": true
 	}

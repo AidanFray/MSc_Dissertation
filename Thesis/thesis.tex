@@ -17,6 +17,7 @@
 \usepackage{soul}
 \usepackage{adjustbox}
 \usepackage{lipsum} 
+\usepackage{footnote}
 
 
 \usepackage[many]{tcolorbox}
@@ -34,6 +35,8 @@
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{calc}
 
+\makesavenoteenv{tabular}
+\makesavenoteenv{table}
 
 \graphicspath{{images/}}
 
@@ -44,7 +47,7 @@
 \addbibresource{references.bib}
 
 \author{Aidan Fray}
-\title{Investigating the Security of  \pep's Trustword PGP Fingerprint Encoding}
+\title{Investigating the Security of p$\equiv$p's Trustwords}
 % \date{10 September 2019}
 \supervisor{Siamak Fayyaz Shahandashti}
 \CYB

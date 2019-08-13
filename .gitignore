@@ -13,6 +13,8 @@
 *.bcf
 *.lof
 *.lot
+*.lol
+*.listing
 *.run.xml
 *.out.ps
 .~lock*
