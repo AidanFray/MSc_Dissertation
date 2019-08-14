@@ -1,0 +1,397 @@
+\chapter{Experiments}
+\label{cha:Experiments}
+
+\section{Scallion vs GreenOnion}
+\label{sec:SvG}
+This section will compare Scallion and the newly designed GreenOnion ability to search for a large number of potential keys.
+
+Table \ref{tab:scallion_speed} shows the speed decline as the number of keys increase. Any number of keys over 45 resulted in a crash to the program.
+
+\todo{Add screenshot of the exception}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|ll|}
+        \hline
+        \textbf{Scallion} & \\
+        \hline
+        OS & Windows 10 (May 2019) \\
+        Version & Scallion-2.0\footnote{\url{https://github.com/lachesis/scallion/raw/binaries/scallion-v2.0.zip}} \\
+        \hline
+        \textbf{GreenOnion} & \\
+        \hline
+        OS & Linux Mint (Version: TODO) \\ 
+        \hline
+        \textbf{Hardware} & \\
+        \hline
+        GPU & GTX 750 Ti  \\
+        CPU & AMD FX-6300 \\
+        \hline
+    \end{tabular}
+    \caption{Testing environment}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|ll|}
+        \hline
+        \textbf{Number of keys} & \textbf{Speed} \\
+        \hline
+        1 & 1001.3 MH/s \\
+        5 & 784.3 MH/s \\
+        10 & 707.9 MH/s \\
+        15 & 628.2 MH/s \\
+        20 & 526.5 MH/s \\
+        25 & 503.8 MH/s \\
+        30 & 473.1 MH/s \\
+        35 & 432.6 MH/s \\
+        40 & 404.9 MH/s \\
+        45+ & \textit{N/A} \\
+        \hline
+    \end{tabular}
+    \caption{Scallion's speed decline}
+    \label{tab:scallion_speed}
+\end{table}
+\todo{Plot scallion speed decline}
+
+\todo{Show the maximum number of keys the tool can achive}
+
+\section{Experiment 1 - Metric performance}
+\todo{talk about participants like the second experiment with Stdev}
+
+As discussed in Section \ref{exp:metric} the goal of the experiment was the cull the number of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|ll|}
+        \hline
+        Gender & Male: & 46.2\% \\
+               & Female: & 53.8\% \\
+        \hline
+        Age:   & 18-24: & 10.6\% \\ 
+               & 25-29: & 20.2\% \\ 
+               & 30-39: & 30.8\% \\ 
+               & 40-49: & 22.1\% \\ 
+               & 50-59: & 11.5\% \\ 
+               & 60-69: & 3.8\% \\ 
+               & 70-79: & 1.0\% \\ 
+               
+        \hline
+        Highest Education:  
+        & GCSE:                 & 15.4\%  \\
+        & A-Level/O-Level:      & 18.3\% \\
+        & Bachelor's degree:    & 51.0\% \\
+        & Master's degree:      & 13.5\% \\ 
+        & PhD:                  & 1.9\% \\
+        \hline
+
+    \end{tabular}
+    \caption{Participant demographics}
+    \label{tab:exp1_demo}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Metric} & \textbf{Average Rating}  & \textbf{$\sigma$}\\
+        \hline
+        Leven     & 3.66  & 1.15\\
+        NYSIIS    & 2.92 & 1.31\\
+        Metaphone & 2.56 & 1.32\\
+        Phonetic Vec & 2.50 & 1.35\\
+        Soundex & 2.08 & 1.12 \\
+        \hline
+        Random  & 1.16 & 0.46\\
+        \hline
+    \end{tabular}
+    \caption{Average metric performance}
+    \label{tab:exp1_results}
+\end{table}
+
+Table \ref{tab:exp1_demo} contains the demographical breakdown of the participants assessed. As it can be seen over 60\% of participants can be considered highly educated (Bachelor’s and up). This is not fully reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US, this again requires consideration due to the large range of dialects present that may bias the results. Further work could investigate the affect of location and dialect on similar results. 
+
+Overall, 104 participants were assessed in this study. Five results were discarded from the set due to either failing the attention questions (See in Section \ref{sec:exp1_qualitycontrol}) or having too low of a fluency rating. This was a necessary process to improve the health of the results. 
+
+Figure \ref{tab:exp1_results} shows the average results for the metrics. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much larger proportion of 4 and 5 ratings than the alternatives. This performance may, however, be due to the visual way the comparisons are being performed. (Discussed in detail in Section \ref{sec:exp1_considerations}). 
+
+Due to the averages of Metaphone and Phonetic Vectors being so close standard deviation was used as the final decider. As it can be seen Megaphone has a slightly lower $\sigma$ value of that of Phonetic vectors, thus, contributing to the decision to select Metaphone to be carried over to the next experiment.
+
+\subsection*{Considerations}
+As discussed in Section \ref{sec:exp1_considerations} compromises were made in order to fullfil all requirement with a minimized cost. Levenshtein's abnormal performance further backs up concerns around the visual aspect biasing the performance of the metric. This will have to be considered when interpreting the results. 
+
+Even with the discussed issues, the aim of the experiment was to promptly reduce the number of metrics for use later in the project. This experiment, therefore, has achieved that goal of providing three metrics for the subsequent experiment while balancing between accuracy and expenditure. The results are also an improvement over informal ad-hoc methods. Further work could aim to reproduce this study with the proposed audio based design (See Section \ref{sec:exp1_considerations}).
+
+\input{diagrams/graphs/experiment_one/graph.tex}
+
+\newpage
+
+\section{Experiment 2 - Trustword attacks}
+\label{sec:exp2}
+The aim of this experiment is to quantify the success rate of the proposed attack. Design details for this experiment can be seen in Section \ref{sec:exp2_design}. This section will present and discuss the results of the experiment alongside a comparison to relevant literature.
+
+\subsection*{Demographics}
+Overall, 435 paid participants recruited via Amazon's MTurk were assessed in this experiment. We excluded 66 results; 7 due to being non-native speakers and 59 were discarded for failing the attention metrics (Discussed in Section \ref{sec:exp2_quality}).
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|ll|}
+        \hline
+        Gender & Male: & 50.41\% \\
+               & Female: & 49.59\% \\
+        \hline
+        Age:   & 18-24: & 12.74\% \\ 
+               & 25-29: & 18.16\% \\ 
+               & 30-39: & 37.4\% \\ 
+               & 40-49: & 17.89\% \\ 
+               & 50-59: & 8.67\% \\ 
+               & 60-69: & 4.34\% \\ 
+               & 70-79: & 0.81\% \\ 
+
+        \hline
+        Highest Education:  
+        & GCSE:                 & 13.82\%  \\
+        & A-Level/O-Level:      & 24.12\% \\
+        & Bachelor's degree:    & 51.49\% \\
+        & Master's degree:      & 8.4\% \\ 
+        & PhD:                  & 2.17\% \\
+        \hline
+
+    \end{tabular}
+    \caption{Participant demographics}
+    \label{tab:exp2_demo}
+\end{table}
+
+The reduced set of 369 participants had an average age of 36.63 ($\sigma = 11.35$) and consisted of an almost equal split of Male (50.41\%) to Female (49.59\%). Around 62\% of participants had completed a single stage of university (Bachelor and up). This makes this set of participants more educated than the general population. All participants were also sourced from the USA and have rated themselves as fully native English speakers.
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        Browser & Percentage \\
+        \hline
+        Chrome & 85.09\% \\
+        Firefox & 12.20\% \\
+        Safari & 1.90\% \\
+        Other & 0.81\% \\
+        \hline
+    \end{tabular}
+    \caption{Internet Browser breakdown}
+    \label{tab:exp2_browser}
+    \begin{tabular}{|l|l|}
+        \hline
+        Operating System & Percentage \\
+        \hline
+        
+        \hline
+        Windows (All) & 74.26\% \\
+        ~~~~\textit{Windows 7} & ~~~12.74\% \\
+        ~~~~\textit{Windows 8} & ~~~4.07\% \\
+        ~~~~\textit{Windows 10} & ~~~57.45\% \\
+        MacOS X	 & 13.82\% \\
+        ChromeOS & 3.79\% \\
+        Android	& 4.34\% \\
+        iPhone	& 1.08\% \\
+        iPad	& 0.54\% \\
+        Linux	& 2.17\% \\
+        \hline
+    \end{tabular}
+    \caption{Operating System breakdown}
+    \label{tab:exp2_os}
+\end{table}
+    
+As user-agent strings were collected for each participant collations of OS and internet browser versions was made possible. Tables \ref{tab:exp2_browser} and \ref{tab:exp2_os} contain the browser and OS breakdowns respectively. Chrome and Windows 10 seem to dominate the proportion of their respective domains alongside the surprisingly large proportion of workers utilizing older versions of Windows such as 7 or 8 (15.81\%).
+
+\subsection*{Results}
+Table \ref{tab:exp2_attacks} contains the break down of results for the experiment. It can be seen that the best metric out of the set was Levenshtein with an overall success of 19.80\%. The best performer when regarding attack strength, as expected is the 2 static words. Levenshtein's 2 static attack performed the best overall with a success rate of 32.05\%. The worst performer was Metaphone with an average of 16.88\% over its three levels of attacks. When comparing the performance of the metrics to the previous experiment the ordering remains the same with Levenshtein, NYSIIS and Metaphone all ranking in exactly the same order.
+
+\begin{table}
+    \makebox[\textwidth][c]{
+        \centering
+        \begin{tabular}{|ll|l|l|l|}
+            \hline
+            \textbf{Metric} & & \textbf{Successful Attacks} & \textbf{Total Attacks} & \textbf{Success Rate} \\
+            \hline
+            Levenshtein && 218 & 1101 & 19.80\% \\
+            \hline
+            & 0 static   & 34  & 358  & ~9.50\% \\
+            & 1 static   & 59  & 353  & 16.71\% \\
+            & 2 static   & 125  & 390  & 32.05\% \\
+            \hline\hline
+            Metaphone &&  181 & 1072 & 16.88\% \\
+            \hline
+            & 0 static   & 38 & 345 & 11.01\% \\
+            & 1 static   & 57 & 375 & 15.20\% \\
+            & 2 static   & 86 & 352 & 24.43\% \\
+            \hline\hline
+            NYSIIS &&  209 & 1114 & 18.76\% \\
+            \hline
+            & 0 static   & 36 & 385 & ~9.35\% \\
+            & 1 static   & 72 & 375 & 19.20\% \\
+            & 2 static   & 101 & 354 & 28.53\% \\
+            \hline\hline
+            \textbf{Overall} & & 608 & 3287 & 18.50\% \\
+            \hline\hline
+        \end{tabular}
+    }
+    \caption{Success rates for simulated attacks}
+    \label{tab:exp2_attacks}
+\end{table}
+
+\subsection*{Considerations}
+As previously mentioned, the set of recruited participants are more highly educated than the general population. This combined with the low average age contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skillful interaction with computer based systems, this, therefore, with the previous assumption in mind means the results of this experiment can be considered a `best case' scenario. The attacks, therefore, would be expected to be more successful on less technical users. This, however, requires further research and possible empirical data to determine the validity of the assumption. 
+
+During this study the main task was to perform the authentication ceremony a large number of times. In the real-world the ceremony is a secondary task due to it not strictly being required. This alongside the potential for users to downplay the possibility of attack leads to the conclusion that the success rates could be much higher in a real-world setting. The assumption is that these results display the success rate for extremely attentive users where they will make sure to double check with their authentication partner multiple times. This is opposed to the assumption that the majority of users will aim to complete the task as quickly as possible. 
+
+\subsection*{Comparison to alternative literature}
+This section will aim to compare the results of the experiment to similar literature.
+
+Work by Kainda \textit{et al.}\cite{kainda2009usability} (previous discussed in Chapter \ref{cha:LiteratureReview}) is the most comparable to this experiment. They were the only study to use exactly 4 words, but differed on the size of dictionary (1024 words) and how a near-match was calculated. Near-matches were a difference in a single word but without the consideration for similarity, this is the unique aspect considered with this experiment.
+
+However, with those aspect in mind attacks on words encoding received an overall success rating of 3.3\%, considerably lower than that of this study. In the worst case our simulated attacks achieved almost 3 times as many successes compared to this study.
+
+Other relevant work by Dechand \textit{el al.}\cite{dechand2016empirical} also discussed in Chapter \ref{cha:LiteratureReview} assess the success rate of attacks on words. This is less similar to the experiment as 14 words per attack were assessed with each participant, where the comparison was performed visually. However, the success for the PGP Word list was 8.78\%. As 10/14 words were kept static more comparable to the results of the highest attack strength ``2 static''. This leads to another 3 fold improvement in the success rates of our simulated attacks. 
+
+The final relevant paper to compare is that of Tan \textit{et al.}\cite{tan2017can}. This paper had the highest number of words assessed with 16 overall. With it assessing the same wordlist and attack strength as the work by Dechand \textit{et al.}. The attack success was 14\% overall, this again compared to the highest attack assessed in the experiment results in a sizeable difference.
+
+In conclusion, all similar literature had much lower attack success rates that the results presented in this experiment. With all papers using similarly designed words lists it highly suggests that the deficiencies in Trustwords are the cause for the substantial increase in attack success. Alongside this, the consideration for similarity when calculating near-collisions could have also resulted in the higher attack success rates. This aspect is also a unique consideration compared to available literature.
+
+
+\section{Average number of near-collision keys for each metric}
+\label{sec:averagePerms}
+In order to predict the effectiveness of the attack over a wide variety of keys the number of average near-matches requires computation. Table \ref{tab:average_perm} shows the average keys for each metric. The ``Compute Time'' is the computation time required for a single mid range (2000MH/s) GPU.
+
+\begin{table}[!h]
+    \makebox[\textwidth][c]{
+        \centering
+        \begin{tabular}{|lllll|}
+            \hline
+            \textbf{Metric} & & \textbf{Mean matches} & \textbf{$\sigma$} & \textbf{Compute Time} \\
+            \hline
+            NYSIIS &&&& \\
+            \hline
+            & 0 static & 1963.07 & 24769.48 & ~~27.19 days \\
+            & 1 static & 448.37 & 4316.57 & 119.14 days \\
+            & 2 static & 98.07 & 550.44 & ~~~~1.49 years \\
+            \hline
+
+            Metaphone &&&& \\
+            \hline
+            & 0 static & 27138.78 & 529229.35 & ~~~~1.97 days \\
+            & 1 static & 2822.74 & 23932.39 & ~~18.91 days \\
+            & 2 static & 339.84 & 1730.97 & 157.45 days \\
+            \hline
+
+            Levenshtein &&&& \\
+            \hline
+            & 0 static & 293.92 & 2158.24 & 182.17 days \\
+            & 1 static & 102.75 & 719.28 & ~~~~1.43 years \\
+            & 2 static & 35.53 & 120.71 & ~~~~4.18 years \\
+            \hline
+
+        \end{tabular}
+    }
+    \caption{Each metric's average near-collision keys}
+    \label{tab:average_perm}
+\end{table}
+
+As it can be seen metrics like Levenshtein have a low overall average and would require much more attacker resources to become feasible. On the other hand, Metaphone has attacks that could be computed on average in under 2 days. The success rate for this attack type in the second experiment was 11.01\% on average. This means on commodity hardware commonly found in the home, an attacker could compute a key in less than two days that could succeed more than 10\% of the time. This is substantial and highlights on weaknesses in the Trustword system.
+
+\section{Distribution of vulnerable keys}
+\label{sec:vulnKeys}
+As discussed in the design of the second experiment (See Section \ref{sec:exp2}) the attacks sampled from a list of `vulnerable keys'. These vulnerable keys were created using real keys extracted from PGP key servers. These keys were then randomly sampled and used to create the combined key as discussed in Section \ref{sec:pep}. 100,000 random key pairs were created and used as the sample. Any vulnerable keys in this set were recorded and used in the experiment.
+
+\todo{Reference David's work}
+
+\begin{table}[!h]
+    \centering
+
+    \makebox[\textwidth][c]{
+
+        \begin{tabular}{|lll|}
+            \hline
+            \textbf{Attack Type} & \textbf{Metric} & \textbf{Vulnerable \%} \\
+            \hline 
+            2 static (152) && \\ 
+            & Levenshtein & ~~4.295\% \\
+            & Metaphone & 24.095\% \\
+            & NYSIIS & 10.441\% \\
+            \hline
+            1 static (1525) && \\ 
+            & Levenshtein & ~~0.827\% \\
+            & Metaphone & 15.569\% \\
+            & NYSIIS & ~~4.341\% \\
+            \hline
+            0 static (15250) && \\ 
+            & Levenshtein & ~~0.157\% \\
+            & Metaphone & 10.202\% \\
+            & NYSIIS & ~~1.824\% \\
+            \hline
+        \end{tabular}
+    }
+    \caption{Number of vulnerable keys per metric}
+    \label{tab:vulnkeys}
+\end{table}
+
+Table \ref{tab:vulnkeys} contains the breakdown of the number of vulnerable keys. The takeaways from this table is the extremely low values for Levenshtein in the higher attacks. This is due to the low number of overall matches produced by Levenshtein. This means Levenshtein will not be effective in the vast majority of cases. However, the standout metric is Metaphone with a good proportion of vulnerable keys, it was the worst performer when assessed against real users but only by as little as 2\%. If you take into consideration the number of vulnerable keys detected in the set alongside the average amount near-collision matches in Table \ref{tab:average_perm} Metaphone appears to be the most usable metric overall.
+
+\section{Generation of keys}
+\label{sec:key_gen}
+To demonstrate that the the generation of the near collision keys is not only theoretical actual generation of keys was performed using GreenOnion. A random metric was selected from the three carried forward from the first experiment. Alongside this a random uncontrolled key was generated as the simulated attack target (See Appendix \ref{appendix:uncontrolled_key} for the armor public key). Then for each attack level (0 static, 1 static, 2 static) a key was computed. NYSIIS was chosen as the selected metric. To expedite the process an initial search was performed for controlled keys that had the highest number of near-collisions, this was due to the demonstrative purpose of this experiment. Producing near-matching keys from key pairs with a very small number of potential matches, adds very little to this demonstration.
+
+\begin{table}[h!]
+
+    \makebox[\textwidth][c]{
+        \begin{tabular}{|l|l|}
+            \hline
+            Potential near-collision keys & 142,296 \\
+            Hashing speed & 4000 MH/s \\
+            Estimated computation time & 9 hours \\
+            Actual computation & 6.41 hours \\
+            GPU Days & 0.52 \\
+            \hline
+            Original Trustwords & BELL GRIND ALGERIA ANNULI \\
+            Actual Trustwords   & BOIL GRAND ALGER ANNUL \\
+            \hline
+        \end{tabular}
+    }
+    \caption{NYSIIS - 0 static}
+    \label{tab:nysiis0}
+
+    \makebox[\textwidth][c]{    
+        \begin{tabular}{|l|l|}
+            \hline
+            Potential near-collision keys & 133,200 \\
+            Hashing speed & 8000 MH/s \\
+            Estimated computation time & 4.2 hours \\
+            Actual computation & 5.12 hours \\
+            GPU Days & 0.853 \\
+            \hline
+            Original Trustwords & ASSUMING SONOMA DENS KEENER \\
+            Actual Trustwords   & ASSUMING SUMMON DENNI CONNOR \\
+            \hline
+        \end{tabular}
+    }
+    \caption{NYSIIS - 1 static}
+    \label{tab:nysiis1}
+
+    \makebox[\textwidth][c]{
+        \begin{tabular}{|l|l|}
+            \hline
+            Potential near-collision keys & 16,464 \\
+            Hashing speed & 6000 MH/s \\
+            Estimated computation time & 2.16 days \\
+            Actual computation & 23.44 hours \\
+            GPU Days & 2.93 \\
+            \hline
+            Original Trustwords & VOCATION BORE TANN ANTE \\
+            Actual Trustwords   & VOCATION BARE TONE ANTE \\
+            \hline
+        \end{tabular}
+    }
+    \caption{NYSIIS - 2 static}
+    \label{tab:nysiis2}
+\end{table}
+
+Tables \ref{tab:nysiis0}, \ref{tab:nysiis1} and \ref{tab:nysiis2} contain the parameters and results on the computation. Due to varying availability of resources each computation has a varying hashing speed. This, however, has been normalized by the introduction of the "GPU Day" metric. This is simply the computation time required to reach the same conclusion on a single 2000 MH/s GPU. 
+
+As it can be seen most notably from Table \ref{tab:nysiis2} the generation of the actual Trustwords differs in only 3 characters making it arguably very similar. When linking this generated key to results of the second experiment (See Section \ref{sec:exp2}) computation of 2.53 days on a single mid-range GPU is able to achieve around a 28\% success rate when assessed against actual users. Even with the least restricted attack type presented in Table \ref{tab:nysiis0} the computation of half a day can provide almost a 10\% success rate when attacking users. This means any user with a single commodity GPU could compute enough keys in less than a week to have a very high probability of fooling an actual user.

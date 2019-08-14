@@ -1,0 +1,96 @@
+\chapter{Implementation}
+\label{cha:Implementation}
+
+This chapter will discuss implementation details of the project. Instead of explaining all the technical achievements in detail, the most interesting ones will be discussed alongside the respective challenges encountered.
+
+\section{GreenOnion}
+
+\subsubsection{General design}
+This section will briefly discuss the overall technical implementation of GreenOnion alongside a deeper discussion into the unique aspect of the tool.
+
+GreenOnion is written in C++. This language was chosen due to its efficiency bonuses over other alternative languages.
+The tool begins by generating a 2048-bit RSA key through GPG\footnote{GNU Privacy Guard}. This key is then used to create a hash of all but the final 512-bit block of the key. The final block of the key is left un-hashed due to the presence of the exponent ($e$). This exponent is then incremented to create a new unique key. This allows rapid generation of new keys due to the reduction in expensive large prime generation. This prevents issues in such as entropy starvation when generating a large number of RSA keys. This produces valid keys but with abnormally large exponents, this was deemed as suitable due to the short term use-case for these keys. 3 bytes are used to represent the exponent giving the potential to create $2^{24} - 1$ extra keys for a single expensive key generation.
+
+All keys plus the intermediate hash are loaded on the GPU via an OpenCL kernel. This kernel is designed to hash the final block, obtain the final fingerprint and check if the fingerprint is present in the provided list.
+
+\subsubsection{Bloom filter}
+
+Mass checking of fingerprints is the tools main ability as it allows for millions of keys to be checked with a very small amount of overhead. This is achieved through the use of a bloom filter. A bloom filter is a probabilistic data structure that allows efficient checking for presence of an element in a set. It is effectively a very large array of booleans that state wether an element is present. The index in the array is decided by a pre-defined hashing algorithm. This is repeated a number of times with a number of hashing algorithms ($k$) to populate the array of length ($m$). This then means checking the presence of an element in the set just means hashing the target and checking the indices returned. This data structure therefore has a complexity of $O(k)$ regardless of the number of elements in the set. This is the only data structure that provides this characteristic.
+
+However, there is the possibility for collisions and, thus, the possibility of false-positives. The data structure, however, does not produce any false-negatives. This, therefore, makes it fully suited to this use-case as any fingerprints tagged as ``possibly'' being present in the bloom filter can be followed up with a more expensive hash-table check to determine their actual presence. Therefore, if the levels of false-positives are controlled (by altering $k$ and $m$) the tool can search through huge number of potential keys without any decrease in speed.
+
+\begin{figure}[h!]
+    \centering
+    \input{diagrams/bloom_filter.tex}
+    \caption{Bloom filter example}
+    \label{fig:bloom}
+\end{figure}
+
+Figure \ref{fig:bloom} shows the operation of a simple bloom filter. As it can be seen the element $n$ definitely does not exist in the set due to both array indices not being set. The performance boost when comparing large numbers of keys is substantial when compared to the similar tool Scallion (See Section \ref{sec:greenDesign}.) The results from the comparison will be quantified in Chapter \ref{cha:Experiments}.
+
+\subsubsection*{OpenCL}
+
+In order to process a substantial number of keys in a concurrent fashion OpenCL was required. Figure \ref{fig:opencl} contains the main sections of the code uploaded to the GPU.
+
+\begin{figure}[!h]
+  \centering
+  \input{diagrams/code/OpenKernel.tex}
+  \caption{OpenCL Kernel}
+  \label{fig:opencl}
+\end{figure}
+
+The \verb|<EXPONENT_INCREMENTING_CODE>| will be explained in the next section. After the exponent is incremented the code produces the final digest by calling \verb|sha1_block(W, H)|. The 32-bit left and right sections of the digest are hashed using the MurmurHash algorithm. MurmurHash does not exhibit features suitable for secure hashing as it can be trivially reversed. Its use-cases include hash based lookups due to its speed and its distributive properties, making it suitable to work well with a bloom filter. The hashed values are then checked against the bloom filter array. If there is a possible match, the identification value (\verb|0x12345678|) is placed in the first byte of the \verb|outResult| alongside the exponent used to produce the possibly matching PGP key. The minimal amount of data returned to the CPU via the \verb|outResult| variable is due to efficiency reasons. Use of this memory is computationally expensive, therefore, at every opportunity writing or reading this memory has been avoided.
+
+\begin{figure}[!h]
+  \centering
+  \input{diagrams/code/ExponentIncrement.tex}
+  \caption{Exponent incrementation code}
+  \label{fig:increment}
+\end{figure}
+
+Figure \ref{fig:increment} contains the code used to increment the exponent. Due to the exponent being split across two words alongside the limited functionality of OpenCL, bitwise operations were chosen as the solution to the incrementation. The code utilise the fact that anything XORed with itself becomes zero alongside the fact that XORing a value $a$ with zero provides the result equal to $a$. This will allow us to replace values using binary operations. The code manipulates the position of values by multiplication or division  of base-16 values, these shift the hex value either left of right respectively. Once it is in position the "Mask" is created by XORing with the original value and the new intended value, this stores the changes required to reach the required values, this then applied to each of the words.
+The \verb|get_global_id| command takes the ID from the currently running thread, this allows a different value to be used for each exponent and allows the code to be run concurrently.
+
+\section{First Experiment}
+In order to assess and collect data from users for the first experiment (See Section \ref{exp:metric}) Google Forms\footnote{\url{https://www.google.com/forms}} was used to host and design the questionnaire. It provided functionality to easily present questions and record their responses. However, as the design requirement of refreshing questions after each submission was not part of the main applications functionality an extra solution was required. This was solved by Google's App Script\footnote{\url{https://developers.google.com/apps-script/}} service that allows a user to programmatically interact with the Form. This allowed the re-sampling of matches each time a user submitted a response.
+
+\begin{figure}[!h]
+  \centering
+  \input{diagrams/code/GoogleAppScript.tex}
+\caption{Section of code from the First Experiment's Google App Script}
+\label{fig:GoogleAppScript}
+\end{figure}
+
+Figure \ref{fig:GoogleAppScript} contains an interesting snippet from the script used in the experiment. Each time a user submitted their response the \verb|updateForm()| endpoint was called, that subsequently updated the questions for the next user. This aimed to keep the samplings fair as they are equally likely to appear when attacking the system.
+
+\newpage
+
+\section{MainExperiment}
+In order to assess users in a similar scenario to ones experienced when utilizing \pep in the real-world a custom application was required. The front-end is developed in Javascript with a Python-Flask backend that acts as the webpages functionality. A number of end points are exposed like \verb|get_audio| or \verb|get_words| that are requested and displayed on the front-end.
+
+One of the main problems encountered was the handling of each user's session. Initially during testing it was noted that changes in one end-point if timed correctly would overwrite the progress of another, this is commonly known as a ``Lost update''. This was due to the user session being stored in the \verb|session| cookie. When sending off a request the session cookie is included in the header, the code will then utilise the data within the cookie to make decision and alter state, the updated state is then returned as a cookie in the response. If, however, another request is executed before the first has completed, the second request is using the context of the first request and, thus, any alterations made by the first will be completely lost.
+
+\begin{figure}[!h]
+  \centering
+  \begin{sequencediagram}
+    \newthread{A}{Client}{}
+    \newinst[2]{B}{get\_audio()}{}
+    \newinst[2]{C}{get\_words()}{}
+    
+    \begin{call}{A}{}{B}{}
+    \begin{call}[1]{A}{}{C}{}
+    \end{call}
+    \end{call}
+    
+    \node[anchor=east] (c0) at (0.75, -1.325) {$c$};
+    \node[below of=c0, yshift=.4cm] (c1) {$c$};
+    \node[below of=c1, yshift=.4cm] (c2) {\textbf{\st{$c_{1}$}}};
+    \node[below of=c2, yshift=.4cm] (c3) {$c_2$};
+  \end{sequencediagram}
+  \caption{Sequence diagram for the `Lost Update' problem}
+  \label{fig:cookie}
+\end{figure}
+
+Figure \ref{fig:cookie} shows this problem visually. As it can be seen the response cookie $c_2$ is based off the old data of $c$. When $c_2$ is eventually returned it will remove the progress of $c_1$. To keep the complexity of the backend as low as possible it was opted to solve this problem by restricting the user via the UI. When a button was clicked all other operations were disabled until a response was received. This stopped the possibility of sending off another request while another is still processing.
+
+In order to collate data for results later in the process state had to be saved. One potential solution would be to format the data and save it as a .csv file. However, this is a static way of data persistence and would require alteration every time the data schema was modified. The chosen solution utilized a python object serialization library known as `Pickle'\footnote{\url{https://docs.python.org/2/library/pickle.html}}. This library saves the instance of a class as a file. This file then can be used to load the instance of the class back into the program. This allows changes to the object to filter down through the program and keeps the design of the application fluid. For example, after initial feedback gathered about the application it was decided that a inclusion of `Round times' would be a useful addition. Edits were made to the \verb|experiment| class and the changes propagated through the application, no changes were needed on the save functionality. To distinguish between old and new save formats a version number was used.

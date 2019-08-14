@@ -1,0 +1,43 @@
+\documentclass[11pt,twocolumn]{article}
+
+\newcommand{\margin}{0.75in}
+\usepackage[a4paper, left=\margin, right=\margin, top=\margin, bottom=\margin]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage[numbers]{natbib} 		% Package for IEE Referencing
+\usepackage[titletoc]{appendix} 	% Package added for the appendix
+\usepackage[dvipsnames]{xcolor}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{makecell}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{lipsum}
+
+
+\title{\textbf{Investigating the Security of p$\equiv$p’s Trustwords}}
+\author{Aidan Fray\\\\ University of York}
+\date{September 2019}
+
+% Changes from Bibliography --> References
+\usepackage[nottoc,notlof,notlot]{tocbibind} 
+\renewcommand\bibname{References}
+
+%Paragraph settings
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.75em}
+
+% Command to make text green coloured
+\newcommand{\comments}[1]{\small\textcolor{OliveGreen}{\emph{#1}}}
+
+% \graphicspath{Sections/Images}
+\begin{document}
+    \bibliographystyle{IEEEtranN}
+    \maketitle
+  
+    \input{sections/abstract.tex}
+
+    \input{sections/introduction.tex}
+    
+\end{document}

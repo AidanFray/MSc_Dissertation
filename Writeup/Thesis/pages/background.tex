@@ -1,0 +1,15 @@
+\chapter{Background}
+\label{cha:Background}
+
+\textbf{TODO:} Maybe research questions here instead of in the literature review
+
+\section{PGP}
+Pretty Good Privacy (PGP) is a specific implementation of public key cryptography discussed in the previous section. Its main use-case is for securing message based communications but can also be used for file or hard drive encryption.
+
+Each element of a PGP key is split into what is know as a 'packet'. The 'fingerprint' packet v4 contains a version number, timestamp and the main elements of the keys algorithm (i.e. RSA exponent and modulus) formatted as MPIs\footnote{Multiprecision integers are unsigned integers used to hold large integers such as the ones used in cryptographic calculations.}. This data is then preceded with PGP packet header (used to specify length and version numbers). This is all then utilized as input into the one-way hash function SHA-1 to produce a 160-bit digest.
+
+\textbf{TODO: } Generate an image of PGP v4 fingerprint packet
+
+Each key pair is the exclusive-or of each key's fingerprint, this combined values is then broken down into 16-bit chunks and mapped to words via a pre-defined dictionary.
+
+

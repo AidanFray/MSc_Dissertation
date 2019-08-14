@@ -299,7 +299,8 @@
 			"**/*.out.ps": true,
 			"Thesis/*.csv": true,
 			"**/*.lol": true,
-			"**/*.listing": true
+			"**/*.listing": true,
+			"Writeup/Thesis/*.csv": true
 		},
 		"git.ignoreLimitWarning": true
 	}
