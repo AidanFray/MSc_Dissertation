@@ -1,10 +1,10 @@
 \chapter{Project Aims}
 
-Following on from the previous chapter, this chapter will define the selected gaps and the subsequent research questions and aims.
+This chapter defines the selected gaps and the subsequent research questions extracted.
 
-The chosen project aims to asses the security of \pep's minimum recommend number of four Trustwords (As stated in Figure \ref{fig:trustwordsNum}). As discussed in the previous chapter, Trustwords aims to sacrifice security for increased usability. The encoding scheme has been designed to assist this by having  the user compare a reduced set of words. Moreover, issues with the dictionary's design such as the presence of homophones and dual-mapping of words shows the potential for possible vulnerabilities. 
+The chosen project aims to asses the security of \pep's minimum recommendation of four Trustwords (As stated in Figure \ref{fig:trustwordsNum}). As discussed in the previous chapter, Trustwords aims to sacrifice security for increased usability. The encoding scheme has been designed to assist this by having  the user compare a reduced set of words. Moreover, issues with the dictionary's design, such as the presence of homophones and dual-mapping of words show the potential for possible vulnerabilities. 
 
-As discussed in the previous chapter, the identified research gap regarding the minimal consideration of attack complexity would be a suitable addition for this project. This is due to it providing the ability to asses actual performance and, thus, the actual real-world strength of Trustwords while providing research to a scant area. Therefore, the security assessment will be supplemented with complexity considerations and an actual implementation of the attack proposed.
+As discussed in the previous chapter, the identified research gap regarding the minimal consideration of attack complexity would be a suitable addition for this project. This choice is due to it providing the ability to asses actual performance and, thus, the actual real-world strength of Trustwords while providing research to a scant area. Therefore, the security assessment is supplemented with complexity considerations alongside an actual implementation of the attack proposed.
 
 \begin{figure}[h!]
     \centering
@@ -18,11 +18,11 @@ compared by the user."
     \label{fig:trustwordsNum}
 \end{figure}
 
-By sampling the \pep documentation they have defined the use case of the Trustword handshake: \textit{A handshake is done by comparing the Trustwords between two users through a separate communication channel (e.g. in person or by phone).}\footnote{https://www.pep.security/docs/general\_information.html\#handshake}. It can be assumed due to the increased globalization of the planet that the most common handshake occurrence will be over the phone, and, therefore, will not be in person. This is, therefore, the assumed context the handshake will be occurring in. This means the similarity of words will need to be quantified phonetically instead of visually.
+By sampling the \pep documentation they have defined the use case of the Trustword handshake: \textit{``A handshake is done by comparing the Trustwords between two users through a separate communication channel (e.g. in person or by phone)''.}\footnote{https://www.pep.security/docs/general\_information.html\#handshake}. It can be assumed due to the increased globalizatiohat is the time andn of the planet that the most common handshake occurrence is over the phone, and, therefore, not in person. This is the assumed context of the handshake. This means, to create near-matches, the similarity of words is quantified phonetically instead of visually.
 
 \section{Research Questions}
 
-With the previously discussed points in mind the following research questions have been proposed.
+With the previously discussed points in mind, the following research questions have been proposed.
 
 \begin{enumerate}
 
@@ -32,11 +32,9 @@ With the previously discussed points in mind the following research questions ha
 
     \item Out of a chosen set of metrics, which are the most effective? \label{goal:bestMetrics}
 
-    \item What is the time and computation complexity required to generate a 'similar' keys for a targeted key pair? \label{goal:complexity}
+    \item What are the time and computation complexity required to generate a 'similar' keys for a targeted key pair? \label{goal:complexity}
     
     \item What kind of hardware is required to compute a matching key? \label{goal:hardwareRequired}
 
     \item What percentage of attacks successfully deceive a user? \label{goal:attackPercentage}
 \end{enumerate}
-
-With these research questions defined, the project will now discuss the design of the proposed attack.
