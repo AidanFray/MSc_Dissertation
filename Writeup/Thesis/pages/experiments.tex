@@ -3,13 +3,9 @@
 
 \section{Scallion vs GreenOnion}
 \label{sec:SvG}
-This section will compare Scallion and the newly designed GreenOnion ability to search for a large number of potential keys.
 
-Table \ref{tab:scallion_speed} shows the speed decline as the number of keys increase. Any number of keys over 45 resulted in a crash to the program.
 
-\todo{Add screenshot of the exception}
-
-\begin{table}[!h]
+\begin{wraptable}[11]{r}{6cm}
     \centering
     \begin{tabular}{|ll|}
         \hline
@@ -29,60 +25,47 @@ Table \ref{tab:scallion_speed} shows the speed decline as the number of keys inc
         \hline
     \end{tabular}
     \caption{Testing environment}
-\end{table}
+\end{wraptable}
 
-\begin{table}[!h]
+\begin{figure}[h!]
     \centering
-    \begin{tabular}{|ll|}
-        \hline
-        \textbf{Number of keys} & \textbf{Speed} \\
-        \hline
-        1 & 1001.3 MH/s \\
-        5 & 784.3 MH/s \\
-        10 & 707.9 MH/s \\
-        15 & 628.2 MH/s \\
-        20 & 526.5 MH/s \\
-        25 & 503.8 MH/s \\
-        30 & 473.1 MH/s \\
-        35 & 432.6 MH/s \\
-        40 & 404.9 MH/s \\
-        45+ & \textit{N/A} \\
-        \hline
-    \end{tabular}
-    \caption{Scallion's speed decline}
+    \input{diagrams/graphs/speed.tex}
     \label{tab:scallion_speed}
-\end{table}
-\todo{Plot scallion speed decline}
+    \caption{Speed comparison between Scallion and GreenOnion}
+\end{figure}
 
-\todo{Show the maximum number of keys the tool can achive}
+This section compares Scallion and the newly designed GreenOnion ability to search for a large number of potential keys.
+
+Figure \ref{tab:scallion_speed} shows the speed decline as the number of keys increases for Scallion. Any number of keys over 40 resulted in a crash for Scallion. GreenOnion's speed is almost perfectly consistent. It is slower up until  around 5 keys. This consistency is due to the overhead of the bloom filter; however, as the number of keys increase, the bloom filter's benefits become apparent. In this test, the bloom filter size was kept consistent at exactly 5,000 elements.
+
+GreenOnion has been tested to handle more than 1.5 million keys with a slight reduction in performance. This improvement over Scallion is, therefore, substantial.
 
 \section{Experiment 1 - Metric performance}
-\todo{talk about participants like the second experiment with Stdev}
 
-As discussed in Section \ref{exp:metric} the goal of the experiment was the cull the number of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results.
+As discussed in Section \ref{exp:metric}, the goal of the experiment was the cull the number of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results.
 
 \begin{table}[h!]
     \centering
     \begin{tabular}{|l|ll|}
         \hline
-        Gender & Male: & 46.2\% \\
-               & Female: & 53.8\% \\
+        Gender & Male: & 44.44\% \\
+               & Female: & 55.56\% \\
         \hline
-        Age:   & 18-24: & 10.6\% \\ 
-               & 25-29: & 20.2\% \\ 
-               & 30-39: & 30.8\% \\ 
-               & 40-49: & 22.1\% \\ 
-               & 50-59: & 11.5\% \\ 
-               & 60-69: & 3.8\% \\ 
-               & 70-79: & 1.0\% \\ 
+        Age:   & 18-24: & 10.10\% \\
+               & 25-29: & 20.20\% \\
+               & 30-39: & 31.31\% \\
+               & 40-49: & 21.21\% \\
+               & 50-59: & 12.12\% \\
+               & 60-69: & ~~4.04\% \\ 
+               & 70-79: & ~~1.01\% \\ 
                
         \hline
         Highest Education:  
-        & GCSE:                 & 15.4\%  \\
-        & A-Level/O-Level:      & 18.3\% \\
-        & Bachelor's degree:    & 51.0\% \\
-        & Master's degree:      & 13.5\% \\ 
-        & PhD:                  & 1.9\% \\
+        & GCSE:                 & 13.13\% \\
+        & A-Level/O-Level:      & 19.19\% \\
+        & Bachelor's degree:    & 52.53\% \\
+        & Master's degree:      & 13.13\% \\ 
+        & PhD:                  & ~~2.02\%  \\
         \hline
 
     \end{tabular}
@@ -90,7 +73,11 @@ As discussed in Section \ref{exp:metric} the goal of the experiment was the cull
     \label{tab:exp1_demo}
 \end{table}
 
-\begin{table}[h!]
+Overall, 104 participants were assessed in this study. Five results were discarded from the set due to either failing the attention questions (See in Section \ref{sec:exp1_qualitycontrol}) or having too low of a fluency rating. This dismissal was a necessary process to improve the health of the results. 
+
+Table \ref{tab:exp1_demo} contains the demographical breakdown of the reduced set of participants. The average ages of the participants were 37.3 years ($\sigma = 11.67$)with a split of 44.44\% of Males to 55.56\% of Females. As can be seen, over 60\% of participants can be considered highly educated (Bachelor’s and up). This level of education is not sufficiently reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US; this again requires consideration due to the broad range of dialects present that may bias the results. Further work could investigate the effect of location and dialect on similar results. 
+
+\begin{wraptable}[11]{r}{8cm}
     \centering
     \begin{tabular}{|l|l|l|}
         \hline
@@ -107,20 +94,17 @@ As discussed in Section \ref{exp:metric} the goal of the experiment was the cull
     \end{tabular}
     \caption{Average metric performance}
     \label{tab:exp1_results}
-\end{table}
+\end{wraptable}
 
-Table \ref{tab:exp1_demo} contains the demographical breakdown of the participants assessed. As it can be seen over 60\% of participants can be considered highly educated (Bachelor’s and up). This is not fully reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US, this again requires consideration due to the large range of dialects present that may bias the results. Further work could investigate the affect of location and dialect on similar results. 
 
-Overall, 104 participants were assessed in this study. Five results were discarded from the set due to either failing the attention questions (See in Section \ref{sec:exp1_qualitycontrol}) or having too low of a fluency rating. This was a necessary process to improve the health of the results. 
+Figure \ref{tab:exp1_results} shows the average results for the metrics. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much more significant proportion of 4 and 5 ratings than the alternatives. This performance may, however, be due to the visual way the comparisons are being performed. (Discussed in detail in Section \ref{sec:exp1_considerations}). 
 
-Figure \ref{tab:exp1_results} shows the average results for the metrics. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much larger proportion of 4 and 5 ratings than the alternatives. This performance may, however, be due to the visual way the comparisons are being performed. (Discussed in detail in Section \ref{sec:exp1_considerations}). 
-
-Due to the averages of Metaphone and Phonetic Vectors being so close standard deviation was used as the final decider. As it can be seen Megaphone has a slightly lower $\sigma$ value of that of Phonetic vectors, thus, contributing to the decision to select Metaphone to be carried over to the next experiment.
+Due to the averages of Metaphone and Phonetic Vectors being so close standard deviation was used as the final decider. As can be seen, Megaphone has a slightly lower $\sigma$ value of that of Phonetic vectors, thus, contributing to the decision to select Metaphone.
 
 \subsection*{Considerations}
-As discussed in Section \ref{sec:exp1_considerations} compromises were made in order to fullfil all requirement with a minimized cost. Levenshtein's abnormal performance further backs up concerns around the visual aspect biasing the performance of the metric. This will have to be considered when interpreting the results. 
+As discussed in Section \ref{sec:exp1_considerations}, compromises were made to fulfil all requirement with a minimized cost. Levenshtein's abnormal performance further backs up concerns around the visual aspect biasing the performance of the metric. This aspect requires consideration when interpreting the results. 
 
-Even with the discussed issues, the aim of the experiment was to promptly reduce the number of metrics for use later in the project. This experiment, therefore, has achieved that goal of providing three metrics for the subsequent experiment while balancing between accuracy and expenditure. The results are also an improvement over informal ad-hoc methods. Further work could aim to reproduce this study with the proposed audio based design (See Section \ref{sec:exp1_considerations}).
+Even with the discussed issues, the experiment was designed to reduce the number of metrics promptly. This experiment, therefore, has achieved that goal of providing three metrics for the subsequent experiment while balancing between accuracy and expenditure. The results are also an improvement over informal ad-hoc methods. Further work could aim to reproduce this study with the proposed audio-based design (See Section \ref{sec:exp1_considerations}).
 
 \input{diagrams/graphs/experiment_one/graph.tex}
 
@@ -128,7 +112,7 @@ Even with the discussed issues, the aim of the experiment was to promptly reduce
 
 \section{Experiment 2 - Trustword attacks}
 \label{sec:exp2}
-The aim of this experiment is to quantify the success rate of the proposed attack. Design details for this experiment can be seen in Section \ref{sec:exp2_design}. This section will present and discuss the results of the experiment alongside a comparison to relevant literature.
+This experiment aims to quantify the success rate of the proposed attack. Design details for this experiment can be seen in Section \ref{sec:exp2_design}. This section presents and discusses the results of the experiment alongside a comparison to relevant literature.
 
 \subsection*{Demographics}
 Overall, 435 paid participants recruited via Amazon's MTurk were assessed in this experiment. We excluded 66 results; 7 due to being non-native speakers and 59 were discarded for failing the attention metrics (Discussed in Section \ref{sec:exp2_quality}).
@@ -162,7 +146,7 @@ Overall, 435 paid participants recruited via Amazon's MTurk were assessed in thi
     \label{tab:exp2_demo}
 \end{table}
 
-The reduced set of 369 participants had an average age of 36.63 ($\sigma = 11.35$) and consisted of an almost equal split of Male (50.41\%) to Female (49.59\%). Around 62\% of participants had completed a single stage of university (Bachelor and up). This makes this set of participants more educated than the general population. All participants were also sourced from the USA and have rated themselves as fully native English speakers.
+The reduced set of 369 participants had an average age of 36.63 ($\sigma = 11.35$) and consisted of an almost equal split of Male (50.41\%) to Female (49.59\%). Around 62\% of participants had completed a single stage of university (Bachelor and up). This aspect makes this set of participants more educated than the general population. All participants were also sourced from the USA and have rated themselves as fully native English speakers.
 \begin{table}[!h]
     \centering
     \begin{tabular}{|l|l|}
@@ -199,10 +183,10 @@ The reduced set of 369 participants had an average age of 36.63 ($\sigma = 11.35
     \label{tab:exp2_os}
 \end{table}
     
-As user-agent strings were collected for each participant collations of OS and internet browser versions was made possible. Tables \ref{tab:exp2_browser} and \ref{tab:exp2_os} contain the browser and OS breakdowns respectively. Chrome and Windows 10 seem to dominate the proportion of their respective domains alongside the surprisingly large proportion of workers utilizing older versions of Windows such as 7 or 8 (15.81\%).
+As user-agent strings were collected for each participant collations of OS and internet browser versions was made possible. Tables \ref{tab:exp2_browser} and \ref{tab:exp2_os} contain the browser and OS breakdowns,  respectively. Chrome and Windows 10 seem to dominate the proportion of their respective domains alongside the surprisingly large proportion of workers utilizing older versions of Windows such as 7 or 8 (15.81\%).
 
 \subsection*{Results}
-Table \ref{tab:exp2_attacks} contains the break down of results for the experiment. It can be seen that the best metric out of the set was Levenshtein with an overall success of 19.80\%. The best performer when regarding attack strength, as expected is the 2 static words. Levenshtein's 2 static attack performed the best overall with a success rate of 32.05\%. The worst performer was Metaphone with an average of 16.88\% over its three levels of attacks. When comparing the performance of the metrics to the previous experiment the ordering remains the same with Levenshtein, NYSIIS and Metaphone all ranking in exactly the same order.
+Table \ref{tab:exp2_attacks} contains the break down of results for the experiment. It can be seen that the best metric out of the set was Levenshtein with an overall success of 19.80\%. The best performer, when regarding attack strength, as expected, is the 2 static words. Levenshtein's 2 static attack performed the best overall with a success rate of 32.05\%. The worst performer was Metaphone, with an average of 16.88\% over its three levels of attacks. When comparing the performance of the metrics to the previous experiment the ordering remains the same with Levenshtein, NYSIIS and Metaphone all ranking in the same order.
 
 \begin{table}
     \makebox[\textwidth][c]{
@@ -238,22 +222,22 @@ Table \ref{tab:exp2_attacks} contains the break down of results for the experime
 \end{table}
 
 \subsection*{Considerations}
-As previously mentioned, the set of recruited participants are more highly educated than the general population. This combined with the low average age contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skillful interaction with computer based systems, this, therefore, with the previous assumption in mind means the results of this experiment can be considered a `best case' scenario. The attacks, therefore, would be expected to be more successful on less technical users. This, however, requires further research and possible empirical data to determine the validity of the assumption. 
+As previously mentioned, the set of recruited participants are more highly educated than the general population. This. combined with the lower average age, contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skilful interaction with computer-based systems, this, therefore, with the previous assumption in mind means the results of this experiment can be considered a `best case' scenario. The attacks, therefore, would be expected to be more successful on less technical users. This consideration, however, requires further research and possible empirical data to determine the validity of the assumption. 
 
-During this study the main task was to perform the authentication ceremony a large number of times. In the real-world the ceremony is a secondary task due to it not strictly being required. This alongside the potential for users to downplay the possibility of attack leads to the conclusion that the success rates could be much higher in a real-world setting. The assumption is that these results display the success rate for extremely attentive users where they will make sure to double check with their authentication partner multiple times. This is opposed to the assumption that the majority of users will aim to complete the task as quickly as possible. 
+During this study, the main task was to perform the authentication ceremony a set number of times. In the real-world, the ceremony is a secondary task due to it not strictly being required. This aspect, alongside the potential for users to downplay the possibility of attack, leads to the conclusion that the success rates could be much higher in a real-world setting. The assumption is that these results display the success rate for extremely attentive users where they make sure to double-check with their authentication partner multiple times. It is, therefore, assumed that the majority of users aim to complete the task as quickly as possible, if at all.
 
 \subsection*{Comparison to alternative literature}
-This section will aim to compare the results of the experiment to similar literature.
+This section compares the results of the experiment to similar literature.
 
-Work by Kainda \textit{et al.}\cite{kainda2009usability} (previous discussed in Chapter \ref{cha:LiteratureReview}) is the most comparable to this experiment. They were the only study to use exactly 4 words, but differed on the size of dictionary (1024 words) and how a near-match was calculated. Near-matches were a difference in a single word but without the consideration for similarity, this is the unique aspect considered with this experiment.
+Work by Kainda \textit{et al.}\cite{kainda2009usability} (previously discussed in Chapter \ref{cha:LiteratureReview}) is the most comparable to this experiment. They were the only study to use exactly 4 words but differed on the size of the dictionary (1024 words) and how a near-match were calculated. Near-matches were a difference in a single word, but without the consideration for similarity, this is the unique aspect considered with this experiment.
 
-However, with those aspect in mind attacks on words encoding received an overall success rating of 3.3\%, considerably lower than that of this study. In the worst case our simulated attacks achieved almost 3 times as many successes compared to this study.
+However, with those aspects in mind attacks on words encoding received an overall success rating of 3.3\%, considerably lower than that of this study. In the worst-case, our simulated attacks achieved almost 3 times as many successes compared to this study.
 
-Other relevant work by Dechand \textit{el al.}\cite{dechand2016empirical} also discussed in Chapter \ref{cha:LiteratureReview} assess the success rate of attacks on words. This is less similar to the experiment as 14 words per attack were assessed with each participant, where the comparison was performed visually. However, the success for the PGP Word list was 8.78\%. As 10/14 words were kept static more comparable to the results of the highest attack strength ``2 static''. This leads to another 3 fold improvement in the success rates of our simulated attacks. 
+Other relevant work by Dechand \textit{el al.}\cite{dechand2016empirical} also discussed in Chapter \ref{cha:LiteratureReview} assess the success rate of attacks on words. Their experiment is less similar as 14 words per attack were assessed with each participant, where the comparison was performed visually. However, the success was 8.78\%. As 10/14 words were kept static, this result is more comparable to the highest attack strength ``2 static''. This, therefore, leads to another 3 fold improvement in the success rates of our simulated attacks. 
 
-The final relevant paper to compare is that of Tan \textit{et al.}\cite{tan2017can}. This paper had the highest number of words assessed with 16 overall. With it assessing the same wordlist and attack strength as the work by Dechand \textit{et al.}. The attack success was 14\% overall, this again compared to the highest attack assessed in the experiment results in a sizeable difference.
+The final relevant paper to compare is that of Tan \textit{et al.}\cite{tan2017can}. This paper had the highest number of words assessed with 16 overall. With it assessing the same wordlist and attack strength as the work by Dechand \textit{et al.}, the attack success was 14\% overall. This success rate compared to the highest attack assessed in the experiment results in another sizeable difference.
 
-In conclusion, all similar literature had much lower attack success rates that the results presented in this experiment. With all papers using similarly designed words lists it highly suggests that the deficiencies in Trustwords are the cause for the substantial increase in attack success. Alongside this, the consideration for similarity when calculating near-collisions could have also resulted in the higher attack success rates. This aspect is also a unique consideration compared to available literature.
+In conclusion, all related literature had much lower attack success rates that the results presented in this experiment. With all papers using similarly designed wordslists, it highly suggests that the deficiencies in Trustwords are the cause for the substantial increase in attack success. Alongside this, the consideration for similarity when calculating near-collisions could have also resulted in the higher attack success rates. This aspect is also a unique consideration compared to the available literature.
 
 
 \section{Average number of near-collision keys for each metric}
