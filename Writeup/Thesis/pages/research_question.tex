@@ -6,18 +6,21 @@ The chosen project aims to asses the security of \pep's minimum recommendation o
 
 As discussed in the previous chapter, the identified research gap regarding the minimal consideration of attack complexity would be a suitable addition for this project. This choice is due to it providing the ability to asses actual performance and, thus, the actual real-world strength of Trustwords while providing research to a scant area. Therefore, the security assessment is supplemented with complexity considerations alongside an actual implementation of the attack proposed.
 
+\begin{center}
 \begin{figure}[h!]
     \centering
-    \begin{verbatim}
+        
+    \begin{lstlisting}[frame=single, numbers=none]
 "Short Trustword Mapping (S-TWM) requires a number of 
 Trustwords that MUST retain at least 64 bits of entropy. 
 Thus, S-TWM results into at least four Trustwords to be 
 compared by the user."
-    \end{verbatim}
+    \end{lstlisting}
+
     \caption{Most recent RFC security recommendation}
     \label{fig:trustwordsNum}
 \end{figure}
-
+\end{center}
 By sampling the \pep documentation they have defined the use case of the Trustword handshake: \textit{``A handshake is done by comparing the Trustwords between two users through a separate communication channel (e.g. in person or by phone)''.}\footnote{https://www.pep.security/docs/general\_information.html\#handshake}. It can be assumed due to the increased globalizatiohat is the time andn of the planet that the most common handshake occurrence is over the phone, and, therefore, not in person. This is the assumed context of the handshake. This means, to create near-matches, the similarity of words is quantified phonetically instead of visually.
 
 \section{Research Questions}
