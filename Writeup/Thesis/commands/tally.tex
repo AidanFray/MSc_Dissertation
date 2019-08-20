@@ -1,0 +1,23 @@
+% ========================================= %
+% Used to display graphs for experiment one
+% ========================================= %
+
+\newcommand{\tally}[1]{%
+\begin{tikzpicture}
+  \begin{axis}[
+    ymin=0,
+    ymax=200,
+    xtick={1,2,3,4,5},
+    width=1\textwidth,
+    grid,
+    xlabel={Phonetic raiting},
+    ylabel={Oucurrance}
+  ]
+    \addplot[ybar, fill=blue] table[ 
+        col sep=comma,
+        y=occurrence, 
+        x=rating] 
+    {#1};
+  \end{axis}
+\end{tikzpicture}
+}

@@ -1,0 +1,60 @@
+%%% BUSINESS CARD SIZE
+\newlength{\cardw}
+\newlength{\cardh}
+%% My size
+\setlength{\cardw}{90mm}
+\setlength{\cardh}{50mm}
+
+%% ISO 7810 size: 85.60mm × 53.98mm
+% \setlength{\cardw}{85.60mm}
+% \setlength{\cardh}{53.98mm}
+
+%% European size: 85mm × 55mm
+% \setlength{\cardw}{85mm}
+% \setlength{\cardh}{55mm}
+
+%% US size: 3.5 in × 2 in
+% \setlength{\cardw}{3.5in}
+% \setlength{\cardh}{2in}
+
+
+%%% DEFINE USER DATA
+\newcommand{\Name}{
+	{\huge \textbf{John Doe} }
+}%
+\newcommand{\Description}{
+	{\large Linux System Administrator }
+}%
+\newcommand{\Email}{
+	{\large john@example.com }
+}%
+\newcommand{\Phone}{
+	{\large +1 234 56 78 910 }
+}%
+\newcommand{\Site}{
+	{\large johndoe.com }
+}%
+
+\newcommand{\FingerprintOne}{
+    {\footnotesize 6424 AD56 4BF7 06BC 0696
+     }
+}%
+\newcommand{\FingerprintTwo}{
+    {\footnotesize BC61 412A 20D9 2450 BDE8}
+}%
+
+\definecolor{mycolor}{rgb}{0.427,0.592,0.749} % RGB(109,151,191)
+
+\begin{tikzpicture}
+
+% card content
+\foreach \i in {0} \foreach \j in {0} {
+   \node[black!25!mycolor][right] at (\i*\cardw+0.05\cardw,\j*\cardh+0.85\cardh) {\Name};
+   \node [right] at (\i*\cardw+0.05\cardw,\j*\cardh+0.7\cardh) {\Description};
+   \node [left] at (\i*\cardw+0.95\cardw,\j*\cardh+0.35\cardh) {\Phone};
+   \node [left] at (\i*\cardw+0.95\cardw,\j*\cardh+0.25\cardh) {\Site};
+   \node [left] at (\i*\cardw+0.95\cardw,\j*\cardh+0.15\cardh) {\Email};
+   \node [left] at (\i*\cardw+0.575\cardw,\j*\cardh+0.575\cardh) {\FingerprintOne};
+   \node [left] at (\i*\cardw+0.575\cardw,\j*\cardh+0.475\cardh) {\FingerprintTwo};
+};
+\end{tikzpicture}

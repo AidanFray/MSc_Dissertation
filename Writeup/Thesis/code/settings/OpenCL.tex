@@ -1,0 +1,49 @@
+% ======================================================================== %
+% Defines the highlighting, style and environment for the OpenCL language
+% ========================================================================%
+
+\lstdefinelanguage{OpenCL}{
+  keywords={int, __kernel,kernel,__local,local,__global,global,__constant,constant,__private,private, char2,char3,char4,char8,char16, uchar2,uchar3,uchar4,uchar8,uchar16, short2,short3,short4,short8,short16, ushort2,ushort3,ushort4,ushort8,ushort16, int2,int3,int4,int8,int16, uint2,uint3,uint4,uint8,uint16, long2,long3,long4,long8,long16, ulong2,ulong3,ulong4,ulong8,ulong16, float2,float3,float4,float8,float16, image2d_t,image3d_t,sampler_t,event_t, bool2,bool3,bool4,bool8,bool16, half2,half3,half4,half8,half16, quad,quad2,quad3,quad4,quad8,quad16, complex,imaginary, uint, long, bool, for, if},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={get_global_id, class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{black}\bfseries,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\itshape\color{OliveGreen}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstdefinestyle{OpenCLStyle}{
+    commentstyle=\color{codegreen},
+    keywordstyle={\bf \color{blue}},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left, 
+    columns=fixed,                                   
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=7,
+    numberstyle=\tiny, 
+    numbersep=8pt,
+    language=OpenCL,
+}
+
+\newtcblisting{OpenCLCode}[2][]{
+	top=0cm,
+	bottom=0cm,
+	left=0.5cm,
+	right=0cm,
+	colback=white,
+	colframe=black,
+    arc=1pt, outer arc=1pt,
+    listing only, 
+    listing style=OpenCLStyle,
+}
