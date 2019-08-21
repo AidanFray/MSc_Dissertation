@@ -21,7 +21,7 @@ The chapter contains the following sections:
 
 To fully understand the literature review, it is necessary to introduce and explain the base knowledge before continuing.
 
-\subsection*{Public-key Cryptography and Key Exchange}
+\subsection{Public-key Cryptography and Key Exchange}
 
 Asymmetric cryptography facilitates the secure encryption of messages in end-to-end encryption (E2EE), verification of digital signatures, and sharing of pre-communication secrets, among others. 
 
@@ -56,7 +56,7 @@ System designers are, however, moving away from the structure of one fingerprint
 
 Due to the manual comparison of the fingerprint, length, and format is a core design consideration. Prior research has shown that the average human can only hold around 7-digits worth of data in their working memory\cite{miller1956magical}. This shows that comparing complete digests would be cumbersome and error-prone. For example, SHA-1 is 40 hex digits (160-bit) and, therefore, difficult to effectively compare. Therefore, if human interaction is required; there is a need for schemes that work effectively with consideration to human limitations.
 
-\section{Encoding schemes}
+\subsection{Encoding schemes}
 \label{sec:encodingSchemes}
 Encoding schemes are the physical method of encoding used to represent the fingerprint. The most common way to represent the fingerprint is alphanumerically with either \textbf{Hexadecimal} (a-f/0-9) or \textbf{Base32} (2-7/A-Z). These encoding schemes are the most popular due to their intuitive simplicity and lack of unique hardware requirements such as colour screens.
 
@@ -140,13 +140,161 @@ Figure \ref{fig:flag} contains an example of each version of Flag discussed.
 
 Research in this area has taken these various encoding schemes and compared their fallibility to impersonated attacks. The main elements of comparison have been the ``accuracy of attack detection" and ``time to compare." In this paper, these are considered the metrics of ``security'' and ``usability,'' respectively.
 
+\subsection{Similarity Metrics}
+\label{sec:similarity_metric}
+A similarity metric is an algorithm designed to determine if two words are phonetically a match. For example, the words "THEIR" and "THERE" is a match, whereas the words "DARK" and "PRINCIPLE" are not phonetically matching. This section provides a base explanation of important phonetic algorithms.
+
+\subsubsection*{Soundex}
+\label{sec:soundex}
+One of the earliest examples of a phonetic algorithm is known as Soundex. It was initially designed for indexing names by phonetics alongside spelling mistakes due to transpositions in letters. 
+
+Soundex produces a four-digit code for each word assessed.
+The first letter of the word is retained alongside the removal of all of a, e, i, o, u, y, h and w. The remaining letters are then mapped to numbers. These mappings are displayed in Figure \ref{fig:soundexMap}.
+
+\begin{figure}[h!]
+    \centering
+    \begin{BVerbatim}
+b, f, p, v               1
+c, g, j, k, q, s, x, z   2
+d, t                     3
+l                        4
+m, n                     5
+r                        6
+    \end{BVerbatim}
+
+    \caption{Soundex mappings of letters to numbers}
+    \label{fig:soundexMap}
+\end{figure}
+
+Due to the fixed length and limited digit set the initial concerns from this design is the limited number of combinations. There are a total of 5616 codes due to 26 initial letters and three digits of 6 values ($26 * 6^3$).
+The limited combinations result in matches of limited quality.
+
+Further issues posed in \cite{patman2001soundex} are discussed below and show the further deficiencies of Soundex in a dictionary word matching context. 
+
+\begin{enumerate}
+    \item \textbf{Dependency on the first letter:} Soundex cannot match words together if their first letters are different, meaning, for example, the words "KORBIN" and "CORBIN" are considered non-matching. 
+
+    \item \textbf{Silent consonants.} Soundex does not have logic embedded to deal with silent consonants.
+
+    \item \textbf{Poor precision.} Due to the previously discussed point of a limited code space. \cite{patman2001soundex} re-iterates this point, but in the context of name matching where Soundex's poor performance was demonstrated. Soundex only gained and overall accuracy of 36.37\% when matching names within a provided database.
+\end{enumerate}
+
+\subsubsection*{NYSIIS}
+\label{sec:nysiis}
+The New York State Identification and Intelligence System (NYSIIS) phonetic code was created for use matching the phonetics of American names. The motivation for it's inception was mostly due to the presence of Hispanic names in the American based databases (this was an aspect Soundex was known to have low accuracy with). 
+
+It also allows for variable-length codes and, thus, allows the applicability of the application to increase due to it not confronting the limited code issue of Soundex. It was in use right up util the end of 1998 within various US Government departments.
+
+\subsubsection*{Metaphone}
+\label{sec:metaphone}
+Metaphone was invented by Lawrence Philips in 1990\cite{philips1990hanging} in response to the deficiencies in Soundex. It improves on Soundex by including information around inconsistency and variation in English spelling in an attempt to create a more accurate phonetic representation.
+
+\subsubsection{Levenshtein Distance}
+\label{sec:leven}
+Levenshtein distance is a string metric designed to measure the `distance' between two strings. It is merely the number of single-character edits (insertions, deletions or substitutions) required to reach the other string.
+
+An example distance between \verb|trace| and \verb|place| would be the substitutions of the first to letters, from \verb|tr| to \verb|pl|, meaning the two strings have a Levenshtein distance of 2.
+
+\subsubsection{Phonetic Vectors}
+\label{sec:phonetic_vectors}
+Phonetic Vectors is a unique addition to the chosen set. Created by Allison Parrish in 2017\cite{parrish2017poetic}, Phonetic vectors is as the name suggests the vectorisation of the phonetics of a word.
+
+Phonetic features are used in this work as a way to compare the similarity of phonemes. Phonemes are the phonetic elements that construct a word. For example, the word "RING" translated into the phonemes \verb|/R IH NG/|. 
+
+Extensive prior work has gone into producing models of features that map to phonemes \cite{chomsky1968sound}\cite{ladefoged1969measurement}\cite{bradlow2010perceptual}. Features, therefore, are an attempt at mapping the varying and inconsistent rules around the pronunciation of the English language. The vectors were created using lists phonemes from the CMU Pronouncing Dictionary and mapping them to possible features.
+
+\begin{table}[!htb]
+    \tiny
+    \begin{minipage}{.33\linewidth}
+        \centering
+        \begin{tabular}{ll}
+            Phone & Features \\
+            \hline
+            AA & bck, low, unr, vwl \\
+            AE & fnt, low, unr, vwl \\
+            AH & cnt, mid, unr, vwl \\
+            AO & bck, lmd, rnd, vwl \\
+            AW & bck, cnt, low, rnd, smh, unr, vwl \\
+            AY & cnt, fnt, low, smh, unr, vwl \\
+            B & blb, stp, vcd \\
+            CH & alv, frc, stp, vls \\
+            D & alv, stp, vcd \\
+            DH & dnt, frc, vcd \\
+            EH & fnt, lmd, unr, vwl \\
+            ER & cnt, rzd, umd, vwl \\
+            EY & fnt, lmd, smh, unr, vwl
+        \end{tabular}
+    \end{minipage}%
+    \begin{minipage}{.33\linewidth}
+        \centering
+        \begin{tabular}{ll}
+            Phone & Features \\
+            \hline
+            F &  frc, lbd, vls \\
+            G &  stp, vcd, vel \\
+            HH & apr, glt \\
+            IH & fnt, smh, unr, vwl \\
+            IY & fnt, hgh, unr, vwl \\
+            JH & alv, frc, stp, vcd \\
+            K &  stp, vel, vls \\
+            L &  alv, lat \\
+            M &  blb, nas \\
+            N &  alv, nas \\
+            NG & nas, vel \\
+            OW & bck, rnd, smh, umd, vwl \\
+            OY & bck, fnt, lmd, rnd, smh, unr, vwl
+        \end{tabular}
+    \end{minipage} 
+    \begin{minipage}{.33\linewidth}
+        \centering
+        \begin{tabular}{ll}
+            Phone & Features \\
+            \hline
+            P & blb, stp, vls \\
+            R & alv, apr \\
+            S & alv, frc, vls \\
+            SH & frc, pla, vls \\
+            T & alv, stp, vls \\
+            TH & dnt, frc, vls \\
+            UH & bck, rnd, smh, vwl \\
+            UW & bck, hgh, rnd, vwl \\
+            V & frc, lbd, vcd \\
+            W & apr, lbv \\
+            Y & apr, pal \\
+            Z & alv, frc, vcd \\
+            ZH & frc, pla, vcd \\
+        \end{tabular}
+    \end{minipage} 
+    \caption{Phonemes to feature mapping table}
+    \label{tab:features}
+\end{table}
+
+Table \ref{tab:features} contains the mappings used in \cite{parrish2017poetic} to create the phonetic feature lists.
+Using this with all 133,852 entries in version 0.7b of the CMU Pronouncing Dictionary, 949 unique properties were produced overall. The author then performed principal components analysis\footnote{Details regarding this process is outside the scope of the project. Please, however, if interested please refer to this resource for more information: \url{http://setosa.io/ev/principal-component-analysis/}} on the unique properties to reduce them down to 50.
+
+This metric allows for a unique set of actions to be performed on the phonetic output. Not only does this metric allow the user to measure \textit{dissimilarity} (as opposed to the similar-or-not method of the alternatives) the continuous nature of the value allows mathematical operations to be performed on the output. An example shown in \cite{parrish2017poetic} was the addition of word vectors.
+
+\begin{table}[!htb]
+    \centering
+    \begin{tabular}{cll}
+        No & Operation & Result \\
+        \hline
+        1  & $Vec(\verb|sub|) + Vec(\verb|marine|)$ & \verb|submarine| \\
+        2  & $Vec(\verb|miss|) + Vec(\verb|sieve|)$ & \verb|missive| \\
+        3  & $Vec(\verb|fizz|) + Vec(\verb|theology|)$ & \verb|physiology| \\
+    \end{tabular}
+    \caption{Examples of vector addition}
+    \label{tab:vectorAdd}
+\end{table}
+
+For example, the addition of vectors can be seen in Table \ref{tab:vectorAdd}. This works for any mathematical operation with examples like multiplication allowing the `tinting' words with a theme.
+
 \section{Definition of terms}
 Throughout the paper, various terms are used to define elements of the authentication ceremony relevant to fingerprints verification. Explicit descriptions are, therefore, stated in this section. These are used to remove ambiguity and underlying associations readers may have for the words chosen.
 \\\\
 \textbf{\textit{Method of comparison}} - is the way a user assesses the encoding scheme. The most common example and the one used as default is ``Compare-and-Confirm'' (CaC). CaC, as the name suggests, is the \textit{comparison} of two fingerprints on different devices or mediums that are then \textit{confirmed}. The following sections explain alternative methods of comparisons.
 
 \todo{Phase this section out - make sure to remove from the introduction layout of the section}
-
 
 \section{Literature Review}
 This section discusses the current research around the proposed topic.
