@@ -72,8 +72,47 @@
   numbers=left,
 }
 
+%Used to format code listings
+\newtcblisting{Code}[2][]{
+    top=0cm,
+    bottom=0cm,
+    left=0.5cm,
+    right=0cm,
+    colback=white,
+    colframe=black,
+    arc=1pt, outer arc=1pt,
+    listing only, 
+    listing style=#1,
+}
+
+\newcommand{\defineStyle}[2]{
+    \lstdefinestyle{#1}{
+    commentstyle=\color{codegreen},
+    keywordstyle={\bf \color{blue}},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=false,                 
+    numbers=left, 
+    columns=fixed,                                   
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=3,
+    numberstyle=\tiny, 
+    numbersep=8pt,
+    language=#2,
+  }
+}
+
+
 \input{code/settings/Javascript.tex}
 \input{code/settings/OpenCL.tex}
+\input{code/settings/CPlusPlus.tex}
+
 % ========================================================================= %
 
 % ############################# TODO ############################## %

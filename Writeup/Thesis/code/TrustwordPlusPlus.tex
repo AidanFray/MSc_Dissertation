@@ -1,0 +1,36 @@
+\begin{adjustbox}{width=\textwidth,keepaspectratio}
+\begin{Code}[CppStyle]
+vvoid find_similar_words(vector<string> words)
+{
+    vector<string> sim_words;
+
+    for (string word_y : words)
+    {
+        sim_words.push_back(word_y);
+
+        for (string word_x : words)
+        {
+            bool add_word = false;
+
+            else
+            {
+                if (LEVENSHTEIN) add_word = 
+                    leven_similar(word_y, word_x);
+
+                else if (METAPHONE) add_word = 
+                    meta_similar(word_y, word_x);
+
+                else if (NYSIIS) add_word = 
+                    nysiis_similar(word_y, word_x);
+            }
+            
+            if (add_word)
+            {
+                sim_words.push_back(word_x);
+                add_word = false;
+            }
+        }
+    }
+}
+\end{Code}
+\end{adjustbox}

@@ -15,35 +15,4 @@
   morestring=[b]"
 }
 
-\lstdefinestyle{OpenCLStyle}{
-    commentstyle=\color{codegreen},
-    keywordstyle={\bf \color{blue}},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\footnotesize\ttfamily,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left, 
-    columns=fixed,                                   
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=7,
-    numberstyle=\tiny, 
-    numbersep=8pt,
-    language=OpenCL,
-}
-
-\newtcblisting{OpenCLCode}[2][]{
-	top=0cm,
-	bottom=0cm,
-	left=0.5cm,
-	right=0cm,
-	colback=white,
-	colframe=black,
-    arc=1pt, outer arc=1pt,
-    listing only, 
-    listing style=OpenCLStyle,
-}
+\defineStyle{OpenCLStyle}{OpenCL}

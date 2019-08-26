@@ -1,4 +1,4 @@
-\chapter{Experiments}
+\chapter{Experimentation Results}
 \label{cha:Experiments}
 
 \section{Scallion vs GreenOnion}
@@ -27,6 +27,14 @@
     \caption{Testing environment}
 \end{wraptable}
 
+This section compares Scallion and the newly designed GreenOnion ability to search for a large number of potential keys.
+
+Figure \ref{tab:scallion_speed} shows the speed decline as the number of potential keys checked in one go increases for Scallion. Any number of keys over 40 resulted in a crash for Scallion. GreenOnion's speed is almost perfectly consistent. It is slower up until  around 5 keys. This consistency is due to the overhead of the bloom filter; however, as the number of keys increase, the bloom filter's benefits become apparent. In this test, the bloom filter size was kept consistent at exactly 5,000 elements.
+
+GreenOnion has been tested to handle more than 1.5 million keys with a slight reduction in performance. This improvement over Scallion is, therefore, substantial.
+
+GreenOnion's code has been made publicly available on GitHub \footnotemark{TODO}.
+
 \begin{figure}[h!]
     \centering
     \input{graphs/speed.tex}
@@ -34,38 +42,34 @@
     \caption{Speed comparison between Scallion and GreenOnion}
 \end{figure}
 
-This section compares Scallion and the newly designed GreenOnion ability to search for a large number of potential keys.
-
-Figure \ref{tab:scallion_speed} shows the speed decline as the number of keys increases for Scallion. Any number of keys over 40 resulted in a crash for Scallion. GreenOnion's speed is almost perfectly consistent. It is slower up until  around 5 keys. This consistency is due to the overhead of the bloom filter; however, as the number of keys increase, the bloom filter's benefits become apparent. In this test, the bloom filter size was kept consistent at exactly 5,000 elements.
-
-GreenOnion has been tested to handle more than 1.5 million keys with a slight reduction in performance. This improvement over Scallion is, therefore, substantial.
+\newpage
 
 \section{Experiment 1 - Metric performance}
 
-As discussed in Section \ref{exp:metric}, the goal of the experiment was the cull the number of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results.
+As discussed in Section \ref{exp:metric}, the goal of the experiment was to select a set of metrics to be assessed in the following experiment. This section will discuss the demographics of participants alongside the subsequent results.
 
 \begin{table}[h!]
     \centering
     \begin{tabular}{|l|ll|}
         \hline
-        Gender & Male: & 44.44\% \\
-               & Female: & 55.56\% \\
+        Gender & Male: & 44.4\% \\
+               & Female: & 55.6\% \\
         \hline
-        Age:   & 18-24: & 10.10\% \\
-               & 25-29: & 20.20\% \\
-               & 30-39: & 31.31\% \\
-               & 40-49: & 21.21\% \\
-               & 50-59: & 12.12\% \\
-               & 60-69: & ~~4.04\% \\ 
-               & 70-79: & ~~1.01\% \\ 
+        Age:   & 18-24: & 10.1\% \\
+               & 25-29: & 20.2\% \\
+               & 30-39: & 31.3\% \\
+               & 40-49: & 21.2\% \\
+               & 50-59: & 12.1\% \\
+               & 60-69: & ~~4.0\% \\ 
+               & 70-79: & ~~1.0\% \\ 
                
         \hline
         Highest Education:  
-        & GCSE:                 & 13.13\% \\
-        & A-Level/O-Level:      & 19.19\% \\
-        & Bachelor's degree:    & 52.53\% \\
-        & Master's degree:      & 13.13\% \\ 
-        & PhD:                  & ~~2.02\%  \\
+        & GCSE:                 & 13.1\% \\
+        & A-Level/O-Level:      & 19.2\% \\
+        & Bachelor's degree:    & 52.5\% \\
+        & Master's degree:      & 13.1\% \\ 
+        & PhD:                  & ~~2.0\%  \\
         \hline
 
     \end{tabular}
@@ -75,7 +79,7 @@ As discussed in Section \ref{exp:metric}, the goal of the experiment was the cul
 
 Overall, 104 participants were assessed in this study. Five results were discarded from the set due to either failing the attention questions (See in Section \ref{sec:exp1_qualitycontrol}) or having too low of a fluency rating. This dismissal was a necessary process to improve the health of the results. 
 
-Table \ref{tab:exp1_demo} contains the demographical breakdown of the reduced set of participants. The average ages of the participants were 37.3 years ($\sigma = 11.67$)with a split of 44.44\% of Males to 55.56\% of Females. As can be seen, over 60\% of participants can be considered highly educated (Bachelor’s and up). This level of education is not sufficiently reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US; this again requires consideration due to the broad range of dialects present that may bias the results. Further work could investigate the effect of location and dialect on similar results. 
+Table \ref{tab:exp1_demo} contains the demographical breakdown of the reduced set of participants. The average ages of the participants were 37.3 years ($\sigma = 11.67$)with a split of 44.4\% of Males to 55.6\% of Females. As can be seen, over 60\% of participants can be considered highly educated (Bachelor’s and up). This level of education is not sufficiently reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US; this again requires consideration due to the broad range of dialects present that may bias the results. Further work could investigate the effect of location and dialect on similar results. 
 
 \begin{wraptable}[11]{r}{8cm}
     \centering
@@ -97,7 +101,7 @@ Table \ref{tab:exp1_demo} contains the demographical breakdown of the reduced se
 \end{wraptable}
 
 
-Figure \ref{tab:exp1_results} shows the average results for the metrics. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much more significant proportion of 4 and 5 ratings than the alternatives. This performance may, however, be due to the visual way the comparisons are being performed. (Discussed in detail in Section \ref{sec:exp1_considerations}). 
+Figure \ref{tab:exp1_results} shows the average results for the selected matches explained in Section \ref{sec:exp1_comparison}. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much more significant proportion of 4 and 5 ratings than the alternatives. This performance may, however, be due to the visual way the comparisons are being performed. (Discussed in detail in Section \ref{sec:exp1_considerations}). 
 
 Due to the averages of Metaphone and Phonetic Vectors being so close standard deviation was used as the final decider. As can be seen, Megaphone has a slightly lower $\sigma$ value of that of Phonetic vectors, thus, contributing to the decision to select Metaphone.
 
@@ -243,7 +247,7 @@ In conclusion, all related literature had much lower attack success rates that t
 
 \section{Average number of near-collision keys for each metric}
 \label{sec:averagePerms}
-In order to predict the effectiveness of the attack over a wide variety of keys, the number of average near-matches requires computation. Table \ref{tab:average_perm} shows the average keys for each metric. The ``Compute Time'' is the computation time required for a single mid-range (2000MH/s) GPU.
+In order to predict the effectiveness of the attack over a wide variety of keys, the number of average near-collision keys requires computation. Table \ref{tab:average_perm} shows the average number of potential collision keys for each metric. The ``Compute Time'' is the computation time required for a single mid-range (2000MH/s) GPU.
 
 \begin{table}[!h]
     \makebox[\textwidth][c]{
@@ -275,7 +279,7 @@ In order to predict the effectiveness of the attack over a wide variety of keys,
 
         \end{tabular}
     }
-    \caption{Each metric's average near-collision keys}
+    \caption{Each metric's average number of near-collision keys}
     \label{tab:average_perm}
 \end{table}
 

@@ -1,7 +1,7 @@
 
 \begin{adjustbox}{width=\textwidth,height=15cm,keepaspectratio}
   \centering
-  \begin{OpenCLCode}
+  \begin{Code}[OpenCLStyle]
   ___kernel void key_hash(__global uint* finalBlock, 
                        __global uint* currentDigest, 
                        __global bool* bitVector, 
@@ -43,5 +43,5 @@
       outResult[1] = newExponent;
     }
   }
-  \end{OpenCLCode}
+  \end{Code}
 \end{adjustbox}

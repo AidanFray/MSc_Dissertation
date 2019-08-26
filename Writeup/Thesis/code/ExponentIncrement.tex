@@ -1,5 +1,5 @@
 \begin{adjustbox}{width=\textwidth,height=15cm,keepaspectratio}
-\begin{OpenCLCode}
+\begin{Code}[OpenCLStyle]
 ///The exponent is split across two words
 // i.e
 //
@@ -29,5 +29,5 @@ int exponenetMaskRight = (lastByte * 0x1000000) ^
     (lastByteNew * 0x1000000);
 
 W[4] = W[4] ^ exponenetMaskRight;
-\end{OpenCLCode}
+\end{Code}
 \end{adjustbox}
