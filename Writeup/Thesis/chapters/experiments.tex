@@ -4,6 +4,7 @@
 \section{Scallion vs GreenOnion}
 \label{sec:SvG}
 
+\todo{Talk about the exception}
 
 \begin{wraptable}[11]{r}{6cm}
     \centering
@@ -29,7 +30,11 @@
 
 This section compares Scallion and the newly designed GreenOnion ability to search for a large number of potential keys.
 
-Figure \ref{tab:scallion_speed} shows the speed decline as the number of potential keys checked in one go increases for Scallion. Any number of keys over 40 resulted in a crash for Scallion. GreenOnion's speed is almost perfectly consistent. It is slower up until  around 5 keys. This consistency is due to the overhead of the bloom filter; however, as the number of keys increase, the bloom filter's benefits become apparent. In this test, the bloom filter size was kept consistent at exactly 5,000 elements.
+Figure \ref{tab:scallion_speed} shows the speed decline as the number of potential keys checked in one go increases for Scallion. Any number of keys over 40 resulted in a crash for Scallion. This crash is solely due to an  implementation issue.
+
+\todo{Fix implementation issue}
+
+GreenOnion's speed is almost perfectly consistent. It is slower up until  around 5 keys. This consistency is due to the overhead of the bloom filter; however, as the number of keys increase, the bloom filter's benefits become apparent. In this test, the bloom filter size was kept consistent at exactly 5,000 elements.
 
 GreenOnion has been tested to handle more than 1.5 million keys with a slight reduction in performance. This improvement over Scallion is, therefore, substantial.
 
@@ -233,7 +238,7 @@ During this study, the main task was to perform the authentication ceremony a se
 \subsection*{Comparison to alternative literature}
 This section compares the results of the experiment to similar literature.
 
-Work by \textbf{R. Kainda, I. Flechais} and \textbf{A. Roscoe, \textit{et al.}}\cite{kainda2009usability} (previously discussed in Chapter \ref{cha:LiteratureReview}) is the most comparable to this experiment. They were the only study to use exactly 4 words but differed on the size of the dictionary (1024 words) and how a near-match were calculated. Near-matches were a difference in a single word, but without the consideration for similarity, this is the unique aspect considered with this experiment.
+Work by \textbf{R. Kainda, I. Flechais} and \textbf{A. Roscoe}\cite{kainda2009usability} (previously discussed in Chapter \ref{cha:LiteratureReview}) is the most comparable to this experiment. They were the only study to use exactly 4 words but differed on the size of the dictionary (1024 words) and how a near-match were calculated. Near-matches were a difference in a single word, but without the consideration for similarity, this is the unique aspect considered with this experiment.
 
 However, with those aspects in mind attacks on words encoding received an overall success rating of 3.3\%, considerably lower than that of this study. In the worst-case, our simulated attacks achieved almost 3 times as many successes compared to this study.
 

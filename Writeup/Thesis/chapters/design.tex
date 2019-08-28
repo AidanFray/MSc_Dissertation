@@ -7,7 +7,7 @@ This chapter discusses an overview of the proposed designs for elements required
 \label{sec:attackDesign}
 
 The attack on Trustwords involves generating "near-collision" keys. 
-This attempts to provide the base to answer Research Questions \ref{goal:numberOfTrustwords}, \ref{goal:complexity} and \ref{goal:hardwareRequired}.
+This attempts to provide the base to answer Research Questions \ref{goal:numberOfTrustwords} and \ref{goal:complexity}.
 
 Near-collision keys are keys composed of a set of words that are deemed a match by the phonetic similarity metric (See Section \ref{sec:similarity_metric}). 
 
@@ -127,7 +127,7 @@ Another notable alternative solution is that of Caverphone that was designed in 
 
 \section{Design of GreenOnion}
 \label{sec:greenDesign}
-In order to answer Research Questions \ref{goal:complexity} and \ref{goal:hardwareRequired} fully, it is necessary to implement an actual tool to generate actual keys. 
+In order to answer Research Questions \ref{goal:complexity} fully, it is necessary to implement an actual tool to generate actual keys. 
 
 The inspiration for the design of this tool was taken from a tool called Scallion\footnote{\url{https://github.com/lachesis/scallion}}. Scallion was designed by Richard Klafter and Eric Swanson and was used to demonstrate that 32-bit PGP key IDs were insufficient. To keep with the onion-based theme, the proposed tool is called `GreenOnion' and is a re-write of Scallion in C++. This language was chosen due to the well-understood efficiency benefits. The proposed tool differs from Scallion, most notably in its ability to concurrently search for a large number of keys, GreenOnion improves on this substantially. More implementation and experimental details are discussed in later chapters.
 
@@ -138,7 +138,7 @@ To answer some of the research questions, empirical evidence is required and, th
 
 \subsection{Metric performance}
 \label{exp:metric}
-This section answers Research Question \ref{goal:bestMetrics}. To reduce the number of metrics to assess in the later rounds, the performance of similarity metrics required comparison. The thinning out of metrics is required due to limited resources. Therefore, possible further work could involve repeating this work with a much more varied selection of metrics. As explained in a previous section (See Section \ref{sec:metrics}) the chosen metrics up for assessment are Soundex, Metaphone, NYSIIS, Levenshtein and Phonetic vectors.
+This section answers Research Question \ref{goal:phoneticSimilarity}. To reduce the number of metrics to assess in the later rounds, the performance of similarity metrics required comparison. The thinning out of metrics is required due to limited resources. Therefore, possible further work could involve repeating this work with a much more varied selection of metrics. As explained in a previous section (See Section \ref{sec:metrics}) the chosen metrics up for assessment are Soundex, Metaphone, NYSIIS, Levenshtein and Phonetic vectors.
 
 The design for the experiment involves assessing the quality of the metrics matches by having participants rate them on a scale of 1 to 5.
 
@@ -226,11 +226,10 @@ The first consideration is the way the words are compared. Due to the channel of
 
 Another consideration is the demographics of people accessible on Mechanical Turk. A comprehensive and still active survey run by \textbf{D. Difallah, E. Filatova} and \textbf{P. Ipeirotis}\cite{difallah2018demographics} shows that MTurk workers are younger and have a more substantial household income than that of the US population. This deviation has to be taken into consideration when interpreting the results because it has to potential to introduce a bias.
 
+\newpage
+
 \subsection{Trustword Attacks}
 \label{sec:exp2_design}
-
-\todo{Include explination into how audio is generated}
-
 
 This experiment is designed to be a simulation of the attack proposed in Section \ref{sec:attackDesign}, in an attempt to answer Research Question \ref{goal:attackPercentage}. The experiment will test the simulated matches of three similarity metrics decided by the previous experiment (See Section \ref{sec:metrics}). The overall aim of the experiment is to quantify the success rate of the attack on live participants. The user is presented with the same design as the \pep Android application (See Section \ref{sec:pep}).
 
