@@ -405,7 +405,7 @@ Tanet alAside from this research, there have been further informal implementatio
 \newpage
 \subsubsection*{Pretty Easy Privacy}
 \label{sec:pep}
-A very recent implementation of a word list can be found in Pretty Easy Privacy (\pep) implementation of TrustWords\footnote{https://tools.ietf.org/html/draft-birk-pep-trustwords-03}. \pep is a data encryption system that utilises PGP encryption to provide E2EE on all common channels of communication such as email or SMS. The embedded design principles state that above all the systems should be easy to install, use and understand.
+A very recent implementation of a word list can be found in Pretty Easy Privacy (\pep) implementation of TrustWords\footnote{\url{https://tools.ietf.org/html/draft-birk-pep-trustwords-03}}. \pep is a data encryption system that utilises PGP encryption to provide E2EE on all common channels of communication such as email or SMS. The embedded design principles state that above all the systems should be easy to install, use and understand.
 
 \begin{wrapfigure}{r}{6cm}
     \centering
@@ -418,7 +418,7 @@ A very recent implementation of a word list can be found in Pretty Easy Privacy 
 
 The unique aspect of TrustWords is its mapping of a single word to 16-bits. If compared to alternative literature, this is the highest number of bits-per-word seen. Full mappings (no duplication of words) would, therefore, require $2^{16}$ words in the dictionary. This number of words is arguably higher than most users' vocabulary. This deviation from the norm has not been currently backed up by research. 
 
-\begin{wrapfigure}{l}{5cm}
+\begin{wrapfigure}[11]{l}{5cm}
     \centering
     \begin{BVerbatim}
     [...]
@@ -430,11 +430,13 @@ The unique aspect of TrustWords is its mapping of a single word to 16-bits. If c
 52132 AAREN
     [...]
     \end{BVerbatim}
-    \caption{Re-mapping position in Trustword dictionary}
+    \caption{Re-mapping position}
     \label{fig:remap}
 \end{wrapfigure}
 
 Alongside the abnormally high number of words, the design choice to exclude slang and profanities from the English Trustword dictionary requires dual-mapping of a section of words. Approximately 13633/65536 (20.8\%) of words are re-mapped in the dictionary, leaving 51903 unique words. The re-mapping looped with the dictionary remaining alphabetical. Figure \ref{fig:remap} shows the position in the dictionary where this occurs.
+
+\newpage
 
 Moreover, the primary RFC documentation remains in a draft stage and states: \textit{``It is for further study, what minimal number of words (or entropy) should be required.''}. These aspects highlight a substantial gap in the current literature.
 
@@ -451,10 +453,9 @@ Research in 2002 by \textbf{Konrad Rieck}\cite{rieck2002fuzzy} is one the first 
 The paper contains an implementation with a ``1.2GHz CPU'' being able to obtain 130,000 H/s (With MD5). In comparison to this, a mid-range Intel i5-3320M CPU can today obtain 111,700,000 MD5 H/s. This imbalance shows that the results obtained from the paper are significantly outdated. However, even with the low hash rate, the author was able to obtain some promising results. Figure~\ref{ref:fuzz} contains the best example used.
 
 \begin{figure}[!h]
-    \begin{center}
-        \verb|TARGET: d6:b7:df:31:aa:55:d2:56:9b:32:71:61:24:08:44:87|
-        \verb|MATCH:  d6:b7:8f:a6:fa:21:0c:0d:7d:0a:fb:9d:30:90:4a:87|
-    \end{center}
+    \centering
+    \verb|TARGET: d6:b7:df:31:aa:55:d2:56:9b:32:71:61:24:08:44:87|
+    \verb|MATCH:  d6:b7:8f:a6:fa:21:0c:0d:7d:0a:fb:9d:30:90:4a:87|
     \caption{Best match obtained after a few minutes of hashing}
     \label{ref:fuzz}
 \end{figure}
