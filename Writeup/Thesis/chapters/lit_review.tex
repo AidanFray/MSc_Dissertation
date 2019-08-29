@@ -9,9 +9,6 @@ The chapter contains the following sections:
     \item \textbf{Project context} \\ 
     Provides the user with the base knowledge required to understand the context and purpose of the following literature review.
     
-    \item \textbf{Definition of terms}\\
-    Specific definitions relevant to the literature review are initially defined.
-    
     \item \textbf{Literature Review} \\
     A review of currently available literature on relevant topics. Recommendations and research gaps are identified and discussed.
 
@@ -289,12 +286,7 @@ This metric allows for a unique set of actions to be performed on the phonetic o
 
 For example, the addition of vectors can be seen in Table \ref{tab:vectorAdd}. This works for any mathematical operation with examples like multiplication allowing the `tinting' words with a theme.
 
-\section{Definition of terms}
-Throughout the paper, various terms are used to define elements of the authentication ceremony relevant to fingerprints verification. Explicit descriptions are, therefore, stated in this section. These are used to remove ambiguity and underlying associations readers may have for the words chosen.
-\\\\
-\textbf{\textit{Method of comparison}} - is the way a user assesses the encoding scheme. The most common example and the one used as default is ``Compare-and-Confirm'' (CaC). CaC, as the name suggests, is the \textit{comparison} of two fingerprints on different devices or mediums that are then \textit{confirmed}. The following sections explain alternative methods of comparisons.
 
-\todo{Phase this section out - make sure to remove from the introduction layout of the section}
 
 \section{Literature Review}
 This section discusses the current research around the proposed topic.
@@ -349,8 +341,10 @@ Alongside this, it was shown in work by \textbf{H. Hsiao \textit{et al.}}\cite{h
 Tables \ref{tab:times} \& \ref{tab:results} contain the accuracy results of all papers assessed; this is to aid in visual comparison. Each paper used a different metric for measuring accuracy. Therefore, all results have been translated into ``overall accuracy.''. For example, if a paper presented "security failures" or "attack success rate" of 5\% the overall accuracy of the scheme is 95\%.
 
 \subsubsection*{Methods of comparison performance}
-Aside 
-from ``Compare-and-Confirm'' (CaC), there is ``Compare-and-Select'' (CaS) and ``Compare-and-Enter'' (CaE). CaS is the method where one device displays the fingerprint, and the other user is provided with several options. The user then has to choose the correct value from the list of candidates. If there is no match, the user must deny the connection attempt. The creation of CaS was due to concerns that CaC would be ``too easy'' for users leading to complacency and errors\cite{uzun2007usability}. The design of CaE is for scenarios where both devices might not have a display, i.e., pairing between a phone and a keyboard. One device displays the checksum. This checksum is then entered into the other device. The first device then compares the entered string and checks for a match.
+
+Method of comparison is the way a user assesses the encoding scheme. The most common example and the one used as default is ``Compare-and-Confirm'' (CaC). CaC, as the name suggests, is the \textit{comparison} of two fingerprints on different devices or mediums that are then \textit{confirmed}. 
+
+Aside from ``Compare-and-Confirm'' (CaC), there is ``Compare-and-Select'' (CaS) and ``Compare-and-Enter'' (CaE). CaS is the method where one device displays the fingerprint, and the other user is provided with several options. The user then has to choose the correct value from the list of candidates. If there is no match, the user must deny the connection attempt. The creation of CaS was due to concerns that CaC would be ``too easy'' for users leading to complacency and errors\cite{uzun2007usability}. The design of CaE is for scenarios where both devices might not have a display, i.e., pairing between a phone and a keyboard. One device displays the checksum. This checksum is then entered into the other device. The first device then compares the entered string and checks for a match.
 
 Research has assessed the performance of these schemes and how they affect the security of the authentication ceremony. The literature agrees on CaC being the best overall scheme to compare fingerprints \cite{tan2017can}\cite{uzun2007usability} with CaS highlighted for its poor security and usability. CaE has had conflicting results. \cite{uzun2007usability} discarded it after one round due to ``poor usability.'' However, \cite{tan2017can} considered it the best method overall for usability and security. These conflicting results, therefore, show polarisation in the results of CaE. However, this could be due to the different overall use-cases of the studies. Validation of results from either study would, therefore, be an area of additional study.
 

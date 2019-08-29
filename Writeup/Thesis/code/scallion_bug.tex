@@ -1,0 +1,11 @@
+\begin{adjustbox}{width=\textwidth,height=15cm,keepaspectratio}
+\begin{Code}[CSharpStyle]
+    CConsole.Write("LoopIteration:{0}  HashCount:{1:0.00}MH  Speed:{2:0.0}MH/s  Runtime:{3}  Predicted:{4}", 
+    loop, 
+    hashes / 1000000.0d, 
+    hashes/gpu_runtime_sw.ElapsedMilliseconds/1000.0d, 
+    gpu_runtime_sw.Elapsed.ToString().Split('.')[0], 
+    parms.ToolConfig.PredictRuntime(hashes * 1000/gpu_runtime_sw.ElapsedMilliseconds)
+);
+\end{Code}
+\end{adjustbox}

@@ -1,0 +1,46 @@
+% ======================================================================== %
+% Defines the highlighting, style and environment for the C#    language
+% ========================================================================%
+
+\lstdefinelanguage{Cs}{
+  keywords={
+      Console,
+      typeof, 
+      new, 
+      true, 
+      false, 
+      catch, 
+      function, 
+      return,
+      null, 
+      catch, 
+      switch, 
+      if, 
+      in, 
+      while, 
+      do, 
+      else, 
+      case, 
+      break,
+      for,
+      void,
+      string,
+      else,
+      vector,
+      bool,
+      int
+    },
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={Write, ToString, Split, ToolConfig, class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\itshape\color{OliveGreen}\ttfamily,
+  stringstyle=\color{Plum}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\defineStyle{CSharpStyle}{Cs}
