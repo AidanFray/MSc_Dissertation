@@ -127,18 +127,18 @@ Another notable alternative solution is that of Caverphone that was designed in 
 
 \section{Design of GreenOnion}
 \label{sec:greenDesign}
-In order to answer Research Questions \ref{goal:complexity} fully, it is necessary to implement an actual tool to generate actual keys. 
+In order to answer Research Questions \ref{goal:complexity} fully, it is necessary to implement a tool to generate working keys. 
 
 The inspiration for the design of this tool was taken from a tool called Scallion\footnote{\url{https://github.com/lachesis/scallion}}. Scallion was designed by Richard Klafter and Eric Swanson and was used to demonstrate that 32-bit PGP key IDs were insufficient. To keep with the onion-based theme, the proposed tool is called `GreenOnion' and is a re-write of Scallion in C++. This language was chosen due to the well-understood efficiency benefits. The proposed tool differs from Scallion, most notably in its ability to concurrently search for a large number of keys, GreenOnion improves on this substantially. More implementation and experimental details are discussed in later chapters.
 
-The tool should take two keys as parameters (Uncontrolled/Controlled) and a chosen similarity metric and produce a list of target keys fingerprints. This list is then used as a search criterion when searching for keys. To utilise the parallel nature of the GPU to compute the hash of a large number of keys, the tool utilises a GPGPU (General-purpose computing on graphics processing units) framework. The chosen framework was OpenCL due to its support for the chosen language (C++) and platform (Linux). OpenCL allows the creation of code chunks referred to as "kernels" to be executed concurrently, this provides a massive speed increase compared to the sequential nature of the CPU. Technical details are explained further in Chapter \ref{cha:Implementation}.
+The tool should take two keys as parameters (Uncontrolled/Controlled) and a chosen similarity metric and produce a list of target key fingerprints. This list is then used as a search criterion when searching for keys. To utilise the parallel nature of the GPU to compute the hash of a large number of keys, the tool utilises a GPGPU (General-purpose computing on graphics processing units) framework. The chosen framework was OpenCL due to its support for the chosen language (C++) and platform (Linux). OpenCL allows the creation of code chunks referred to as "kernels" to be executed concurrently, this provides a massive speed increase compared to the sequential nature of the CPU. Technical details are explained further in Chapter \ref{cha:Implementation}.
 
 \section{Experiment Design}
-To answer some of the research questions, empirical evidence is required and, thus, experiments are required. In this section, the designs and considerations of the chosen experiments are discussed.
+To answer some of the research questions, empirical evidence is required. In this section, the designs and considerations of the chosen experiments are discussed.
 
 \subsection{Metric performance}
 \label{exp:metric}
-This section answers Research Question \ref{goal:phoneticSimilarity}. To reduce the number of metrics to assess in the later rounds, the performance of similarity metrics required comparison. The thinning out of metrics is required due to limited resources. Therefore, possible further work could involve repeating this work with a much more varied selection of metrics. As explained in a previous section (See Section \ref{sec:metrics}) the chosen metrics up for assessment are Soundex, Metaphone, NYSIIS, Levenshtein and Phonetic vectors.
+This section aims to assist answering Research Question \ref{goal:phoneticSimilarity}. To reduce the number of metrics to assess in the later rounds, the performance of similarity metrics required comparison. The thinning out of metrics is required due to limited resources. Therefore, possible further work could involve repeating this work with a much more varied selection of metrics. As explained in a previous section (See Section \ref{sec:metrics}) the chosen metrics up for assessment are Soundex, Metaphone, NYSIIS, Levenshtein and Phonetic vectors.
 
 The design for the experiment involves assessing the quality of the metrics matches by having participants rate them on a scale of 1 (Very different sound) to 5 (Very similar sound).
 
@@ -152,7 +152,7 @@ In the case of Levenshtein values of similarity are discrete due to it being the
 \begin{table}[h!]
     \centering
     \input{tables/design/match_size_leven.tex}
-    \caption{Levenshtein number of matches comparison}
+    \caption{Levenshtein's number of matches comparison}
     \label{tab:matchSize}
 \end{table}
 
@@ -190,7 +190,7 @@ The experiment randomises the order of these comparisons per session alongside a
 \label{sec:exp1_qualitycontrol}
 As the study was being outsourced to Amazon's Mechanical Turk, the requirement to check the quality of results is essential. Therefore, a couple of additions were provided to check a result's validity.
 
-The first was the addition of five "Random matches" questions. These are matches consisting of two random words selected from the dictionary. Therefore, the expected average rating of these words should be close to one. This design allows for a simple check for valid results. If their average is too high, their results are discarded.
+The first was the addition of five "Random matches" questions. These are matches consisting of two random words selected from the dictionary. Therefore, the expected average rating of these words should be close to one. This design allows for a simple check for valid results. If their average rating for Random matches is too high, their results are discarded.
 
 \begin{figure}[h!]
     \centering
@@ -201,7 +201,7 @@ The first was the addition of five "Random matches" questions. These are matches
     \label{fig:exactMatch}
 \end{figure}
 
-Alongside this, was the addition of two questions comparing precisely the same word. As both words are the same, the result should always be a full 5/5 rating, any results without a full rating are discarded. Figure \ref{fig:exactMatch} contains one example of the attention questions used to filter inaccurate results.
+Alongside this, was the addition of two questions comparing precisely the same word. As both words are the same, the result should always be a full 5/5 rating, any results without a full rating are discarded. Figure \ref{fig:exactMatch} contains one example of the attention question used to filter inaccurate results.
 
 The final check to ensure the validity of results is a check for native English fluency. Having non-native English speakers complete the 
 experiment can introduce inconsistencies into the 
@@ -220,7 +220,7 @@ worker.
 \subsubsection{Considerations}
 \label{sec:exp1_considerations}
 
-The first consideration is the way the words are compared. Due to the assumed context of authentication being phone-based, the comparison of words is a mixture of auditory and visual. The user will hear their authentication partner read their set of words (Auditory) and compare to their set of words (Visual). This mixture is because a user needs to match a words sound to the one displayed on their device. This experiment asks users to compare the sound of two words that are visually displayed to them. This visual aspect is the first point of contact between the participant and the question, followed by a mental comparison of the phonetics of the word. Therefore, this initial visual contact has the potential to bias the results of the study. Levenshtein has the potential to be most affected by this due to the matches never being more than one character different, therefore, resulting in very similar-looking words. The alternative method of running this experiment is to get users to compare audio samples of words; this forces the user to compare just the phonetics of the words and not be influenced by the visual aspects of the pair. However, this adds a substantial cost to the operation of the study. Due to the aforementioned lack of resources, the chosen design was decided as most feasible as it is a balance between cost and accuracy. Further work, therefore, could improve by producing more conclusive results on the performance of the metrics by implementing the more accurate but costly alternative.
+The first consideration is the way the words are compared. Due to the assumed context of authentication being phone-based, the comparison of words is a mixture of auditory and visual. The user will hear their authentication partner read their set of words (Auditory) and compare to their set of words (Visual). This experiment asks users to compare the sound of two words that are visually displayed to them. This visual aspect is the first point of contact between the participant and the question, followed by a mental comparison of the phonetics of the word. Therefore, this initial visual contact has the potential to bias the results of the study. Levenshtein has the potential to be most affected by this due to the matches never being more than one character different, therefore, resulting in very similar-looking words. The alternative method of running this experiment is to get users to compare audio samples of words; this forces the user to compare just the phonetics of the words and not be influenced by the visual aspects of the pair. However, this adds a substantial cost to the operation of the study. Due to the aforementioned lack of resources, the chosen design was decided as most feasible as it is a balance between cost and accuracy. Further work, therefore, could improve by producing more conclusive results on the performance of the metrics by implementing the more accurate but costly alternative.
 
 Another consideration is the demographics of people accessible on Mechanical Turk. A comprehensive and still active survey run by \textbf{D. Difallah, E. Filatova} and \textbf{P. Ipeirotis}\cite{difallah2018demographics} shows that MTurk workers are younger and have a more substantial household income than that of the US population. This deviation has to be taken into consideration when interpreting the results because it has to potential to introduce a bias.
 
@@ -235,7 +235,7 @@ Appendix \ref{appendix:trustword_attack} shows the design of the experiments fro
 
 \subsubsection{Design}
 
-Due to the scarcity of attacks in a real-world setting, users are often complacent about their occurrence. Therefore, in this experiment, attacks only occur 30\% of the time. This occurrence is a much higher value than in a real-world setting, but is a balance between resources and realistic design. If the chosen attack rate is too low, many more trials are required to collate a useful number of attack instances, thus, requiring more resources, but with more realism. If, however, the attack rate is too high, less total rounds are required to obtain the target number of attack trails, however, the user will lose their complacency as an attack will be expected. This loss of complacency is undesirable as it does not realistically reflect real life. Furthermore, the first 5 trials of a new experiment is always benign. This inclusion is to ensure users are consistently lulled into of complacency.
+Due to the scarcity of attacks in a real-world setting, users are often complacent about their occurrence. Therefore, in this experiment, attacks only occur 30\% of the time. This occurrence is a much higher value than in a real-world setting, but is a balance between resources and realistic design. If the chosen attack rate is too low, many more trials are required to collate a useful number of attack instances, thus, requiring more resources, but with more realism. If, however, the attack rate is too high, less total rounds are required to obtain the target number of attack trails, however, the user will lose their complacency as an attack will be expected. This loss of complacency is undesirable as it does not realistically reflect real life. Furthermore, the first 5 trials of a new experiment is always benign. This inclusion is to ensure users are consistently lulled into complacency.
 
 Certain keys have higher levels of potential near-collision keys than others due to how certain words are deemed similar by the similarity metric. Therefore, this presents the possibility to have keys with a very low number of possible near-collision keys. The distribution of these keys is explained further in Chapter \ref{cha:Experiments}. Therefore, if random sets of words are chosen with no restraints, there are attacks presented to the user that in a real setting would be infeasible as they are close to a $2^{64}$ attack (4 Words * 16-bits). Therefore, the experiment is designed to sample from a list of "vulnerable" keys. These are keys that have a number of potential near-collision keys that allow computation in a specified timeframe. 
 
@@ -285,11 +285,11 @@ Table \ref{tab:attackReq} contains a summary of the different level of attacks a
 
 \subsubsection{Quality control}
 \label{sec:exp2_quality}
-Like the previous experiment, participants are sourced from MTurk. Therefore, again, quality control is an aspect that requires consideration. As with the previous study, initially screened native speakers are used, alongside the utilisation of the same process to recruit suitable workers. Two metrics are used to detect invalid results: audio-button-clicks and the overall-time. 
+Like the previous experiment, participants are sourced from MTurk. Therefore, again, quality control is an aspect that requires consideration. As with the previous study, initially screened native speakers are used. Alongside this, two metrics are used to detect invalid results: audio-button-clicks and the overall-time. 
 
 Audio-buttons-clicks is the number of times the blue \textit{"Authenticate with partner over the phone"} button in Figure \ref{fig:expID} is clicked. If there are rounds without button clicks, this is a sign of non-attentiveness. The design choice was made to allow non-clicks as an attention check. This design provides a way to detect and discard click-throughs\footnote{Workers that aim to complete the task as fast as possible, with no regard for the quality of responses}. 
 
-Overall-time is as the name suggest a recording of the time taken to complete the entire experiment. If users complete the experiment in an abnormally small amount of time, it can be used as another detection for invalid responses. A benchmark for the time is set by completing the experiment correctly but as fast as possible. Anything below this pace was discarded as anything higher will risk invalid and rushed results.
+Overall-time is as the name suggest a recording of the time taken to complete the entire experiment. If users complete the experiment in an abnormally small amount of time, it can be used as another detection for invalid responses. A benchmark for the time is set by completing the experiment as fast as possible. Anything quicker was discarded as anything faster will risk invalid and rushed results.
 
 \subsubsection{Considerations}
-As with the previous experiment, sampling from a  MTurk demographics results in a collection of participants that are not reflective of the general population. Due to the attack context of this experiment is can be assumed that the youth of the participants contributes to less successful attacks. Therefore, the results generated by this experiment can be loosely assumed as a best-case scenario for the scheme. We predict a high attack success rate if assessed over the general population.
+As with the previous experiment, sampling from a  MTurk demographics results in a collection of participants that are not reflective of the general population. Due to the attack context of this experiment it can be assumed that the youth of the participants contributes to less successful attacks. Therefore, the results generated by this experiment can be loosely assumed as a best-case scenario for the scheme. We predict a high attack success rate if assessed over the general population.

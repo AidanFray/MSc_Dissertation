@@ -51,7 +51,7 @@ Historically fingerprints have been represented as a hexadecimal string, whereon
 
 System designers are, however, moving away from the structure of one fingerprint per identity and are now implementing a combined key. This change is due to the assumed increase in usability. Users now compare a single fingerprint together, instead of two sets separately. In the case of WhatsApp for example, the connection fingerprint of two parties keys is the first 30 bytes of an SHA-512\footnote{5200 iterations} hash of each parties' identity key, these are then both concatenated together to form a single fingerprint\cite{whatsapp2017paper}. This process produces a unique key per communication pair.
 
-Due to the manual comparison of the fingerprint, length, and format is a core design consideration. Prior research has shown that the average human can only hold around 7-digits worth of data in their working memory\cite{miller1956magical}. This shows that comparing complete digests would be cumbersome and error-prone. For example, SHA-1 is 40 hex digits (160-bit) and, therefore, difficult to effectively compare. Therefore, if human interaction is required; there is a need for schemes that work effectively with consideration to human limitations.
+Due to the manual comparison of the fingerprint, length and format are core design considerations. Prior research has shown that the average human can only hold around 7-digits worth of data in their working memory\cite{miller1956magical}. This shows that comparing complete digests would be cumbersome and error-prone. For example, SHA-1 is 40 hex digits (160-bit) and, therefore, difficult to effectively compare. Therefore, if human interaction is required; there is a need for schemes that work effectively with consideration to human limitations.
 
 \newpage
 
@@ -59,7 +59,7 @@ Due to the manual comparison of the fingerprint, length, and format is a core de
 \label{sec:encodingSchemes}
 
 \subsubsection*{Text-based schemes}
-Encoding schemes are the physical method of encoding used to represent the fingerprint. The most common way to represent the fingerprint is alphanumerically with either \textbf{Hexadecimal} (a-f/0-9) or \textbf{Base32} (2-7/A-Z). These encoding schemes are the most popular due to their intuitive simplicity and lack of hardware requirements.
+Encoding schemes are the physical method of encoding used to represent the fingerprint. The most common representation is alphanumerically with either \textbf{Hexadecimal} (0-9/A-F) or \textbf{Base32} (2-7/A-Z). These encoding schemes are the most popular due to their intuitive simplicity and lack of hardware requirements.
 
 Fingerprints can also be encoded using natural language. The fingerprint can be chunked and mapped to a set or words. The same principle can be used to fill placeholders in a pre-defined sentence allowing the simple formation of syntactically accurate English sentences. Moreover, other languages can be used such as Chinese, Japanese or Korean to map fingerprint chunks to characters.
 
@@ -70,7 +70,7 @@ Fingerprints can also be encoded using natural language. The fingerprint can be 
 \end{table}
 
 \subsubsection*{Graphical Schemes}
-Graphical schemes are a potential alternative to text based schemes. They often attempt to visualise small changes in the fingerprint to assist in altering the user to minute changes. This should, therefore, be able to provide increased usability and security. This section will explain the schemes relevant in this paper.
+Graphical schemes are a potential alternative to text-based schemes. They often attempt to visualise small changes in the fingerprint to assist in alerting the user to small changes. This schemes should, therefore, be able to provide increased usability and security. This section will explain the relevant schemes in this paper.
 
 \textbf{Random Art}. Random Art engine\cite{perrig1999hash} takes any length of input and processes it via SHA-1 to produce a digest that is then converted into an image. Figure \ref{fig:randomArt} contains three examples from the Random Art Gallery\footnote{\url{http://www.random-art.org/}}.
 
@@ -91,9 +91,9 @@ Graphical schemes are a potential alternative to text based schemes. They often 
 
 \textbf{Flag}. Flag is a visual hash scheme proposed by \textbf{C. Ellison} and \textbf{S. Dohrmann}\cite{ellison2003public}. Flag consists of four coloured strips with $2^n$ number of possible colours in each strip. 
 
-\textbf{T-Flag}. T-Flag is an attempt to improve on the previously mentioned Flag \cite{lin2010spate}. Improvements include twice the number of coloured blocks with a choice of eight colourblind-proof colours.
+\textbf{T-Flag}. T-Flag is an attempt to improve on the previously mentioned Flag \cite{lin2010spate}. Improvements include twice the number of coloured blocks with a choice of eight colours. The authors claim the choice of colours are ``colourblind proof''.
 
-\textbf{Flag-Ext}. Flag Extended is the proposed scheme assessed in the paper by \textbf{H. Hsiao \textit{et al.}}\cite{hsiao2009study}. Flag extended aims again, to improve on flag by reducing the number of blocks while adding 8 possible shapes.
+\textbf{Flag-Ext}. Flag Extended is the proposed scheme assessed in the paper by \textbf{H. Hsiao \textit{et al.}}\cite{hsiao2009study}. Flag-Ext aims, again, to improve on flag by reducing the number of blocks while adding 8 possible shapes.
 
 Figure \ref{fig:flag} contains an example of each version of Flag discussed.
 
@@ -115,11 +115,11 @@ Figure \ref{fig:flag} contains an example of each version of Flag discussed.
     \label{fig:flag}
 \end{figure}
 
-\textbf{OpenSSH}. OpenSSH visual host key is an ASCII based graphical scheme used in MiTM detection when connecting to SSH servers. The image is generated by movement of the marker across a grid. Every 2-bits of the generated MD5 hash defines the diagonal direction of movement. For example, if the first 2-bits are \verb|11| the marker will move South East. The different characters are determined by the number of times the marker is present in that index, for example, if the maker is present on a square 4 times the character will be an equals sign (\verb|=|).
+\textbf{OpenSSH}. OpenSSH Visual Host Key is an ASCII based graphical scheme used in MiTM detection when connecting to SSH servers. The image is generated by movement of the central marker across a grid. Every 2-bits of the generated MD5 hash defines the diagonal direction of movement. For example, if the first 2-bits are \verb|11| the marker will move South East. The different characters are determined by the number of times the marker is present in that index, for example, if the maker is present on a square 4 times the character will be an equals sign (\verb|=|).
 
-\textbf{Unicorns}\footnote{https://unicornify.pictures/}. Unicorns can be considered an example of an ``Avatar'' graphical scheme. The provided hash changes aspects of the image such as background colour, horn length and colour of the Unicorn's mane.
+\textbf{Unicorns}\footnote{\url{https://unicornify.pictures/}}. Unicorns can be considered an example of an ``Avatar'' graphical scheme. The provided hash changes aspects of the image such as background colour, horn length and colour of the Unicorn's mane.
 
-\textbf{Vash}\footnote{https://github.com/thevash/vash}. Vash is similar to that of unicorns where the hash determines certain characteristics of the image. Vash claims to have $\approx 5,438$ bits of entropy.
+\textbf{Vash}\footnote{\url{https://github.com/thevash/vash}}. Vash is similar to that of unicorns where the hash determines certain characteristics of the image. Vash claims to have $\approx 5,438$ bits of entropy.
 
 \begin{figure}[h!]
     \centering
@@ -138,11 +138,11 @@ Figure \ref{fig:flag} contains an example of each version of Flag discussed.
     \caption{Examples of alternative graphical encoding schemes}
 \end{figure}
 
-Research in this area has taken these various encoding schemes and compared their fallibility to impersonated attacks. The main elements of comparison have been the ``accuracy of attack detection" and ``time to compare." In this paper, these are considered the metrics of ``security'' and ``usability,'' respectively.
+Research in this area has taken these various encoding schemes and compared their falibility to impersonated attacks. The main elements of comparison have been the ``accuracy of attack detection" and ``time to compare." In this paper, these are considered the metrics of ``security'' and ``usability,'' respectively.
 
 \subsection{Similarity Metrics}
 \label{sec:similarity_metric}
-A similarity metric is an algorithm designed to determine if two words are phonetically a match. For example, the words "THEIR" and "THERE" is a match, whereas the words "DARK" and "PRINCIPLE" are not phonetically matching. This section provides a base explanation of important phonetic algorithms.
+A similarity metric is an algorithm designed to determine if two words are phonetically a match. For example, the words "THEIR" and "THERE" is a match, whereas the words "DARK" and "PRINCIPLE" are not phonetically matching. This section provides a base explanation of important phonetic algorithms relevant in this project.
 
 \subsubsection*{Soundex}
 \label{sec:soundex}
@@ -181,7 +181,7 @@ Further issues posed in \cite{patman2001soundex} are discussed below and show th
 
 \subsubsection*{NYSIIS}
 \label{sec:nysiis}
-The New York State Identification and Intelligence System (NYSIIS) phonetic code was created for use matching the phonetics of American names. The motivation for it's inception was mostly due to the presence of Hispanic names in the American based databases (this was an aspect Soundex was known to have low accuracy with). 
+The New York State Identification and Intelligence System (NYSIIS) phonetic code was created for the phonetic matching of American names. The motivation for its inception was mostly due to the presence of Hispanic names in the American based databases (this was an aspect Soundex was known to have low accuracy with). 
 
 It also allows for variable-length codes and, thus, allows the applicability of the application to increase due to it not confronting the limited code issue of Soundex. It was in use right up util the end of 1998 within various US Government departments.
 
@@ -287,7 +287,7 @@ This metric allows for a unique set of actions to be performed on the phonetic o
     \label{tab:vectorAdd}
 \end{table}
 
-For example, the addition of vectors can be seen in Table \ref{tab:vectorAdd}. This works for any mathematical operation with examples like multiplication allowing the `tinting' words with a theme.
+For example, the addition of vectors can be seen in Table \ref{tab:vectorAdd}. This works for any mathematical operation with examples like multiplication allowing the `tinting' of words with a phonetical theme.
 
 
 
@@ -324,11 +324,11 @@ Aside from textual representations were graphical schemes. As explained in Secti
 \end{table}
 \\
 In terms of usability of graphical schemes, the literature concurred on their high usability. The comparison speed of these schemes were all among the quickest (See Table \ref{tab:times} for an overview of timings). Other work also indirectly agreed with graphical encodings having significantly quicker comparison times compared to non-graphical schemes \cite{dechand2016empirical, kainda2009usability}.
-In terms of research into the performance of graphical schemes, the literature does not contain an extensive review with literature only containing two papers. There is also no overlap in the schemes assessed with each paper reviewing a unique set. This area is, therefore, a promising candidate for further research.
+In terms of research into the performance of graphical schemes, the literature does not contain an extensive review with only two papers available. There is also no overlap in the schemes assessed with each paper reviewing a unique set. This area is, therefore, a promising candidate for further research.
 
-One unique paper in this research area was the work by \textbf{M. Shirvanian, N. Saxena and J. J. George}\cite{shirvanian2017pitfalls} produced in the context of secure messaging pairing. This paper was unique for several reasons. First was to consideration for ``remote-vs-proximity'' pairing where this is the first consideration of this aspect found in the literature. There is room for further research to compare encoding schemes in the context of ``remote-vs-proximity.'' Another unique aspect was the end-to-end encryption context of the study.
+One unique paper in this research area was the work by \textbf{M. Shirvanian, N. Saxena and J. J. George}\cite{shirvanian2017pitfalls} produced in the context of secure messaging pairing. This paper was unique for several reasons. First was the consideration for ``remote-vs-proximity'' pairing where this is the first consideration of this aspect found in the literature. There is room for further research to compare encoding schemes in the context of ``remote-vs-proximity.'' Another unique aspect was the end-to-end encryption context of the study.
 
-The findings from the paper showed a high false-negative rate for all the schemes. This consideration is also missing from the literature. Alongside this, results for usability were lower in a remote setting for all the schemes. The author, however, comments on the expected nature of this result.\\
+The findings from the paper showed a high false-negative rate for all the schemes in a remote setting. This consideration is also missing from the literature. Alongside this, results for usability were lower in a remote setting for all the schemes. The author, however, comments on the expected nature of this result.\\
 Images were identified as being the most secure method of authentication in the remote setting but voted as the method with the worst usability. This conclusion is highly inconsistent with all other work in this area. However, this could be due to the unique setting of remote verification, resulting in distinct results from user studies. Without further work in this area, it is difficult to validate these results conclusively.
 
 Alongside this, it was shown in work by \textbf{H. Hsiao \textit{et al.}}\cite{hsiao2009study} that age and gender do not affect the accuracy of the scheme. However, younger participants were considerably faster. Furthermore, findings also showed that language comprehension helped in discerning small differences between schemes encoded in Chinese, Japanese, Korean, or English. Subsequently, knowledge of the language did not assist in differentiating more significant changes in the schemes as these had high accuracy regardless. These were unique considerations. Further work could aim to corroborate these conclusions.
@@ -349,7 +349,7 @@ Tables \ref{tab:times} \& \ref{tab:results} contain the accuracy results of all 
 
 \subsubsection*{Methods of comparison performance}
 
-Method of comparison is the way a user assesses the encoding scheme. The most common example and the one used as default is ``Compare-and-Confirm'' (CaC). CaC, as the name suggests, is the \textit{comparison} of two fingerprints on different devices or mediums that are then \textit{confirmed}. 
+Method of comparison is the way a user compares the encoding schemes output. The most common example and the one used as default is ``Compare-and-Confirm'' (CaC). CaC, as the name suggests, is the \textit{comparison} of two fingerprints on different devices or mediums that are then \textit{confirmed}. 
 
 Aside from ``Compare-and-Confirm'' (CaC), there is ``Compare-and-Select'' (CaS) and ``Compare-and-Enter'' (CaE). CaS is the method where one device displays the fingerprint, and the other user is provided with several options. The user then has to choose the correct value from the list of candidates. If there is no match, the user must deny the connection attempt. The creation of CaS was due to concerns that CaC would be ``too easy'' for users leading to complacency and errors\cite{uzun2007usability}. The design of CaE is for scenarios where both devices might not have a display, i.e., pairing between a phone and a keyboard. One device displays the checksum. This checksum is then entered into the other device. The first device then compares the entered string and checks for a match.
 
@@ -370,7 +370,7 @@ One consideration of note is that made by \textbf{S. Dechand \textit{et al.}}\ci
 
 One glaring issue with the demographical health of the study by \textbf{E. Uzun, K. Karvonen} and \textbf{N. Asokan}\cite{uzun2007usability} is the use of two entirely different groups of participants. Not only were their demographics different, but they were from different countries (America and Finland). Different cultures contain inherent biases and assumptions. Changes were made pragmatically regarding the results from the first round of 40 participants. These were then re-assessed, alongside the direct comparison of results. This aspect casts vast doubts on the validity of the results with no consideration made by the authors to control external factors that may affect the performance of the method of comparison.
 
-Hexadecimal and numerical schemes were not included as encoding schemes in work by \textbf{H. Hsiao \textit{et al.}}\cite{hsiao2009study} (some of the most widespread encoding schemes). The justification was the schemes similarities to Base32  alongside "well-known deficiencies". This point was provided with no further justification or quantified. Moreover, it is also inconsistent with available research, for example, in \textit{``Empirical Study of Textual Key-Fingerprint Representations''}\cite{dechand2016empirical} it was shown numerical representations performed significantly better than that of Base32.
+Hexadecimal and numerical schemes were not included as encoding schemes in work by \textbf{H. Hsiao \textit{et al.}}\cite{hsiao2009study} (some of the most widespread encoding schemes). The justification was the schemes similarities to Base32  alongside "well-known deficiencies". This point was provided with no further justification. Moreover, it is also inconsistent with available research, for example, in \textit{``Empirical Study of Textual Key-Fingerprint Representations''}\cite{dechand2016empirical} it was shown numerical representations performed significantly better than that of Base32.
 
 \begin{table}[h!]
     \centering
@@ -388,15 +388,15 @@ Table \ref{tab:attacker} has been provided to compare the different aspects of t
 \subsubsection*{Conclusion}
 Overall, this review has identified several key areas suitable for further work.
 The first is the performance assessment of graphical encoding schemes. Recreation of pre-existing results from \cite{hsiao2009study}\cite{tan2017can} is required to corroborate current conclusions and validate results.
-Another gap in the research is the consideration into the utilisation of encoding schemes in realistic conditions, i.e. ``remove vs proximity." This topic was initially covered by \cite{shirvanian2017pitfalls}, but their scope was limited. Further work, therefore, could increase the scope and touch upon a large number of schemes in these settings. The final aspect for further work is the limited consideration into the feasibility of attacks on encoding schemes. All of the papers assessed simulated attacks and had minimal consideration for the execution of these attacks. Therefore, further work could delve
+Another gap in the research is the consideration into the utilisation of encoding schemes in realistic conditions, i.e. ``remove vs proximity." This topic was initially covered by \cite{shirvanian2017pitfalls}, but their scope was limited. Further work, therefore, could increase the scope and touch upon a large number of schemes in these settings. The final aspect for further work is the limited consideration into the feasibility of attacks on encoding schemes. All of the papers assessed simulated attacks and had minimal consideration for their execution. Therefore, further work could delve
 into the implementation and feasibility of such attacks.
 
 \subsection{Encoding schemes}
-Another area of research is investigations into the actual physical encodings of the hash digest. This section discusses the current research on the creation and security of actual encoding schemes. The technical details of the operation of the schemes are outside the scope of this literature review. Therefore, minimal attention is allocated to these details.
+Another area of research is investigations into the actual physical encodings of the hash digest. This section discusses the current research on the creation and security of actual encoding schemes. The technical and operation details are outside the scope of this literature review. Therefore, minimal attention is allocated to these areas.
 
 Some of the oldest preliminary work into visual encoding schemes is by \textbf{A. Perrig} and \textbf{D. Song}\cite{perrig1999hash} in the creation of their scheme ``Random Art" in 1999. The motivation for creating such a scheme was the perceived flaws in the ways humans verify and compare written information. As mentioned in previous sections, visual encoding schemes have been shown to have mixed success, with low security being one of their most alarming flaws. This research laid the foundation for further work in analysing the security of visual encoding schemes.
 
-Further research into the creation of unique visual hash schemes has been performed by \textbf{C. Ellison} and \textbf{S. Dohrmann}\cite{ellison2003public} (Flag), \textbf{Yue-Hsun Lin \textit{et al.}}\cite{lin2010spate} (T-Flag) and work by \textbf{M.  Olembo \textit{et al.}}\cite{olembo2013developing}. Each publication has provided a new way  to represent a key fingerprint visually. Alongside the academic literature, there are informally presented methods of visual fingerprints such as Unicorns\footnote{https://unicornify.pictures/} and Robots\footnote{https://github.com/e1ven/Robohash}. This list is by no means exhaustive but is used to depict the amount of research and work invested into graphical hash representations.
+Further research into the creation of unique visual hash schemes has been performed by \textbf{C. Ellison} and \textbf{S. Dohrmann}\cite{ellison2003public} (Flag), \textbf{Yue-Hsun Lin \textit{et al.}}\cite{lin2010spate} (T-Flag) and work by \textbf{M.  Olembo \textit{et al.}}\cite{olembo2013developing}. Each publication has provided a new way  to represent a key fingerprint visually. Alongside the academic literature, there are informally presented methods of visual fingerprints such as Unicorns\footnote{\url{https://unicornify.pictures/}} and Robots\footnote{\url{https://github.com/e1ven/Robohash}}. This list is by no means exhaustive but is used to depict the amount of research and work invested into graphical hash representations.
 
 One paper of note is the preliminary work performed by \textbf{D Loss \textit{et al.}}\cite{loss2009drunken} in their \textit{``An analysis of the OpenSSH fingerprint visualisation algorithm''} where  they aimed to spur on further research with their initial findings into the security of the OpenSSH scheme. The authors claim that the use of the algorithm in OpenSSH is only heuristically justified, and a more formal proof is required.\\
 The paper proposed several ways to generate similar fingerprints. The methods proposed were: Naive brute force, Graph Theory, and brute force of a full visual set. They were only able to produce only initial results and have proposed a large amount of potential further work. Since the paper's publication in 2009, there seems to have been no research building on the work of the authors.
@@ -407,10 +407,10 @@ A more specific subsection of textual fingerprints is the use of words and sente
 
 Overall the paper provides a foundation for formalising the creation of effective wordlists. A limitation is the lack of empirical data gathered on the performance. However, this was later evaluated in work by \textbf{S. Dechand \textit{et al.}}\cite{dechand2016empirical} and shown to be an effective encoding scheme.
 
-Other research of note is work by \textbf{M. Goodrich \textit{et al.}}\cite{goodrich2006loud} called \textit{Loud and Clear: Human-Verifiable Authentication Based on Audio}. As the name suggests, the authors were researching ways to improve current methods of secure device pairing. The unique aspect of this work is the use of a Text-to-Speech system reading out syntactically correct English sentences. MadLibs\footnote{https://en.wikipedia.org/wiki/Mad\_Libs} was the base for these sentences. MadLibs is where static placeholders are replaced with a list potential words.\\
+Other research of note is work by \textbf{M. Goodrich \textit{et al.}}\cite{goodrich2006loud} called \textit{Loud and Clear: Human-Verifiable Authentication Based on Audio}. As the name suggests, the authors were researching ways to improve current methods of secure device pairing. The unique aspect of this work is the use of a Text-to-Speech system reading out syntactically correct English sentences. MadLibs\footnote{\url{https://en.wikipedia.org/wiki/Mad\_Libs}} was the base for these sentences. MadLibs is where static placeholders are replaced with a member from a list of potential words.\\
 This work is an extension to work performed by \textbf{Juola} and \textbf{Zimmermann}\cite{juola1996whole} as they aimed to emulate the techniques used in PGPfone. The paper's findings are limited by the lack of empirical data backing up claims made by the author the performance of the system, and security is only theoretically assessed.
 
-Tanet alAside from this research, there have been further informal implementations of fingerprint encodings. The first being by \textbf{Michael Rogers}\footnote{https://github.com/akwizgran/basic-english}. Rogers' implementation is a program designed to map fingerprints to pseudo-random poems. This implementation was again, empirically evaluated by \textbf{S. Dechand \textit{et al.}}\cite{dechand2016empirical}. Ealier work by \textbf{N. Haller} with the S/KEY\cite{haller1995s} shows the implementation of a system designed to represent a hash as a series of six short words. However, this system is designed for a one-time-password purpose and only provides word mappings for basic human usability of the password and not within a fingerprint verification context. Therefore, the wordlist has not been designed with pronounceability in mind.
+Aside from this research, there have been further informal implementations of fingerprint encodings. The first being by \textbf{Michael Rogers}\footnote{\url{https://github.com/akwizgran/basic-english}}. Rogers' implementation is a program designed to map fingerprints to pseudo-random poems. This implementation was again, empirically evaluated by \textbf{S. Dechand \textit{et al.}}\cite{dechand2016empirical}. Earlier work by \textbf{N. Haller} with the S/KEY\cite{haller1995s} shows the implementation of a system designed to represent a hash as a series of six short words. However, this system is designed for a one-time-password purpose and only provides word mappings for basic human usability of the password and not within a fingerprint verification context. Therefore, the wordlist has not been designed with pronounceability in mind.
 
 \newpage
 \subsubsection*{Pretty Easy Privacy}
@@ -444,7 +444,7 @@ The unique aspect of TrustWords is its mapping of a single word to 16-bits. If c
     \label{fig:remap}
 \end{wrapfigure}
 
-Alongside the abnormally high number of words, the design choice to exclude slang and profanities from the English Trustword dictionary requires dual-mapping of a section of words. Approximately 13633/65536 (20.8\%) of words are re-mapped in the dictionary, leaving 51903 unique words. The re-mapping looped with the dictionary remaining alphabetical. Figure \ref{fig:remap} shows the position in the dictionary where this occurs.
+Alongside the abnormally high number of words, the design choice to exclude slang and profanities from the English Trustword dictionary requires dual-mapping of a section of words. Approximately 13633/65536 (20.8\%) of words are re-mapped in the dictionary, leaving 51903 unique words. The re-mapping is performed on a alphabetical loop. Figure \ref{fig:remap} shows the position in the dictionary where this occurs.
 
 \newpage
 
@@ -456,7 +456,7 @@ In conclusion to this topic, the current research has primarily focused on the r
 \cite{juola1996whole} and \textbf{M. Goodrich \textit{et al.}}\cite{goodrich2006loud} providing meaningful research to build upon in terms of word and sentence based encodings. The fragmentation of this research leaves room for further work into this topic area. Alongside this, findings from the previous section's research show that human language based encodings provided the best usability and, therefore, should be a target for further research looking to improve upon their security and usability.
 
 \subsection{Attacks on encoding schemes}
-This area of research studies ways to physically execute attacks on fingerprint encoding schemes. This topic differs from previously examined work due to papers discussing the performance and fallibility of encoding schemes simulated the attack without consideration for how the attack execution. Research in this area is scant, with lots of research attention on security of Man-in-the-Middle (MITM) attacks and not the encoding schemes themselves.
+This area of research studies ways to physically execute attacks on fingerprint encoding schemes. This topic differs from previously examined work due to a central focus on the implementation details of an attack. Previous work discussed has only simulated the result of respective attacks. Research in this area is scant, with lots of research focusing on the security and prevention of Man-in-the-Middle (MITM) attacks.
 
 Research in 2002 by \textbf{Konrad Rieck}\cite{rieck2002fuzzy} is one the first formalisation of attacks on fingerprint representations. The paper titled \textit{``Fuzzy Fingerprints Attacking Vulnerabilities in the Human Brain''} aimed to look into ways users check hexadecimal encoded OpenSSH fingerprint representations. The author created an elegant way to `weight' essential chunks of the digest. The bytes furthest to the right and left of the digests provided the highest weight. This technique provides a way to score digests and determine the best partial collisions found. For example, with the target fingerprint: \verb|9F23| and partial match \verb|9313| is given a score of 45\% even though only two characters are matching.
 
@@ -480,9 +480,9 @@ Phones''}. Further research in the area of ``human voice impersonation'' has rec
 In this paper, the authors develop a way to 
 impersonate users when authenticating 
 Short-authentication-Strings (SAS) in the pairing of 
-Crypto-phones. To achieve this impersonating they propose 
+Crypto-phones. To achieve this impersonation they propose 
 two methods: ``Short voice re-ordering attack'' where an 
-arbitrary SAS string is recreated by re-ordering snipped 
+arbitrary SAS string is recreated by re-ordering voice snippets 
 obtained from eavesdropping a previous connection
 and ``Short voice morphing attacks'' whereby the use of 
 previously eavesdropped audio snippets the attacker can
@@ -501,14 +501,14 @@ replacing the victim, performed with an $\sim$18\% success rate. Morphing gained
 One of the most significant limitations addressed by the authors  was the reduction in success rates as the size of the authentication string grew. The morphing and re-ordering  attacks become increasingly ineffective as the user had more time to detect imperfections. This aspect is not quantified by the author and the extent of this degradation is never empirically discussed. Therefore, the results from this study are only effective and applicable in a SAS context.
 
 \subsubsection*{Topic Conclusion}
-Overall the literature for this subtopic remains sparse and incomplete. Further suggested work could look into the feasibility of generating partial collisions for all textual representations alongside quantified effectiveness on users. With the possibility to concentrate on a few selected implementations. The work would aim to focus on the various physical methods used and their feasibility. This is one area the previous literature has failed to cover and has only theoretically quantified attacker strength without consideration for the actual real-world cost of these attacks.
+Overall the literature for this subtopic remains sparse and incomplete. Further suggested work could look into the feasibility of generating partial collisions for all textual representations alongside quantified effectiveness on users. With the possibility to concentrate on a few selected implementations. The work would aim to focus on the various physical methods used and their feasibility. This is one area the previous literature has failed to cover and has only theoretically quantified attacker strength without consideration for the actual real-world cost.
 
 \section{Overall Summary}
-In summary of the literature gaps areas discovered; encoding scheme performance requires further work in the performance of all graphical schemes to back up the results made by other work. Furthermore, there is a gap with the assessment of encoding schemes in the context of "remote-vs-proximity" first proposed by \textbf{M. Shirvanian, N. Saxena} and \textbf{J. J. George}\cite{shirvanian2017pitfalls} as it would arguably provide a better simulation of real-world scenarios.
+In summary of the literature gaps discovered; encoding scheme performance requires further work focusing on all graphical schemes to corroborate results made by other work. Furthermore, there is a gap with the assessment of encoding schemes in the context of "remote-vs-proximity" first proposed by \textbf{M. Shirvanian, N. Saxena} and \textbf{J. J. George}\cite{shirvanian2017pitfalls} as it would arguably provide a better simulation of real-world scenarios.
 
 In the context of human demographics and the way they alter the performance of the schemes; further research is required into how the fluency of languages affects authentication ceremony. This further work would be a continuation of the initial work by \textbf{H. Hsiao \textit{et al.}}\cite{hsiao2009study} and could allow the creation of schemes that are better suited to specific languages.
-Alongside this, there is a research gap in the investigation of how mental impairments affect the performance. This aspect is useful due to the number of potential users being affected due to systems not being designed with them in mind. For example, 7\% of the population have been identified as having dyslexic tendencies\cite{peterson2012developmental}. This fact means that with a UK population of around 63,000,000\footnote{From the 2011 Census collated by the Office for National Statistics}  4,410,000 people could benefit from encoding schemes designed to work well with dyslexia. Dyslexia, however, is only one of many impairments that could affect a scheme's performance, thus further contributing to the substantial effect further work could have on this area.
+Alongside this, there is a research gap in the investigation of how mental impairments affect a schemes performance. This aspect is useful due to the number of potential users being affected. For example, 7\% of the population have been identified as having dyslexic tendencies\cite{peterson2012developmental}. This fact means that with a UK population of around 63,000,000\footnote{From the 2011 Census collated by the Office for National Statistics}  4,410,000 people could benefit from encoding schemes designed to work well with dyslexia. Dyslexia, however, is only one of many impairments that could affect a scheme's performance, thus, contributing to the substantial effect further work could have on this area.
 
-Other possible large areas for consideration is the lacks of direct consideration for attack strength when assessing the vulnerability of encoding schemes. Issues included the previously discussed wide range of attack strength ($2^{28}$ - $2^{242}$) alongside the lack of consideration at all from the majority of papers. Moreover, the complete lack of computation and storage complexity considerations means this is a prime area for further research as it would improve the applicability of results.
+Other possible large areas for consideration is the lack of direct consideration for attack strength when assessing the vulnerability of encoding schemes. Issues included the previously discussed wide range of attack strength ($2^{28}$ - $2^{242}$) alongside the lack of consideration at all from the majority of papers. Moreover, the complete lack of computation and storage complexity considerations means this is a prime area for further research as it would improve the applicability of results.
 
 The final significant research gap identified is the lack of justification for the newly created Trustwords. Abnormal design choices (16-bit per word) and its recent creation alongside the shown effectiveness of language-based encodings, such as words makes this a promising area for further research. 
