@@ -4,12 +4,13 @@
 vvar ALGOS = ["Soundex", "Metaphone", ...];
 var ALGO_SIZES = [763777, 412916, ...];
 
+var QUESTION_PER_ALGO = 5;
+
 function updateForm(ss, form) {
 
   // Obtains a list of the items present on the form
   formItems = form.getItems();
   
-  // Updates the new values
   var algo_index = 0;
   var scale_index = 0;
   for (var i = 0; i < formItems.length; i++)

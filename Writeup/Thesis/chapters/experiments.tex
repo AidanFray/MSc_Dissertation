@@ -89,7 +89,7 @@ As discussed in Section \ref{exp:metric}, the goal of the experiment was to sele
 
 Overall, 104 participants were assessed in this study. Five results were discarded from the set due to either failing the attention questions (See in Section \ref{sec:exp1_qualitycontrol}) or having too low of a fluency rating. This dismissal was a necessary process to improve the health of the results. 
 
-Table \ref{tab:exp1_demo} contains the demographical breakdown of the reduced set of participants. The average ages of the participants were 37.3 years ($\sigma = 11.67$)with a split of 44.4\% of Males to 55.6\% of Females. As can be seen, over 60\% of participants can be considered highly educated (Bachelor’s and up). This level of education is not sufficiently reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US; this again requires consideration due to the broad range of dialects present that may bias the results. Further work could investigate the effect of location and dialect on similar results. 
+Table \ref{tab:exp1_demo} contains the demographical breakdown of the reduced set of participants. The average ages of the participants were 37.3 years ($\sigma = 11.67$) with a split of 44.4\% of Males to 55.6\% of Females. As can be seen, over 60\% of participants can be considered highly educated (Bachelor’s and up). This level of education is not sufficiently reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US; this again requires consideration due to the broad range of dialects present that may bias the results. Further work could investigate the effect of location and dialect on similar results. 
 
 \begin{wraptable}[11]{r}{8cm}
     \centering
@@ -111,7 +111,7 @@ Table \ref{tab:exp1_demo} contains the demographical breakdown of the reduced se
 \end{wraptable}
 
 
-Figure \ref{tab:exp1_results} shows the average results for the selected matches explained in Section \ref{sec:exp1_comparison}. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much more significant proportion of 4 and 5 ratings than the alternatives. This performance may, however, be due to the visual way the comparisons are being performed. (Discussed in detail in Section \ref{sec:exp1_considerations}). 
+Figure \ref{tab:exp1_results} shows the average results for the selected matches explained in Section \ref{sec:exp1_comparison}. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much more significant proportion of 4 and 5 ratings than the alternatives. This performance may, however, be due to the visual way the comparisons are performed. (Discussed in detail in Section \ref{sec:exp1_considerations}). 
 
 Due to the averages of Metaphone and Phonetic Vectors being so close standard deviation was used as the final decider. As can be seen, Megaphone has a slightly lower $\sigma$ value of that of Phonetic vectors, thus, contributing to the decision to select Metaphone.
 
@@ -160,7 +160,7 @@ Overall, 435 paid participants recruited via Amazon's MTurk were assessed in thi
     \label{tab:exp2_demo}
 \end{table}
 
-The reduced set of 369 participants had an average age of 36.63 ($\sigma = 11.35$) and consisted of an almost equal split of Male (50.41\%) to Female (49.59\%). Around 62\% of participants had completed a single stage of university (Bachelor and up). This aspect makes this set of participants more educated than the general population. All participants were also sourced from the USA and have rated themselves as fully native English speakers.
+The reduced set of 369 participants had an average age of 36.63 ($\sigma = 11.35$) and consisted of an almost equal split of Male (50.4\%) to Female (49.6\%). Around 62\% of participants had completed a single stage of university (Bachelor and up). This aspect makes this set of participants more educated than the general population. All participants were also sourced from the USA and have rated themselves as fully native English speakers.
 \begin{table}[!h]
     \centering
     \begin{tabular}{|l|l|}
@@ -200,7 +200,7 @@ The reduced set of 369 participants had an average age of 36.63 ($\sigma = 11.35
 As user-agent strings were collected for each participant collations of OS and internet browser versions was made possible. Tables \ref{tab:exp2_browser} and \ref{tab:exp2_os} contain the browser and OS breakdowns,  respectively. Chrome and Windows 10 seem to dominate the proportion of their respective domains alongside the surprisingly large proportion of workers utilizing older versions of Windows such as 7 or 8 (15.81\%).
 
 \subsection*{Results}
-Table \ref{tab:exp2_attacks} contains the break down of results for the experiment. It can be seen that the best metric out of the set was Levenshtein with an overall success of 19.80\%. The best performer, when regarding attack strength, as expected, is the 2 static words. Levenshtein's 2 static attack performed the best overall with a success rate of 32.05\%. The worst performer was Metaphone, with an average of 16.88\% over its three levels of attacks. When comparing the performance of the metrics to the previous experiment the ordering remains the same with Levenshtein, NYSIIS and Metaphone all ranking in the same order.
+Table \ref{tab:exp2_attacks} contains the break down of results for the experiment. It can be seen that the best metric out of the set was Levenshtein with an overall success of 19.80\%. The best performer, when regarding attack strength, as expected, is the \XOOX~attack. Levenshtein's \XOOX~attack performed the best overall with a success rate of 32.05\%. The worst performer was Metaphone, with an average of 16.88\% over its three levels of attacks. When comparing the performance of the metrics to the previous experiment the ordering remains the same with Levenshtein, NYSIIS and Metaphone all ranking in the same order.
 
 \begin{table}
     \makebox[\textwidth][c]{
@@ -211,21 +211,21 @@ Table \ref{tab:exp2_attacks} contains the break down of results for the experime
             \hline
             Levenshtein && 218 & 1101 & 19.8\% \\
             \hline
-            & 0 static   & 34  & 358  & ~~9.5\% \\
-            & 1 static   & 59  & 353  & 16.7\% \\
-            & 2 static   & 125  & 390  & 32.1\% \\
+            & \OOOO   & 34  & 358  & ~~9.5\% \\
+            & \XOOO   & 59  & 353  & 16.7\% \\
+            & \XOOX   & 125  & 390  & 32.1\% \\
             \hline\hline
             Metaphone &&  181 & 1072 & 16.9\% \\
             \hline
-            & 0 static   & 38 & 345 & 11.0\% \\
-            & 1 static   & 57 & 375 & 15.2\% \\
-            & 2 static   & 86 & 352 & 24.4\% \\
+            & \OOOO   & 38 & 345 & 11.0\% \\
+            & \XOOO   & 57 & 375 & 15.2\% \\
+            & \XOOX   & 86 & 352 & 24.4\% \\
             \hline\hline
             NYSIIS &&  209 & 1114 & 18.8\% \\
             \hline
-            & 0 static   & 36 & 385 & ~~9.3\% \\
-            & 1 static   & 72 & 375 & 19.2\% \\
-            & 2 static   & 101 & 354 & 28.5\% \\
+            & \OOOO   & 36 & 385 & ~~9.3\% \\
+            & \XOOO   & 72 & 375 & 19.2\% \\
+            & \XOOX   & 101 & 354 & 28.5\% \\
             \hline\hline
             \textbf{Overall} & & 608 & 3287 & 18.5\% \\
             \hline\hline
@@ -236,7 +236,7 @@ Table \ref{tab:exp2_attacks} contains the break down of results for the experime
 \end{table}
 
 \subsection*{Considerations}
-As previously mentioned, the set of recruited participants are more highly educated than the general population. This. combined with the lower average age, contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skilful interaction with computer-based systems, this, therefore, with the previous assumption in mind means the results of this experiment can be considered a `best case' scenario. The attacks, therefore, would be expected to be more successful on less technical users. This consideration, however, requires further research and possible empirical data to determine the validity of the assumption. 
+As previously mentioned, the set of recruited participants are more highly educated than the general population. This combined with the lower average age, contributes to an inevitable bias being introduced into the data. An assumption can be made that higher education leads to more skilful interaction with computer-based systems, this, therefore, with the previous assumption in mind means the results of this experiment can be considered a `best case' scenario. The attacks, therefore, would be expected to be more successful on less technical users. This consideration, however, requires further research and possible empirical data to determine the validity of the assumption. 
 
 During this study, the main task was to perform the authentication ceremony a set number of times. In the real-world, the ceremony is a secondary task due to it not strictly being required. This aspect, alongside the potential for users to downplay the possibility of attack, leads to the conclusion that the success rates could be much higher in a real-world setting. The assumption is that these results display the success rate for attentive users where they make sure to double-check with their authentication partner multiple times. It is, therefore, assumed that the majority of users aim to complete the task as quickly as possible, if at all.
 
@@ -247,7 +247,7 @@ Work by \textbf{R. Kainda, I. Flechais} and \textbf{A. Roscoe}\cite{kainda2009us
 
 However, with those aspects in mind attacks on words encoding received an overall success rating of 3.3\%, considerably lower than that of this study. In the worst-case, our simulated attacks achieved almost 3 times as many successes compared to this study.
 
-Other relevant work by \textbf{Dechand \textit{el al.}}\cite{dechand2016empirical} also discussed in Chapter \ref{cha:LiteratureReview} assess the success rate of attacks on words. Their experiment is less similar as 14 words per attack were assessed with each participant, where the comparison was performed visually. However, the success was 8.78\%. As 10/14 words were kept static, this result is more comparable to the highest attack strength ``2 static''. This, therefore, leads to another 3 fold improvement in the success rates of our simulated attacks. 
+Other relevant work by \textbf{S. Dechand \textit{el al.}}\cite{dechand2016empirical} also discussed in Chapter \ref{cha:LiteratureReview} assess the success rate of attacks on words. Their experiment is less similar as 14 words per attack were assessed with each participant, where the comparison was performed visually. However, the success was 8.78\%. As 10/14 words were kept static, this result is more comparable to the highest attack strength ``2 static''. This, therefore, leads to another 3 fold improvement in the success rates of our simulated attacks. 
 
 The final relevant paper to compare is that of \textbf{J. Tan \textit{et al.}}\cite{tan2017can}. This paper had the highest number of words assessed with 16 overall. With it assessing the same wordlist and attack strength as the work by \textbf{S. Dechand \textit{et al.}}\cite{dechand2016empirical}, the attack success was 14\% overall. This success rate compared to the highest attack assessed in the experiment results in another sizeable difference.
 
@@ -266,23 +266,23 @@ In order to predict the effectiveness of the attack over a wide variety of keys,
             \hline
             NYSIIS &&& \\
             \hline
-            & 0 static & 1963.07 &  ~~27.19 days \\
-            & 1 static & 448.37 &  119.14 days \\
-            & 2 static & 98.07 &  ~~~~1.49 years \\
+            & \OOOO & 1963.07 &  ~~27.19 days \\
+            & \XOOO & 448.37 &  119.14 days \\
+            & \XOOX & 98.07 &  ~~~~1.49 years \\
             \hline\hline
 
             Metaphone &&& \\
             \hline
-            & 0 static & 27138.78 &  ~~~~1.97 days \\
-            & 1 static & 2822.74 &  ~~18.91 days \\
-            & 2 static & 339.84 &  157.45 days \\
+            & \OOOO & 27138.78 &  ~~~~1.97 days \\
+            & \XOOO & 2822.74 &  ~~18.91 days \\
+            & \XOOX & 339.84 &  157.45 days \\
             \hline\hline
 
             Levenshtein &&& \\
             \hline
-            & 0 static & 293.92 &  182.17 days \\
-            & 1 static & 102.75 &  ~~~~1.43 years \\
-            & 2 static & 35.53 &   ~~~~4.18 years \\
+            & \OOOO & 293.92 &  182.17 days \\
+            & \XOOO & 102.75 &  ~~~~1.43 years \\
+            & \XOOX & 35.53 &   ~~~~4.18 years \\
             \hline\hline
 
         \end{tabular}
@@ -306,17 +306,17 @@ As discussed in the design of the second experiment (See Section \ref{sec:exp2})
             \hline
             \textbf{Attack Type} & \textbf{Metric} & \textbf{Vulnerable \%} \\
             \hline 
-            2 static (152) && \\ 
+            \XOOX~(152) && \\ 
             & Levenshtein & ~~4.295\% \\
             & Metaphone & 24.095\% \\
             & NYSIIS & 10.441\% \\
             \hline\hline
-            1 static (1525) && \\ 
+            \XOOO~(1525) && \\ 
             & Levenshtein & ~~0.827\% \\
             & Metaphone & 15.569\% \\
             & NYSIIS & ~~4.341\% \\
             \hline\hline
-            0 static (15250) && \\ 
+            \OOOO~(15250) && \\ 
             & Levenshtein & ~~0.157\% \\
             & Metaphone & 10.202\% \\
             & NYSIIS & ~~1.824\% \\
@@ -327,11 +327,11 @@ As discussed in the design of the second experiment (See Section \ref{sec:exp2})
     \label{tab:vulnkeys}
 \end{table}
 
-Table \ref{tab:vulnkeys} contains the breakdown of the number of vulnerable keys. The takeaways from this table are the extremely low values for Levenshtein in the higher attacks. This phenomenon is due to the low number of overall matches produced by Levenshtein, meaning Levenshtein is effective in the vast majority of cases. However, the standout metric is Metaphone with a sizeable proportion of vulnerable keys; it was the worst performer when assessed against real users but only by as little as 2\%. If you take into consideration, the number of vulnerable keys detected in the set alongside the average amount of near-collision matches in Table \ref{tab:average_perm} Metaphone appears to be the most usable metric overall.
+Table \ref{tab:vulnkeys} contains the breakdown of the number of vulnerable keys. The takeaways from this table are the extremely low values for Levenshtein in the higher attacks. This phenomenon is due to the low number of overall matches produced by Levenshtein, meaning the metric is not effective in the vast majority of cases. However, the standout metric is Metaphone with a sizeable proportion of vulnerable keys; it was the worst performer when assessed against real users but only by as little as 2\%. If you take into consideration, the number of vulnerable keys detected in the set alongside the average amount of near-collision matches in Table \ref{tab:average_perm} Metaphone appears to be the most usable metric overall.
 
 \section{Generation of keys}
 \label{sec:key_gen}
-In order to demonstrate that the generation of the near-collision keys is not only theoretical, the actual generation of keys was performed using GreenOnion. A random metric was selected from the three carried forward from the first experiment. Alongside this, a random uncontrolled key was generated as the simulated attack target (See Appendix \ref{appendix:uncontrolled_key} for the armor public key). Then for each attack level (0 static, 1 static, 2 static), a key was computed. NYSIIS was chosen as the selected metric. To expedite the process, an initial search was performed for controlled keys that had the highest number of near-collisions; this was due to the demonstrative purpose of this experiment. Producing near-matching keys from key pairs with a very small number of potential matches adds very little to this demonstration. This, however, will result in best-case scenario key computation times.
+In order to demonstrate that the generation of the near-collision keys is not only theoretical, the actual generation was performed using GreenOnion. A random metric was selected from the three carried forward from the first experiment. Alongside this, a random uncontrolled key was generated as the simulated attack target (See Appendix \ref{appendix:uncontrolled_key} for the armor public key). Then for each attack level (\OOOO, \XOOO, \XOOX), a key was computed. NYSIIS was chosen as the selected metric. To expedite the process, an initial search was performed for controlled keys that had the highest number of near-collisions; this was due to the demonstrative purpose of this experiment. Producing near-matching keys from key pairs with a very small number of potential matches adds very little to this demonstration. This, however, will result in best-case scenario key computation times.
 
 \begin{table}[h!]
 
@@ -349,7 +349,7 @@ In order to demonstrate that the generation of the near-collision keys is not on
             \hline
         \end{tabular}
     }
-    \caption{NYSIIS - 0 static}
+    \caption{NYSIIS - OOOO}
     \label{tab:nysiis0}
 
     \makebox[\textwidth][c]{    
@@ -366,7 +366,7 @@ In order to demonstrate that the generation of the near-collision keys is not on
             \hline
         \end{tabular}
     }
-    \caption{NYSIIS - 1 static}
+    \caption{NYSIIS - XOOO}
     \label{tab:nysiis1}
 
     \makebox[\textwidth][c]{
@@ -383,10 +383,10 @@ In order to demonstrate that the generation of the near-collision keys is not on
             \hline
         \end{tabular}
     }
-    \caption{NYSIIS - 2 static}
+    \caption{NYSIIS - XOOX}
     \label{tab:nysiis2}
 \end{table}
 
 Tables \ref{tab:nysiis0}, \ref{tab:nysiis1} and \ref{tab:nysiis2} contain the parameters and results on the computation. Due to the varying availability of resources, each computation has a varying hashing speed. This variation has been normalized by the introduction of the "GPU Day" metric. A GPU day is simply the computation time required to reach the same conclusion on a single 2000 MH/s GPU. 
 
-As can be seen most notably from Table \ref{tab:nysiis2}, the generation of the actual Trustwords differs in only 3 characters making it arguably very similar. When linking this generated key to results of the second experiment (See Section \ref{sec:exp2}) computation of 2.53 days on a single mid-range GPU can achieve around a 28\% success rate when assessed against actual users. Even with the least restricted attack type presented in Table \ref{tab:nysiis0}, the computation of half a day can provide almost a 10\% success rate when attacking users. This results in any user with a single commodity GPU could compute enough keys in less than a week to have a very high probability of fooling an actual user.
+As can be seen most notably from Table \ref{tab:nysiis2}, the generation of the actual Trustwords differs in only 3 characters making it arguably very similar. When linking this generated key to results of the second experiment (See Section \ref{sec:exp2}) computation of 2.53 days on a single mid-range GPU can achieve around a 28\% success rate when assessed against actual users. Even with the least restricted attack type presented in Table \ref{tab:nysiis0}, the computation of half a day can provide almost a 10\% success rate when attacking users. This results in any user with a single commodity GPU could compute enough keys in less than a week to have a very high probability of deceiving an actual user.
