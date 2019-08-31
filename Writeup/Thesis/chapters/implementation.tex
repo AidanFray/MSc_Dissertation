@@ -11,7 +11,7 @@ This section briefly discusses the overall technical implementation of GreenOnio
 GreenOnion is written in C++. This language was chosen due to its efficiency bonuses over other alternative languages.
 The tool begins by generating a 2048-bit RSA key through GPG\footnote{GNU Privacy Guard}. This key is then used to create a hash of all but the final 512-bit block of the key. The final block of the key is left un-hashed due to the presence of the exponent ($e$). This exponent is then incremented to create a new unique key. This technique allows the accelerated generation of new keys due to the reduction in expensive large prime generation. Entropy starvation is an example of a common issue encountered when generating a large number of RSA keys. This process produces valid keys, but with abnormally large exponents, this was deemed suitable due to the short term use-case for these keys. Three bytes are used to represent the exponent giving the potential to create $2^{24} - 1$ extra keys for a single expensive key generation.
 
-All keys including the intermediate hash are loaded on the GPU via an OpenCL kernel. This kernel is designed to hash the final block, obtain the final fingerprint and check if the fingerprint is present in the provided list.
+The intermediate hash is then loaded on the GPU via an OpenCL kernel. This kernel is designed to increment the exponent, hash the final block, obtain the final fingerprint and check if the fingerprint is present in the provided data structure.
 
 \subsubsection{Bloom filter}
 
@@ -49,13 +49,13 @@ The \verb|<EXPONENT_INCREMENTING_CODE>| is explained in the next section. After 
 \end{figure}
 
 Figure \ref{fig:increment} contains the code used to increment the exponent. Due to the exponent being split across two words alongside the limited functionality of OpenCL, bitwise operations are used to increment the exponent. The code utilises the fact that anything XORed with itself becomes zero alongside the fact that XORing a value $a$ with zero provides the result equal to $a$. The code manipulates the position of values by multiplication or division  of base-16 values; these shift the hex value either left or right, respectively. Once it is in position the "Mask" is created by XORing with the original value and the new intended value, this stores the changes required to reach the required values, this then applied to each of the words.
-The \verb|get_global_id| command takes the ID from the currently running thread; this allows a different value to be used for each exponent concurrently
+The \verb|get_global_id| command takes the ID from the currently running thread; this allows a different value to be used for each exponent concurrently.
 
 \newpage
 
 \section{First Experiment}
 \label{sec:exp1_implemtation}
-As discussed in Section \ref{sec:matches} a list of matches were generated for each metric. Figure \ref{fig:trustwordMatch} shows the algorithm designed to compute these lists. It loads the entire Trustword dictionary and works through all combinations of words.
+As discussed in Section \ref{sec:matches}, a list of matches were generated for each metric. Figure \ref{fig:trustwordMatch} shows the algorithm designed to compute these lists. It loads the entire Trustword dictionary and works through all combinations of words.
 
 \begin{figure}[h!]
   \centering
@@ -64,7 +64,7 @@ As discussed in Section \ref{sec:matches} a list of matches were generated for e
   \label{fig:trustwordMatch}
 \end{figure}
 
-Figure \ref{fig:matchExample} further shows the code used in the \verb|leven_similar|. The levenshtein difference is computed and compared to the tolerance discussed in Section \ref{sec:matches}. If this function returns true the match is added to the list.
+Figure \ref{fig:matchExample} further shows the code used in the \verb|leven_similar|. The Levenshtein difference is computed and compared to the tolerance discussed in Section \ref{sec:matches}. If this function returns true the match is added to the list.
 
 \begin{figure}[h!]
 \begin{Code}[CppStyle]
@@ -80,7 +80,7 @@ bbool leven_similar(string word1, string word2)
 
 \newpage
 
-In order to assess and collect data from users for the first experiment (See Section \ref{exp:metric}), Google Forms\footnote{\url{https://www.google.com/forms}} was used to host and design the questionnaire. It provided the functionality to present questions easily and record responses. However, as the design requirement of refreshing questions after each submission was not part of the main applications functionality, an extra solution was required. This problem was solved by Google's App Script\footnote{\url{https://developers.google.com/apps-script/}} service that allows a user to interact with the Form programmatically. This addition allowed the re-sampling of matches  each time a user submitted a response. 
+In order to assess and collect data from users for the first experiment (See Section \ref{exp:metric}), Google Forms\footnote{\url{https://www.google.com/forms}} was used to host and design the questionnaire. It provided the functionality to present questions easily and record responses. However, as the design requirement of refreshing questions after each submission was not part of the main applications functionality, an extra solution was required. This problem was solved by Google's App Script\footnote{\url{https://developers.google.com/apps-script/}} service that allows a user to interact with the Form programmatically. This addition allowed the re-sampling of matches  each time a response is submitted. 
 
 \begin{figure}[!h]
   \centering
