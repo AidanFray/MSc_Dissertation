@@ -1,3 +1,169 @@
 \section{Results}
 
-\lipsum[1]
+
+\subsection{Scallion vs GreenOnion}
+\label{sec:SvG}
+
+This section compares Scallion and the newly designed GreenOnion ability to search for a large number of potential keys.
+
+Figure \ref{tab:scallion_speed} shows the speed decline as the number of concurrently checked potential keys increases. Alongside the results for base version of Scallion is the speed for \textit{Scallion Improved}. This is the same Scallion code but with a fix that reduces the severity of the speed decline. Scallion contained a call in its print statement that became become increasingly expensive as the number of concurrently checked keys increases. Removing this line from the print statement results in a sizeable improvement in speeds as can be seen in Figure \ref{tab:scallion_speed}. This was necessary to include as we believe the improved versions show a better comparison between the design of the two tools. 
+
+\begin{figure}[h!]
+    \centering
+    \input{graphs/speed.tex}
+    \label{tab:scallion_speed}
+    \caption{Speed comparison between Scallion and GreenOnion}
+\end{figure}
+
+GreenOnion's speed is almost perfectly consistent. It is slower up until  around 800 keys. This initial lower speed is due to the overhead of the bloom filter; however, as the number of keys increase, the bloom filter's benefits become apparent. In this test, the bloom filter size was kept consistent at exactly 10,000 elements. 
+
+Scallion was unable to handle anything over 2513 concurrent keys. This was due to the search strings being passed via a command-line argument as a regex string. This number of keys hit the character limit of a Powershell command. GreenOnion, however, has been tested to handle more than 1.5 million keys with a slight reduction in performance. This improvement over Scallion is, therefore, substantial. GreenOnion's code has been made publicly available and can be viewed on GitHub\footnote{\url{https://github.com/AidanFray/GreenOnion}}.
+
+\subsection{Experiment 1 - Metric performance}
+
+The goal of this experiment was to select a set of metrics to be assessed in the subsequent experiment. This section discusses the demographics of participants alongside the subsequent results.
+
+% \subsubsection*{Demographics}
+
+Overall, 104 participants were assessed in this study. Five results were discarded from the set due to either failing the attention questions (See in Section \ref{sec:exp1_qualitycontrol}) or having too low of a fluency rating. This dismissal was a necessary process to improve the health of the results. 
+
+Table \ref{tab:exp1_demo} contains the demographical breakdown of the reduced set of participants. The average ages of the participants were 37.3 years ($\sigma = 11.67$) with a split of 44.4\% of Males to 55.6\% of Females. As can be seen, over 60\% of participants can be considered highly educated (Bachelor’s and up). This level of education is not sufficiently reflective of the general population and therefore, has to be considered when interpreting the results. All participants were sourced from the US; this again requires consideration due to the broad range of dialects present that may bias the results. Further work could investigate the effect of location and dialect on similar results. 
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|ll|}
+        \hline
+        Gender & Male: & 44.4\% \\
+               & Female: & 55.6\% \\
+        \hline
+        Age:   & 18-24: & 10.1\% \\
+               & 25-29: & 20.2\% \\
+               & 30-39: & 31.3\% \\
+               & 40-49: & 21.2\% \\
+               & 50-59: & 12.1\% \\
+               & 60-69: & ~~4.0\% \\ 
+               & 70-79: & ~~1.0\% \\ 
+               
+        \hline
+        Highest Education:  
+        & GCSE:                 & 13.1\% \\
+        & A-Level/O-Level:      & 19.2\% \\
+        & Bachelor's degree:    & 52.5\% \\
+        & Master's degree:      & 13.1\% \\ 
+        & PhD:                  & ~~2.0\%  \\
+        \hline
+
+    \end{tabular}
+    \caption{Participant demographics}
+    \label{tab:exp1_demo}
+\end{table}
+
+Figure \ref{tab:exp1_results} shows the average results for the selected matches.. It can be seen that Levenshtein came out substantially above the rest. The breakdown of the ratings in Figure \ref{fig:exp1_breakdown} also shows Levenshtein's dominance. Levenshtein has a much more significant proportion of 4 and 5 ratings than the alternatives.
+
+Due to the averages of Metaphone and Phonetic Vectors being so close standard deviation was used as the final decider. As can be seen, Megaphone has a slightly lower $\sigma$ value of that of Phonetic vectors, thus, contributing to the decision to select Metaphone.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Metric} & \textbf{Average Rating}  & \textbf{$\sigma$}\\
+        \hline
+        Leven     & 3.66  & 1.15\\
+        NYSIIS    & 2.92 & 1.31\\
+        Metaphone & 2.56 & 1.32\\
+        Phonetic Vec & 2.50 & 1.35\\
+        Soundex & 2.08 & 1.12 \\
+        \hline
+        Random  & 1.16 & 0.46\\
+        \hline
+    \end{tabular}
+    \caption{Average metric performance}
+    \label{tab:exp1_results}
+\end{table}
+
+
+%TODO: Include graphs?
+
+\section{Experiment 2 - Trustword attacks}
+
+\begin{table*}[t]
+    \makebox[\textwidth][c]{
+        \centering
+        \begin{tabular}{|ll|l|l|l|}
+            \hline
+            \textbf{Metric} & & \textbf{Successful Attacks} & \textbf{Total Attacks} & \textbf{Success Rate} \\
+            \hline
+            Levenshtein && 218 & 1101 & 19.8\% \\
+            \hline
+            & \OOOO   & 34  & 358  & ~~9.5\% \\
+            & \XOOO   & 59  & 353  & 16.7\% \\
+            & \XOOX   & 125  & 390  & 32.1\% \\
+            \hline\hline
+            Metaphone &&  181 & 1072 & 16.9\% \\
+            \hline
+            & \OOOO   & 38 & 345 & 11.0\% \\
+            & \XOOO   & 57 & 375 & 15.2\% \\
+            & \XOOX   & 86 & 352 & 24.4\% \\
+            \hline\hline
+            NYSIIS &&  209 & 1114 & 18.8\% \\
+            \hline
+            & \OOOO   & 36 & 385 & ~~9.3\% \\
+            & \XOOO   & 72 & 375 & 19.2\% \\
+            & \XOOX   & 101 & 354 & 28.5\% \\
+            \hline\hline
+            \textbf{Overall} & & 608 & 3287 & 18.5\% \\
+            \hline\hline
+        \end{tabular}
+    }
+    \caption{Success rates for simulated attacks}
+    \label{tab:exp2_attacks}
+\end{table*}
+
+\label{sec:exp2}
+This experiment aims to quantify the success rate of the proposed attack. Design details for this experiment can be seen in Section \ref{sec:exp2_design}. This section presents and discusses the results of the experiment alongside a comparison to relevant literature.
+
+Overall, 435 paid participants recruited via Amazon's MTurk were assessed in this experiment. We excluded 66 results; 7 due to being non-native speakers and 59 were discarded for failing the attention metrics (Discussed in Section \ref{sec:exp2_quality})
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|ll|}
+        \hline
+        Gender & Male: & 50.4\% \\
+               & Female: & 49.6\% \\
+        \hline
+        Age:   & 18-24: & 12.7\% \\ 
+               & 25-29: & 18.2\% \\ 
+               & 30-39: & 37.4\% \\ 
+               & 40-49: & 17.9\% \\ 
+               & 50-59: & ~~8.7\% \\ 
+               & 60-69: & ~~4.3\% \\ 
+               & 70-79: & ~~0.8\% \\ 
+
+        \hline
+        Highest Education:  
+        & GCSE:                 & 13.8\%  \\
+        & A-Level/O-Level:      & 24.1\% \\
+        & Bachelor's degree:    & 51.5\% \\
+        & Master's degree:      & ~~8.4\% \\ 
+        & PhD:                  & ~~2.2\% \\
+        \hline
+
+    \end{tabular}
+    \caption{Participant demographics}
+    \label{tab:exp2_demo}
+\end{table}
+
+The reduced set of 369 participants had an average age of 36.6 ($\sigma = 11.35$) and consisted of an almost equal split of Male (50.4\%) to Female (49.6\%). Around 62\% of participants had completed a single stage of university (Bachelor and up). This aspect makes this set of participants more educated than the general population. All participants were also sourced from the USA and have rated themselves as fully native English speakers.
+
+Table \ref{tab:exp2_attacks} contains the break down of results for the experiment. It can be seen that the best metric out of the set was Levenshtein with an overall success of 19.8\%. The best performer, when regarding attack strength, as expected, is the \XOOX~attack. Levenshtein's \XOOX~attack performed the best overall with a success rate of 32.1\%. The worst performer was Metaphone, with an average of 16.9\% over its three levels of attacks. When comparing the performance of the metrics to the previous experiment, the ordering remains the same with Levenshtein, NYSIIS and Metaphone all ranking in the same order.
+
+\subsection*{Comparison to alternative literature}
+This section compares the results of the experiment to similar literature.
+
+Work by \textbf{R. Kainda, I. Flechais} and \textbf{A. Roscoe}\cite{kainda2009usability}  is the most comparable to this experiment. They were the only study to use exactly 4 words but differed on the size of the dictionary (1024 words) and how a near-match were calculated. Near-matches were a difference in a single word, but without the consideration for similarity, this is the unique aspect considered with this experiment. However, with those aspects in mind attacks on words encoding received an overall success rating of 3.3\%, considerably lower than that of this study. In the worst-case, our simulated attacks achieved almost 3 times as many successes compared to this study.
+
+Other relevant work by \textbf{S. Dechand \textit{el al.}}\cite{dechand2016empirical} assess the success rate of attacks on words. Their experiment is less similar as 14 words per attack were assessed with each participant, where the comparison was performed visually. However, the success was 8.78\%. As 10/14 words were kept static, this result is more comparable to the highest attack strength (\XOOX). This, therefore, leads to another 3 fold improvement in the success rates of our simulated attacks. 
+
+The final relevant paper to compare is that of \textbf{J. Tan \textit{et al.}}\cite{tan2017can}. This paper had the highest number of words assessed with 16 overall. With it assessing the same wordlist and attack strength as the work by \textbf{S. Dechand \textit{et al.}}\cite{dechand2016empirical}, the attack success was 14\% overall. This success rate compared to the highest attack assessed in the experiment results in another sizeable difference.
+
+In conclusion, all related literature had much lower attack success rates that the results presented in this experiment. With all papers using similarly designed wordlists, it highly suggests that the deficiencies in Trustwords are the cause for the substantial increase in attack success. Alongside this, the consideration for similarity when calculating near-collisions could have also resulted in the higher attack success rates. This aspect is also a unique consideration compared to the available literature.

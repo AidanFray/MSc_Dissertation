@@ -1,0 +1,23 @@
+
+\begin{tikzpicture}[every axis plot/.append style={thick}]
+    \begin{axis}[
+        width=\linewidth,
+        % height=5cm,
+        grid=major,
+        xmin=1, xmax=2513,
+        % ymin=0, ymax=100,
+        % x tick label style={rotate=45},
+        % x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+        xlabel=Number of Keys,
+        ylabel=Hashing speed (MH/s)
+        ]
+        \addplot[color=blue] table [x index=0, y index=1, mark=none, search path=data, col sep=comma]{scallion.csv};
+        \addlegendentry{Scallion}
+
+        \addplot[color=red] table [x index=0, y index=1, mark=none, search path=data, col sep=comma]{fscallion.csv};
+        \addlegendentry{Scallion (Improved)}
+        
+        \addplot[color=green] table [x index=0, y index=1, mark=none, search path=data, col sep=comma]{green.csv};
+        \addlegendentry{GreenOnion}	
+     \end{axis}
+\end{tikzpicture}

@@ -1,1 +1,15 @@
 \section{Discussion and Further Work}
+
+\subsection{Further work}
+
+\subsection*{Trustword improvements}
+The first area of proposed work could be recommendations into how to improve Trustwords backed by empirical evidence. We feel the most promising avenue would be the utilisation of Phonetic Vectors unique qualities to identify words of low quality by measuring very low vector distances. For example, present in the dictionary are the words \verb|THERE| and \verb|THEIR|, these could be massively improved upon and could result in a better quality word list. Moreover, utilising the quantification of dissimilarity could be used to create a dictionary of maximized phonetic distance. This phonetically distinct wordlist could then be assessed in a similar way with its success rate quantified against users.
+
+\subsection*{Similar metrics performance}
+Another area of further work is the comprehensive assessment of algorithms used to assess phonetic similarity. The algorithms assessed in this work are a very small proportion of potential options. Thus, further work could assess the performance of metrics against each other to determine the one that works best with human models. A conclusion could be reached by running the improved experiment discussed in Section \ref{exp:metric}, where it could be repeated with an increased number of metrics. Other elements for consideration could be age, location and dialect as variables that affect a metrics performance. 
+
+\subsection*{GreenOnion optimizations}
+A minimal amount of work was allocated to improving the performance of GreenOnion as low-level optimizations are very time-consuming. A project, therefore, could aim to improve on the performance already recorded in this paper. This project could improve the performance of the attack and allow for more effective keys to be computed in less time. 
+
+\subsection{Conclusion}
+Overall, the project has demonstrated a potential attack on \pep's implementation of Trustwords. An attack was proposed that utilised phonetic similarity algorithms to exploit the weaknesses in the Trustword dictionary to generate near-collision keys. To achieve this, a tool was created to compute a massive number of keys concurrently. It was based on a known tool but improved substantially on its key searching performance. The performance of similarity metrics was compared alongside an experiment assessing participants fallibility to the proposed attack. Results showed as much as a 32.05\% success rate for the best attack. The main project aim was to show that the recommend minimum number of four Trustwords was insufficient to provide a basic level of security. We believe we have demonstrated that four Trustwords is too low to provide enough security for general use-case and the minimum provided words should, therefore, be increased.

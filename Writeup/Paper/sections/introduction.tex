@@ -1,9 +1,13 @@
 \section{Introduction}
 
 The increasing use of public-key cryptography by instant messaging and secure email means ensuring confidentiality is an ever more important task.
-One of the most significant risks to the security of the communication channel is a Man-in-the-middle (MiTM) attack. A MiTM attack involves an attacker impersonating one or both sides of a connection. MiTM attacks can entirely circumvent the encryption as it allows an attacker to read all of the encrypted data.
-A countermeasure for the threat of MiTM attacks is the verification of each parties’ fingerprint. A fingerprint is a small string of characters that is unique to each key and, thus, can be used to identify.
+
+One of the most significant risks to the security of the communication channel is a Man-in-the-middle (MiTM) attack. A MiTM attack involves an attacker impersonating one or both sides of a connection. MiTM attacks can entirely circumvent the encryption as it allows an attacker to read all of the encrypted data. A countermeasure for the threat of MiTM attacks is the verification of each parties’ fingerprint. A fingerprint is a small string of characters that is unique to each key and, thus, can be used to identify.
+
 Fingerprints can come in several different encodings such as Hexadecimal, words, and even procedurally generated avatars. Previous research has shown that the average human can only hold around 7-digits ($\pm 2$) worth of data in their working memory\cite{miller1956magical}. Consequently, this makes the designing of user-friendly schemes a task of utmost importance.
+
 Humans are commonly considered the most vulnerable part of any computer system. Solutions, therefore, have been proposed to remove this manual verification with examples such as PGP's web-of-trust\cite{callas1998openpgp} and Namecoin\cite{kalodner2015empirical}. However, these suffer from user adoption due to perceived complexity. Manual verification is, consequently, left in a difficult position, due in part to proposed solutions needing to sacrifice either usability or security. Therefore, research into improving or creating a more secure and user-friendly fingerprint encoding remains an important task.
+
 One proposed user-friendly scheme is Pretty Easy Privacy's (p$\equiv$p) "Trustwords". Trustwords is an implementation of word fingerprint mapping with a emphasis on usability. This increase in usability is achieved by the user comparing a reduced number of words. This usability boost, however, comes at a cost of a much larger word list.
+
 This report evaluates the security and feasibility of attacking Trustwords. The motivation for this is due in part to the shortage of justification behind the size and features of the chosen wordlist.

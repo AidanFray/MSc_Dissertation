@@ -11,10 +11,30 @@
 \usepackage{graphicx}
 \usepackage{multicol}
 \usepackage{makecell}
-\usepackage{url}
 \usepackage{hyperref}
+\usepackage{adjustbox}
+\usepackage{filecontents}
 \usepackage{lipsum}
+\usepackage{url}
+\usepackage{soul}
+\usepackage{float}
+\usepackage{fancyvrb}
 
+
+% tikz
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes.geometric}
+
+% pfg
+\usepackage{pgfplots}
+\usepackage{pgf-umlsd}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{statistics}
+
+% For Cisco network images
+\newcommand{\cisco}{cisco_images}
+\newcommand{\ciscoImageScale}{0.7}
 
 \title{\textbf{Investigating the Security of p$\equiv$p’s Trustwords}}
 \author{Aidan Fray\\\\ University of York}
@@ -28,22 +48,52 @@
 \setlength{\parindent}{0em}
 \setlength{\parskip}{0.75em}
 
+\newcommand{\pep}{p\texorpdfstring{$\equiv$}{E}p~}
+\newcommand{\XOOX}{\Verb+\textbf{X}OO\textbf{X}+}
+\newcommand{\XOOO}{\Verb+\textbf{X}OOO+}
+\newcommand{\OOOO}{\Verb+OOOO+}
+
+\newcommand{\tally}[1]{%
+\begin{tikzpicture}
+  \begin{axis}[
+    ymin=0,
+    ymax=200,
+    xtick={1,2,3,4,5},
+    width=.8\textwidth,
+    height=0.2\paperheight,
+    grid,
+    xlabel={Phonetic raiting},
+    ylabel={Oucurrance}
+  ]
+    \addplot[ybar, fill=blue] table[ 
+        col sep=comma,
+        y=occurrence, 
+        x=rating] 
+    {#1};
+  \end{axis}
+\end{tikzpicture}
+}
+
 % Command to make text green coloured
 \newcommand{\comments}[1]{\small\textcolor{OliveGreen}{\emph{#1}}}
 
-% \graphicspath{Sections/Images}
+\graphicspath{{images/}}
+
 \begin{document}
     \bibliographystyle{IEEEtranN}
     \maketitle
     \textbf{\input{sections/abstract.tex}}
 
     \input{sections/introduction.tex}
-    \input{sections/related_work.tex}
     \input{sections/background.tex}
+    % \input{sections/related_work.tex}
+    \input{sections/design.tex}
     \input{sections/experimental_design.tex}
     \input{sections/results.tex}
     \input{sections/discussion.tex}
 
     \bibliography{references.bib}
+    
+    \input{sections/appendix.tex}
 
 \end{document}
