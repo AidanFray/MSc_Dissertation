@@ -2,18 +2,17 @@
 
 \subsection{Attack Design}
 \label{sec:attackDesign}
-The attack on Trustwords involves generating ``near-collision'' keys. Near-collision keys are keys composed of a set of words that are deemed a match by the similarity metric.
+The propossed attack on Trustwords involves generating ``near-collision'' keys. Near-collision keys are keys composed of a set of words that are deemed a match by the similarity metrics.
 \\\\
-As each combined key in Trustwords is an exclusive-or of both sides' public-key the attack is designed to target a single pair of users and requires recomputation for each attack target. Each pair is split into an "Uncontrolled" or "Controlled" key. Uncontrolled is the receiver of the communication, and, thus, the key cannot be altered. The Controlled key is the one we are attempting to impersonate. It is assumed that there is the ability to replace the Controlled key with the malicious option. The uncontrolled and controlled keys can be swapped around, thus, resulting in the possibility to intercept both directions of communication. This, however, requires performing the attack twice.
+As each combined key in Trustwords is an exclusive-or of both sides' public-key, therefore, the attack is designed to target a single pair of users and requires recomputation for each attack target pair. Each pair is split into an "Uncontrolled" or "Controlled" key. Uncontrolled is the receiver of the communication, and, thus, the key cannot be altered. The Controlled key is the one we are attempting to impersonate. It is assumed that there is the ability to replace the Controlled key with the malicious option. The uncontrolled and controlled keys can be swapped around, thus, resulting in the possibility to intercept both directions of communication. This, however, requires performing the attack twice.
 \\\\
 When attacking, a similarity metric is used to compute a list of possibilities for each position in the target fingerprint. Completing these steps produces a list of fingerprints that can be inserted into a tool designed to hash a large number of keys and search for matches. This aspect of using an extensive list to search for keys massively reduces the complexity of the search.
 
 In summary, the attack steps are:
-
 \begin{enumerate}
     \item Compute all possible matches using a similarity metric on all words in a dictionary (Only needs performing once).
 
-    \item Select a target and allocate "Uncontrolled" and "Controlled" key identification.
+    \item Select a target and allocate ``Uncontrolled" and ``Controlled" key identification.
     
     \item Calculate all permutations of near-collisions for the key pair and produce a list of near-collision key fingerprints.
     
@@ -23,6 +22,6 @@ In summary, the attack steps are:
 
 \subsection{GreenOnion Design}
 
-The inspiration for the design of this tool was taken from a tool called Scallion\footnote{\url{https://github.com/lachesis/scallion}}. Scallion was designed by Richard Klafter and Eric Swanson and was used to demonstrate that 32-bit PGP key IDs were insufficient. To keep with the onion-based theme, the proposed tool is called `GreenOnion' and is a re-write of Scallion in C++. This language was chosen due to the well-understood efficiency benefits. The proposed tool differs from Scallion, most notably in its ability to concurrently search for a large number of keys, GreenOnion improves on this substantially. More implementation and experimental details are discussed in later chapters.
+The inspiration for the design of this tool was taken from a tool called Scallion\footnote{\url{https://github.com/lachesis/scallion}}. The proposed tool is called `GreenOnion' and is a re-write of Scallion in C++.  The proposed tool differs from Scallion, most notably in its ability to concurrently search for a large number of keys. This is due to the unique addition of a bloom filter. A bloom filter is a probabilistic data structure that allows efficient checking for the presence of an element in a set. It is effectively a vast array of booleans that state whether an element is present. A pre-defined hashing algorithm decides the index in the array. This process is repeated several times with a set number of hashing algorithms ($k$) to populate the array of length ($m$). To check the presence of an element in the set means hashing the target value and checking the indices returned. This data structure, therefore, has a complexity of $O(k)$ regardless of the number of elements in the set. Due to the use of hashing algorithms, there is the possibility for collisions and, thus, the possibility of false-positives. The data structure, however, does not produce any false-negatives. If the levels of false-positives are controlled (by altering $k$ and $m$), the tool can search through a vast number of potential keys with minimal decrease in speed.
 
-The tool should take two keys as parameters (Uncontrolled/Controlled) and a chosen similarity metric and produce a list of target key fingerprints. This list is then used as a search criterion when searching for keys. To utilise the parallel nature of the GPU to compute the hash of a large number of keys, the tool utilises a GPGPU (General-purpose computing on graphics processing units) framework. The chosen framework was OpenCL due to its support for the chosen language (C++) and platform (Linux). OpenCL allows the creation of code chunks referred to as "kernels" to be executed concurrently, this provides a massive speed increase compared to the sequential nature of the CPU.
+The tool should take two keys as parameters (Uncontrolled/Controlled) and a chosen similarity metric and produce a list of target key fingerprints. This list is then used as a search criterion when searching for keys. To utilise the parallel nature of the GPU to compute the hash of a large number of keys, the tool utilises a GPGPU (General-purpose computing on graphics processing units) framework. OpenCL allows the creation of code chunks referred to as "kernels" to be executed concurrently, this provides a massive speed increase compared to the sequential nature of the CPU.

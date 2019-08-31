@@ -1,1 +1,12 @@
 \section{Related Work}
+
+\subsection{Encoding Schemes}
+Encoding schemes are the physical method of encoding used to represent the fingerprint. The most common representation is alphanumerical with either \textbf{Hexadecimal} (0-9/A-F) or \textbf{Base32} (2-7/A-Z). These encoding schemes are the most popular due to their intuitive simplicity and lack of hardware requirements.
+
+Fingerprints can also be encoded using natural language. The fingerprint can be chunked and mapped to a set of words. The same principle can be used to fill placeholders in a pre-defined sentence allowing the simple formation of syntactically correct English sentences. Moreover, other languages can be used such as Chinese, Japanese or Korean, to map fingerprint chunks to characters.
+
+A substantial amount of work has been performed assessing the performance of encoding schemes. Results from this literature consistently show the effectiveness of language-based encodings such as Words or Sentences with accuracies ranging up from 94\% \cite{dechand2016empirical}\cite{tan2017can}\cite{kainda2009usability}. In all cases, these were the best schemes from the sets assessed. The exception to this is the work performed by \textbf{H. Hsiao \textit{et al.}}\cite{hsiao2009study} with Words achieving an abnormal accuracy of 63\%. All of the papers assessed simulated attacks and had minimal consideration for technical details regarding their execution. 
+
+Further research has aimed at creating or improving language based encoding schemes. Work by \textbf{Juola} and \textbf{Zimmermann} \cite{juola1996whole} aimed to produce a word list where phonetic distinctiveness was prioritised alongside, \textbf{Michael Rogers'}\footnote{\url{https://github.com/akwizgran/basic-english}} research detailing a process to map fingerprints to pseudo-random poems.
+
+To our knowledge no research has been performed investigating the unique design choices present in Trustwords. This, therefore, is a promising candidate for research.
