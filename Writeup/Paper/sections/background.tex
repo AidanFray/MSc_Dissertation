@@ -10,8 +10,7 @@ public-key is used to encrypt data that only the respective private-key
 can decrypt. Hence, this means that sharing the keys required to encrypt
 can be performed across insecure channels.
 
-An E2EE connection uses the key types discussed previously to ex-
-change messages between verified parties securely. However, this hinges
+An E2EE connection uses the key types discussed previously to exchange messages between verified parties securely. However, this hinges
 on the verification of the initial parties, if one party impersonates another and receives sensitive communication, the secure encryption is
 completely circumvented. Therefore, the correct identification of parties is crucial to maintaining security. The exploitation of this is known as a Man-in-the-middle (MiTM) attack. This attack is commonly bidirectional, and if executed correctly, there is often no discerning change to the user experience.
 
@@ -19,15 +18,15 @@ completely circumvented. Therefore, the correct identification of parties is cru
 \label{sec:similarity_metric}
 A similarity metric is an algorithm designed to determine if two words are phonetically a match. For example, the words ``THEIR" and "THERE" is a match, whereas the words ``DARK" and ``PRINCIPLE" are not phonetically matching. This section provides a base explanation of important phonetic algorithms relevant in this project.
 
-\textbf{Soundex} - One of the earliest examples of a phonetic algorithm is known as Soundex. It was initially designed for phonetically indexing names alongside detection of transposed letters in spelling mistakes.  Soundex is one of the most famous example of a phonetic. This is due in part to its implementation into major database clients like MySQL\cite{mysql_soundex}, Oracle\cite{moved_2005} and PostgreSQL\cite{postgresql}.
+\textbf{Soundex} - One of the earliest examples of a phonetic algorithm is known as Soundex. It was initially designed for phonetically indexing names alongside detection of transposed letters in spelling mistakes.  Soundex is one of the most famous example of a phonetic algorithm. This is due in part to its implementation into major database clients like MySQL\cite{mysql_soundex}, Oracle\cite{moved_2005} and PostgreSQL\cite{postgresql}.
 
-\textbf{NYSIIS} - The New York State Identification and Intelligence System (NYSIIS) phonetic code was created for the phonetic matching of American names. The motivation for its inception was mostly due to the presence of Hispanic names in the American based databases (this was an aspect Soundex was known to have low accuracy with).
+\textbf{NYSIIS} - The New York State Identification and Intelligence System (NYSIIS) phonetic code was created for the phonetic matching of American names. The motivation for its inception was mostly due to the presence of Hispanic names in the American based databases (this was an aspect Soundex was known to have low accuracy with). It was in use right up until the end of 1998 within various US Government departments.
 
 \textbf{Metaphone} - Metaphone was invented by Lawrence Philips in 1990\cite{philips1990hanging} in response to the deficiencies in Soundex. It improves on Soundex by including information around inconsistency and variation in English spelling in an attempt to create a more accurate phonetic representation.
 
 \textbf{Levenshtein Distance} - Levenshtein distance is a string metric designed to measure the `distance' between two strings. It is merely the number of single-character edits (insertions, deletions or substitutions) required to reach the other string.
 
-\textbf{Phonetic Vectors} - Phonetic Vectors is a unique addition to the chosen set. Created by Allison Parrish in 2017\cite{parrish2017poetic}, Phonetic vectors is as the name suggests the vectorisation of the phonetics of a word. Phonetic features are used in this work as a way to compare the similarity of phonemes. Phonemes are the phonetic elements that construct a word. For example, the word ``RING" translated into the phonemes \verb|/R IH NG/|. 
+\textbf{Phonetic Vectors} - Phonetic Vectors; created by Allison Parrish in 2017\cite{parrish2017poetic}, is as the name suggests the vectorisation of the phonetics of a word. Phonetic features are used in this work as a way to compare the similarity of phonemes. Phonemes are the phonetic elements that construct a word. For example, the word ``RING" translated into the phonemes \verb|/R IH NG/|. 
 
 % \subsection{Pretty Easy Privacy}
 % \label{sec:pep}
