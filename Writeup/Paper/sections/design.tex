@@ -2,9 +2,9 @@
 
 \subsection{Attack Design}
 \label{sec:attackDesign}
-The propossed attack on Trustwords involves generating ``near-collision'' keys. Near-collision keys are keys composed of a set of words that are deemed a match by the similarity metrics.
+The proposed attack on Trustwords involves generating ``near-collision'' keys. Near-collision keys are keys composed of a set of words that are deemed a match by the similarity metrics.
 \\\\
-The attack is designed to target a single pair of users and requires recomputation for each attack target pair. Each pair is split into an "Uncontrolled" or "Controlled" key. Uncontrolled is the receiver of the communication, and, thus, the key cannot be altered. The Controlled key is the one we are attempting to impersonate. It is assumed that there is the ability to replace the Controlled key with the malicious option. The uncontrolled and controlled keys can be swapped around, thus, resulting in the possibility to intercept both directions of communication.
+The attack is designed to target a single pair of users and requires recomputation for each attack target pair. Each pair is split into an ``Uncontrolled'' or ``Controlled'' key. Uncontrolled is the receiver of the communication, and, thus, the key cannot be altered. The Controlled key is the one we are attempting to impersonate. It is assumed that there is the ability to replace the Controlled key with the malicious option. The uncontrolled and controlled keys can be swapped around, thus, resulting in the possibility to intercept both directions of communication.
 \\\\
 When attacking, a similarity metric is used to compute a list of possibilities for each position in the target fingerprint. Completing these steps produces a list of fingerprints that can be inserted into a tool designed to hash a large number of keys and search for matches. This aspect of using an extensive list to search for keys massively reduces the complexity of the search.
 
@@ -12,7 +12,7 @@ In summary, the attack steps are:
 \begin{enumerate}
     \item Compute all possible matches using a similarity metric on all words in a dictionary (Only needs performing once).
 
-    \item Select a target and allocate ``Uncontrolled" and ``Controlled" key identification.
+    \item Select a target and allocate ``Uncontrolled'' and ``Controlled'' key identification.
     
     \item Calculate all permutations of near-collisions for the key pair and produce a list of near-collision fingerprints.
     

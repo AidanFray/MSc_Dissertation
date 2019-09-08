@@ -27,7 +27,7 @@ The experiment randomises the order of these comparisons per session alongside a
 \label{sec:exp1_qualitycontrol}
 As the study was being outsourced to Amazon's Mechanical Turk, the requirement to check the quality of results is essential. Therefore, a couple of additions were provided to check a result's validity.
 
-The first was the addition of five ``Random matches" questions. These are matches consisting of two random words selected from the dictionary. Therefore, the expected average rating of these words should be close to one. This design allows for a simple check for valid results. If their average rating for Random matches is too high, their results are discarded.
+The first was the addition of five ``Random matches'' questions. These are matches consisting of two random words selected from the dictionary. Therefore, the expected average rating of these words should be close to one. This design allows for a simple check for valid results. If their average rating for Random matches is too high, their results are discarded.
 
 Alongside this, was the addition of two questions comparing precisely the same word. As both words are the same, the result should always be a full 5/5 rating, any results without a full rating are discarded. 
 
@@ -70,7 +70,7 @@ A live version of the application is avaliable\footnote{\url{https://afray.pytho
 
 Due to the scarcity of attacks in a real-world setting, users are often complacent about their occurrence. Therefore, in this experiment, attacks only occur 30\% of the time. This occurrence is a much higher value than in a real-world setting but is a balance between resources and realistic design. If the chosen attack rate is too low, many more trials are required to collate a useful number of attack instances, thus, requiring more resources, but with more realism. If, however, the attack rate is too high, less total rounds are required to obtain the target number of attack trails. However, the user's complacency is lost as an attack is expected. This loss of complacency is undesirable as it does not realistically reflect real life. Furthermore, the first 5 trials of a new experiment are always benign. This inclusion is to ensure users are consistently lulled into complacency.
 
-Certain keys have higher levels of potential near-collision keys than others due to how certain words are deemed similar by the similarity metric. Therefore, if random sets of words are chosen with no restraints, there are attacks presented to the user that in a real setting would be infeasible as they are close to a $2^{64}$ attack (4 Words * 16-bits). Therefore, the experiment is designed to sample from a list of "vulnerable" keys. These are keys that have a number of potential near-collision keys that allow computation in a specified timeframe. 
+Certain keys have higher levels of potential near-collision keys than others due to how certain words are deemed similar by the similarity metric. Therefore, if random sets of words are chosen with no restraints, there are attacks presented to the user that in a real setting would be infeasible as they are close to a $2^{64}$ attack (4 Words * 16-bits). Therefore, the experiment is designed to sample from a list of ``vulnerable'' keys. These are keys that have a number of potential near-collision keys that allow computation in a specified timeframe. 
 
 Furthermore, certain levels of attacks are also simulated. Below is the list of attacks considered in this experiment: 
 
