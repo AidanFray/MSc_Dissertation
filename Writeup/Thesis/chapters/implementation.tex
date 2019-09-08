@@ -94,7 +94,7 @@ Figure \ref{fig:GoogleAppScript} contains an interesting snippet from the script
 \newpage
 
 \section{MainExperiment}
-In order to assess users in a similar scenario to ones experienced when utilizing \pep in the real-world, a custom application was required. The front-end is developed in Javascript with a Python-Flask backend that acts as the functionality of the webpage. Several endpoints are exposed like \verb|get_audio| or \verb|get_words| that are requested and displayed on the front-end.
+In order to assess users in a similar scenario to ones experienced when utilising \pep in the real-world, a custom application was required. The front-end is developed in Javascript with a Python-Flask backend that acts as the functionality of the webpage. Several endpoints are exposed like \verb|get_audio| or \verb|get_words| that are requested and displayed on the front-end.
 
 One of the main problems encountered was the handling of each user's session. Initially, during testing, it was noted that changes in one endpoint if timed correctly would overwrite the progress of another, this is commonly known as a ``Lost update''. This issue was due to the user session being stored in the \verb|session| cookie. When sending off a request the session cookie is included in the header, the code then utilises the data within the cookie to make decisions and alter state, the updated state is then returned as a cookie in the response. If, however, another request is executed before the first has completed, the second request is using the context of the first request and, thus, any alterations made by the first is completely lost.
 

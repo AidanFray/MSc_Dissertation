@@ -80,9 +80,9 @@ In summary, the attack steps are:
 One of the first requirements for the attack is quantifying "phonetic similarity." This section is looking to provide an answer for Research Question \ref{goal:phoneticSimilarity}. There are many algorithms currently available to provide this functionality. This section describes and explains the reasons they were selected for assessment later in the project.
 
 \subsection{Soundex}
-Soundex is one of the most famous example of a phonetic algorithm (See Section \ref{sec:soundex}). This is due in part to its implementation into major database clients like MySQL\cite{mysql_soundex}, Oracle\cite{moved_2005} and PostgreSQL\cite{postgresql}.
+Soundex is one of the most famous examples of a phonetic algorithm (See Section \ref{sec:soundex}). This is due in part to its implementation into major database clients like MySQL\cite{mysql_soundex}, Oracle\cite{moved_2005} and PostgreSQL\cite{postgresql}.
 
-Soundex, however, has had extensive work focused on its own deficiencies alongside quantification of its performance under certain conditions. However, even with these previously discussed issues, its algorithmic simplicity and popularity allows it to remain relevant for assessment in this project.
+Soundex, however, has had extensive work focused on its deficiencies alongside quantification of its performance under certain conditions. However, even with these previously discussed issues, its algorithmic simplicity and popularity allows it to remain relevant for assessment in this project.
 
 \subsection{NYSIIS}
 NYSIIS primary use case was the matching of common names present in a database (See Section \ref{sec:nysiis}). However, due to it having embedded rules to handle word phonetics, it would again be applicable in this application.
@@ -90,7 +90,7 @@ NYSIIS primary use case was the matching of common names present in a database (
 Due to NYSIIS's aforementioned use in a professional setting alongside its high occurrence in literature, it was deemed suitable as one of the selected similarity metrics.
 
 \subsection{Metaphone}
-Metaphone, as discussed in Section \ref{sec:metaphone} is another famous phonetic algorithm. Metaphone is arguably on the same level of ubiquity as that of Soundex with it finding itself implemented in languages such as PHP\cite{php}. Metaphone was chosen due to similar reasons to that of Soundex and NYSIIS. 
+Metaphone, as discussed in Section \ref{sec:metaphone}, is another famous phonetic algorithm. Metaphone is arguably on the same level of ubiquity as that of Soundex with it finding itself implemented in languages such as PHP\cite{php}. Metaphone was chosen due to similar reasons to that of Soundex and NYSIIS. 
 
 Further work would involve the implementation of newer versions of Metaphone. Double Metaphone (2000) and
 Metaphone 3 (2009) that claim to improve over the original version.
@@ -272,7 +272,7 @@ Figure \ref{fig:heatMap} shows the results of an eye-tracking experiment where t
 
 However, this may not be applicable in this context due to the user being linearly fed an audio stream that they cannot skip to the start or end. We believe, however, that attention also plays a part in defining the most important areas of comparison. The hypothesis is that the users' attention is lower in the middle sections of comparison, where it peaks at the start and end. All of these aspects require empirical evidence to conclude. Therefore, this requires consideration when assessing the results of the experiment.
 
-These attacks are ascending in complexity. The timeframe for computing a near-collision was decided as one week with attack strengths of 7 GPU-days \textit{(1 x GPU)}, 70 GPU-days \textit{(10 x GPUs)} and 700 GPU-days \textit{(100 x GPUs)} on a mid-range GPU (AMD RX 480). Due to the long lifetime of PGP keys, 7 days was chosen as a reasonable length of the attack. The tool requires no user interaction once started, therefore, it can be left for an extended period to compute potential keys. This timeframe is also a maximum time, as these attacks also include keys that have a shorter average computation time.
+These attacks are ascending in complexity. The timeframe for computing a near-collision was decided as one week with attack strengths of 7 GPU-days \textit{(1 x GPU)}, 70 GPU-days \textit{(10 x GPUs)} and 700 GPU-days \textit{(100 x GPUs)} on a mid-range GPU (AMD RX 480). Due to the long lifetime of PGP keys, 7 days was chosen as a reasonable length of the attack. The tool requires no user interaction once started. Therefore, the tool can be left for an extended period to compute potential keys. This timeframe is also a maximum time, as these attacks also include keys that have a shorter average computation time.
 
 \begin{table}[h!]
     \centering
