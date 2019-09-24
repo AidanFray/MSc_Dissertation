@@ -1,6 +1,6 @@
 # Investigating the Security of p≡p’s Trustwords
 
-*Abstract* – Many encrypted connections require
+**Abstract** – Many encrypted connections require
 the comparison of a fingerprint to protect
 against eavesdropping. A substantial amount
 of past work has aimed to propose fingerprint
@@ -10,8 +10,7 @@ is an example of such a scheme, where the
 fingerprint is encoded as words in an attempt
 to improve usability.
 
-This work’s main aim is to assess if Trust-
-word’s recommended minimum number of four
+This work’s main aim is to assess if Trustword’s recommended minimum number of four
 words is sufficient. In order to achieve this goal,
 this work implements an attack on Trustwords
 and quantifies its effectiveness on more than
