@@ -26,3 +26,6 @@ to levering the design flaws in the Trustword
 scheme. Therefore, we believe a minimum of
 four Trustwords is insufficient to provide even a
 basic level of security.
+
+### [Paper Download](https://github.com/AidanFray/MSc_Dissertation/releases/download/v1.0/paper.pdf)
+### [Thesis Download](https://github.com/AidanFray/MSc_Dissertation/releases/download/v1.0/thesis.pdf)
