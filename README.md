@@ -14,10 +14,10 @@ This work’s main aim is to assess if Trustword’s recommended minimum number 
 words is sufficient. In order to achieve this goal,
 this work implements an attack on Trustwords
 and quantifies its effectiveness on more than
-400 participants. A tool called GreenOnion
+400 participants. A tool called [GreenOnion](https://github.com/AidanFray/GreenOnion)
 was designed to assist in quantifying attack
-feasibility. GreenOnion improved substantially
-on a similar tool’s ability to search for matches
+feasibility. [GreenOnion](https://github.com/AidanFray/GreenOnion)
+improved substantially on a similar tool’s ability to search for matches
 concurrently. Our findings show a substantial
 increase in attack success compared to related
 literature.
